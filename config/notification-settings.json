@@ -1,0 +1,26 @@
+{
+  "user_email": "your_email@example.com",
+  "email_frequency": "daily",
+  "email_enabled": true,
+  "min_priority_score": 60,
+  "send_time": "08:00",
+  "send_timezone": "America/New_York",
+  "include_all_vehicles": false,
+  "max_vehicles_per_email": 5,
+  "preferences": {
+    "only_high_priority": false,
+    "exclude_reviewed": false,
+    "send_empty_digest": false
+  },
+  "comments": {
+    "email_frequency": "Options: 'daily', 'weekly', 'disabled', 'on_new' (immediate on new high-priority matches)",
+    "min_priority_score": "Minimum priority score (0-100) to trigger email notification. Default: 60",
+    "send_time": "Time to send daily/weekly digest in HH:MM format (24-hour). Used by cron job.",
+    "send_timezone": "Timezone for send_time. Examples: 'America/New_York', 'America/Los_Angeles', 'America/Chicago'",
+    "include_all_vehicles": "If true, includes all matching vehicles. If false, only top max_vehicles_per_email",
+    "max_vehicles_per_email": "Maximum number of vehicles to include in email (top N by priority score)",
+    "only_high_priority": "If true, only send emails when high priority vehicles (score >= 80) are found",
+    "exclude_reviewed": "If true, exclude vehicles already reviewed by user from email",
+    "send_empty_digest": "If true, send digest even if no new vehicles found (not recommended)"
+  }
+}
