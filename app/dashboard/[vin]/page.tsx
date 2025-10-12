@@ -46,22 +46,30 @@ export default async function VehicleDetailPage({ params }: { params: Promise<Pa
   try {
     vehicle = await getMarketcheckListingByVin(vin);
   } catch (marketcheckError) {
-    // Try legacy curated_listings table
+    // Marketcheck query failed, will try legacy next
+  }
+
+  // If not found in Marketcheck, try legacy curated_listings table
+  if (!vehicle) {
     try {
       vehicle = await getListingByVin(vin.toUpperCase());
     } catch (error) {
-      // Supabase not configured or error - fallback to mock data
-      const mockVehicle = mockListings.find(listing => listing.vin.toUpperCase() === vin.toUpperCase());
-      if (mockVehicle) {
-        vehicle = {
-          ...mockVehicle,
-          id: '', // Mock data doesn't have ID
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          first_seen_at: new Date().toISOString(),
-          last_updated_at: new Date().toISOString(),
-        } as Vehicle;
-      }
+      // Legacy query failed, will try mock data next
+    }
+  }
+
+  // If still not found, fallback to mock data
+  if (!vehicle) {
+    const mockVehicle = mockListings.find(listing => listing.vin.toUpperCase() === vin.toUpperCase());
+    if (mockVehicle) {
+      vehicle = {
+        ...mockVehicle,
+        id: '', // Mock data doesn't have ID
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        first_seen_at: new Date().toISOString(),
+        last_updated_at: new Date().toISOString(),
+      } as Vehicle;
     }
   }
 
@@ -80,24 +88,35 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
 
   // Try Marketcheck, then legacy, fallback to mock data
   let vehicle: Vehicle | null = null;
+
+  // Try Marketcheck first
   try {
     vehicle = await getMarketcheckListingByVin(vin);
   } catch (marketcheckError) {
+    // Marketcheck query failed
+  }
+
+  // If not found, try legacy
+  if (!vehicle) {
     try {
       vehicle = await getListingByVin(vin);
     } catch (error) {
-      // Fallback to mock data
-      const mockVehicle = mockListings.find(listing => listing.vin === vin);
-      if (mockVehicle) {
-        vehicle = {
-          ...mockVehicle,
-          id: '',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          first_seen_at: new Date().toISOString(),
-          last_updated_at: new Date().toISOString(),
-        } as Vehicle;
-      }
+      // Legacy query failed
+    }
+  }
+
+  // If still not found, fallback to mock data (case-insensitive)
+  if (!vehicle) {
+    const mockVehicle = mockListings.find(listing => listing.vin.toUpperCase() === vin.toUpperCase());
+    if (mockVehicle) {
+      vehicle = {
+        ...mockVehicle,
+        id: '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        first_seen_at: new Date().toISOString(),
+        last_updated_at: new Date().toISOString(),
+      } as Vehicle;
     }
   }
 

@@ -15,10 +15,39 @@ export interface CarImageProps {
 /**
  * CarImage component with automatic fallback handling
  * Shows placeholder if image fails to load
+ * Handles SSR and hydration properly for direct page loads
  */
 export function CarImage({ src, alt, className, onError, priority }: CarImageProps) {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
+  const [mounted, setMounted] = React.useState(false);
+  const imgRef = React.useRef<HTMLImageElement>(null);
+
+  // Handle SSR: Only show loading state after client-side mount
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Check if image is already loaded (cached or complete)
+  React.useEffect(() => {
+    if (!imgRef.current) return;
+
+    // Image already loaded (cached from previous navigation or complete)
+    if (imgRef.current.complete && imgRef.current.naturalWidth > 0) {
+      setLoading(false);
+    }
+  }, [src]);
+
+  // Fallback: Assume loaded after timeout (handles stalled loads)
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+      }
+    }, 5000); // 5 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [loading]);
 
   const handleError = () => {
     setError(true);
@@ -47,7 +76,7 @@ export function CarImage({ src, alt, className, onError, priority }: CarImagePro
 
   return (
     <>
-      {loading && (
+      {loading && mounted && (
         <div
           className={cn(
             'absolute inset-0 flex items-center justify-center',
@@ -60,11 +89,12 @@ export function CarImage({ src, alt, className, onError, priority }: CarImagePro
         </div>
       )}
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         className={cn('w-full h-full object-cover transition-opacity', className, {
-          'opacity-0': loading,
-          'opacity-100': !loading,
+          'opacity-0': loading && mounted,
+          'opacity-100': !loading || !mounted,
         })}
         onError={handleError}
         onLoad={handleLoad}
