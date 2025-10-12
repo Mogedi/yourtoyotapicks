@@ -101,10 +101,11 @@ export default async function VehicleDetailPage({ params }: { params: Promise<Pa
   // Fetch vehicle data - try Supabase, fallback to mock data
   let vehicle: Vehicle | null = null;
   try {
-    vehicle = await getListingByVin(vin);
+    // VINs are stored in uppercase, so normalize the input
+    vehicle = await getListingByVin(vin.toUpperCase());
   } catch (error) {
     // Supabase not configured or error - fallback to mock data
-    const mockVehicle = mockListings.find(listing => listing.vin === vin);
+    const mockVehicle = mockListings.find(listing => listing.vin.toUpperCase() === vin.toUpperCase());
     if (mockVehicle) {
       vehicle = {
         ...mockVehicle,
