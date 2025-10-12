@@ -111,6 +111,8 @@ export default async function VehicleDetailPage({ params }: { params: Promise<Pa
         id: '', // Mock data doesn't have ID
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        first_seen_at: new Date().toISOString(),
+        last_updated_at: new Date().toISOString(),
       } as Vehicle;
     }
   }
@@ -145,6 +147,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
         id: '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        first_seen_at: new Date().toISOString(),
+        last_updated_at: new Date().toISOString(),
       } as Vehicle;
     }
   }

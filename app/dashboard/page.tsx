@@ -48,6 +48,8 @@ export default function DashboardPage() {
         // Use mock data as fallback
         const mockData = mockListings.map(listing => ({
           ...listing,
+          id: '',
+          created_at: new Date().toISOString(),
           reviewed_by_user: false,
           user_rating: undefined,
           user_notes: undefined,
