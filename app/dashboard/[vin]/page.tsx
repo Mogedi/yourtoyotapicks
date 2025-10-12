@@ -1,72 +1,13 @@
-import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getListingByVin, getMarketcheckListingByVin } from '@/lib/supabase';
 import { mockListings } from '@/lib/mock-data';
 import { VehicleDetail } from '@/components/VehicleDetail';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { Vehicle } from '@/lib/types';
 
 // Dynamic params type
 type Params = {
   vin: string;
 };
-
-// Loading component
-function VehicleDetailSkeleton() {
-  return (
-    <div className="space-y-6">
-      {/* Back button skeleton */}
-      <Skeleton className="h-10 w-40" />
-
-      {/* Hero section skeleton */}
-      <Card>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4 p-6">
-            <Skeleton className="aspect-[4/3] rounded-lg" />
-            <div className="grid grid-cols-4 gap-2">
-              <Skeleton className="aspect-square" />
-              <Skeleton className="aspect-square" />
-              <Skeleton className="aspect-square" />
-              <Skeleton className="aspect-square" />
-            </div>
-          </div>
-          <div className="p-6 space-y-6">
-            <div>
-              <Skeleton className="h-9 w-3/4 mb-2" />
-              <Skeleton className="h-6 w-1/2" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Skeleton className="h-20" />
-              <Skeleton className="h-20" />
-              <Skeleton className="h-20" />
-              <Skeleton className="h-20" />
-            </div>
-            <div className="flex gap-2">
-              <Skeleton className="h-6 w-32" />
-              <Skeleton className="h-6 w-28" />
-              <Skeleton className="h-6 w-24" />
-            </div>
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        </div>
-      </Card>
-
-      {/* Tabs skeleton */}
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-10 w-full" />
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-6 w-3/4" />
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
 // Error component
 function VehicleNotFound() {
@@ -130,11 +71,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<Pa
   }
 
   // Render vehicle detail
-  return (
-    <Suspense fallback={<VehicleDetailSkeleton />}>
-      <VehicleDetail vehicle={vehicle} />
-    </Suspense>
-  );
+  return <VehicleDetail vehicle={vehicle} />;
 }
 
 // Generate metadata for SEO
