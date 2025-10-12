@@ -5,14 +5,6 @@
       "schedule": "0 6 * * *"
     }
   ],
-  "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "https://placeholder.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "placeholder-key",
-    "SUPABASE_SERVICE_ROLE_KEY": "placeholder-service-key",
-    "CRON_SECRET": "placeholder-cron-secret",
-    "DATA_SOURCE": "mock",
-    "SKIP_VIN_VALIDATION": "true"
-  },
   "headers": [
     {
       "source": "/api/(.*)",
