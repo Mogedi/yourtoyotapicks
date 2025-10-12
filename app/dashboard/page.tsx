@@ -1,0 +1,196 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { FilterBar, type FilterState } from '@/components/FilterBar';
+import { VehicleList } from '@/components/VehicleList';
+import { getListings } from '@/lib/supabase';
+import { mockListings } from '@/lib/mock-data';
+import type { ListingSummary, MileageRating } from '@/lib/types';
+
+// Initial filter state
+const initialFilters: FilterState = {
+  make: 'all',
+  model: 'all',
+  priceMin: '',
+  priceMax: '',
+  mileageRating: 'all',
+  reviewStatus: 'all',
+  sortBy: 'priority',
+  search: '',
+};
+
+export default function DashboardPage() {
+  const [filters, setFilters] = useState<FilterState>(initialFilters);
+  const [allVehicles, setAllVehicles] = useState<ListingSummary[]>([]);
+  const [filteredVehicles, setFilteredVehicles] = useState<ListingSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch vehicles from Supabase on mount
+  useEffect(() => {
+    async function fetchVehicles() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Try to fetch from Supabase, fallback to mock data if it fails
+        try {
+          const response = await getListings({ limit: 100 });
+          if (response.data && response.data.length > 0) {
+            setAllVehicles(response.data);
+            setFilteredVehicles(response.data);
+            return;
+          }
+        } catch (dbError) {
+          // Silently fallback to mock data (expected when Supabase not configured)
+        }
+
+        // Use mock data as fallback
+        const mockData = mockListings.map(listing => ({
+          ...listing,
+          reviewed_by_user: false,
+          user_rating: undefined,
+          user_notes: undefined,
+        } as ListingSummary));
+
+        setAllVehicles(mockData);
+        setFilteredVehicles(mockData);
+      } catch (err) {
+        console.error('Error fetching vehicles:', err);
+        setError('Failed to load vehicles. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchVehicles();
+  }, []);
+
+  // Apply filters and sorting whenever filters or vehicles change
+  useEffect(() => {
+    let filtered = [...allVehicles];
+
+    // Filter by make
+    if (filters.make !== 'all') {
+      filtered = filtered.filter((v) => v.make === filters.make);
+    }
+
+    // Filter by model
+    if (filters.model !== 'all') {
+      filtered = filtered.filter((v) => v.model === filters.model);
+    }
+
+    // Filter by price min
+    if (filters.priceMin !== '') {
+      const minPrice = parseFloat(filters.priceMin);
+      if (!isNaN(minPrice)) {
+        filtered = filtered.filter((v) => v.price >= minPrice);
+      }
+    }
+
+    // Filter by price max
+    if (filters.priceMax !== '') {
+      const maxPrice = parseFloat(filters.priceMax);
+      if (!isNaN(maxPrice)) {
+        filtered = filtered.filter((v) => v.price <= maxPrice);
+      }
+    }
+
+    // Filter by mileage rating
+    if (filters.mileageRating !== 'all') {
+      filtered = filtered.filter(
+        (v) => v.mileage_rating === (filters.mileageRating as MileageRating)
+      );
+    }
+
+    // Filter by review status
+    if (filters.reviewStatus !== 'all') {
+      if (filters.reviewStatus === 'reviewed') {
+        filtered = filtered.filter((v) => v.reviewed_by_user === true);
+      } else if (filters.reviewStatus === 'not-reviewed') {
+        filtered = filtered.filter((v) => v.reviewed_by_user === false);
+      }
+    }
+
+    // Filter by search (VIN or keyword)
+    if (filters.search !== '') {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter((v) => {
+        const vinMatch = v.vin.toLowerCase().includes(searchLower);
+        const makeMatch = v.make.toLowerCase().includes(searchLower);
+        const modelMatch = v.model.toLowerCase().includes(searchLower);
+        const yearMatch = v.year.toString().includes(searchLower);
+        return vinMatch || makeMatch || modelMatch || yearMatch;
+      });
+    }
+
+    // Apply sorting
+    switch (filters.sortBy) {
+      case 'priority':
+        filtered.sort((a, b) => b.priority_score - a.priority_score);
+        break;
+      case 'price-asc':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'mileage-asc':
+        filtered.sort((a, b) => a.mileage - b.mileage);
+        break;
+      case 'mileage-desc':
+        filtered.sort((a, b) => b.mileage - a.mileage);
+        break;
+      case 'date':
+        filtered.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        break;
+      default:
+        // Default to priority
+        filtered.sort((a, b) => b.priority_score - a.priority_score);
+    }
+
+    setFilteredVehicles(filtered);
+  }, [filters, allVehicles]);
+
+  // Handle filter changes
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+  };
+
+  // Handle clear filters
+  const handleClearFilters = () => {
+    setFilters(initialFilters);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Browse and filter curated vehicle listings matching your preferences.
+        </p>
+      </div>
+
+      {/* Filter Bar */}
+      <FilterBar
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+      />
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {/* Vehicle List */}
+      <VehicleList vehicles={filteredVehicles} loading={loading} />
+    </div>
+  );
+}
