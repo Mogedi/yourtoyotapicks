@@ -167,13 +167,13 @@ export function ReviewSection({
           <Textarea
             id="notes"
             placeholder="Add your notes about this vehicle..."
-            value={notes}
+            value={notes || ''}
             onChange={(e) => setNotes(e.target.value)}
             rows={4}
             className="resize-none"
           />
           <p className="text-xs text-muted-foreground">
-            {notes.length} characters
+            {notes?.length || 0} characters
           </p>
         </div>
 
