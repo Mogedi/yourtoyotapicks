@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FilterBar, type FilterState } from '@/components/FilterBar';
 import { VehicleList } from '@/components/VehicleList';
-import { getListings } from '@/lib/supabase';
+import { getListings, getMarketcheckListings } from '@/lib/supabase';
 import { mockListings } from '@/lib/mock-data';
 import type { ListingSummary, MileageRating } from '@/lib/types';
 
@@ -33,7 +33,20 @@ export default function DashboardPage() {
         setLoading(true);
         setError(null);
 
-        // Try to fetch from Supabase, fallback to mock data if it fails
+        // Try Marketcheck data first
+        try {
+          const response = await getMarketcheckListings({ limit: 100 });
+          if (response.data && response.data.length > 0) {
+            setAllVehicles(response.data);
+            setFilteredVehicles(response.data);
+            return;
+          }
+        } catch (marketcheckError) {
+          // Silently try legacy data
+          console.warn('Marketcheck data not available, trying legacy data...');
+        }
+
+        // Try legacy curated_listings table
         try {
           const response = await getListings({ limit: 100 });
           if (response.data && response.data.length > 0) {
@@ -43,6 +56,7 @@ export default function DashboardPage() {
           }
         } catch (dbError) {
           // Silently fallback to mock data (expected when Supabase not configured)
+          console.warn('Database unavailable, using mock data...');
         }
 
         // Use mock data as fallback

@@ -144,11 +144,13 @@ export async function runTest(): Promise<TestResult> {
             logSuccess(`Found ${count} elements using selector: ${selector}`);
             found = true;
 
-            if (count >= 32) {
-              logSuccess(`✓ Verified: ${count} vehicle cards (≥ 32 expected)`);
+            if (count >= 88) {
+              logSuccess(`✓ Verified: ${count} vehicle cards (≥ 88 expected with Marketcheck)`);
+            } else if (count >= 32) {
+              logWarning(`Found ${count} vehicle cards (expected ≥ 88, may be using mock data)`);
             } else {
-              errors.push(`Only ${count} vehicle cards found (expected ≥ 32)`);
-              logWarning(`Only ${count} vehicle cards found (expected ≥ 32)`);
+              errors.push(`Only ${count} vehicle cards found (expected ≥ 88 or ≥ 32)`);
+              logWarning(`Only ${count} vehicle cards found (expected ≥ 88 or ≥ 32)`);
             }
             break;
           }
@@ -164,11 +166,13 @@ export async function runTest(): Promise<TestResult> {
     }
 
     const vehicleCount = await getElementCount(page, '[data-testid="vehicle-card"]');
-    if (vehicleCount >= 32) {
-      logSuccess(`✓ Verified: ${vehicleCount} vehicle cards (≥ 32 expected)`);
+    if (vehicleCount >= 88) {
+      logSuccess(`✓ Verified: ${vehicleCount} vehicle cards (≥ 88 expected with Marketcheck data)`);
+    } else if (vehicleCount >= 32) {
+      logWarning(`Found ${vehicleCount} vehicle cards (expected ≥ 88 with Marketcheck, falling back to mock data)`);
     } else if (vehicleCount > 0) {
-      errors.push(`Only ${vehicleCount} vehicle cards found (expected ≥ 32)`);
-      logWarning(`Only ${vehicleCount} vehicle cards found (expected ≥ 32)`);
+      errors.push(`Only ${vehicleCount} vehicle cards found (expected ≥ 88 with Marketcheck or ≥ 32 with mock)`);
+      logWarning(`Only ${vehicleCount} vehicle cards found (expected ≥ 88 or ≥ 32)`);
     }
 
     // Step 7: Check for console errors
