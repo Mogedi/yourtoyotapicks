@@ -12,6 +12,7 @@ import type {
   FilterCriteria,
   PaginatedResponse,
 } from './types';
+import { transformMarketcheckToListingSummary, transformMarketcheckToVehicle } from './marketcheck-adapter';
 
 // ============================================================================
 // CLIENT INITIALIZATION
@@ -528,6 +529,175 @@ export async function getSearchStats(days: number = 30): Promise<{
   } catch (error) {
     console.error('Error in getSearchStats:', error);
     throw error;
+  }
+}
+
+// ============================================================================
+// MARKETCHECK LISTINGS FUNCTIONS
+// ============================================================================
+
+/**
+ * Get all Marketcheck listings with optional filtering and pagination
+ */
+export async function getMarketcheckListings(
+  filters?: FilterCriteria
+): Promise<PaginatedResponse<ListingSummary>> {
+  try {
+    let query = supabase
+      .from('marketcheck_listings')
+      .select('*', { count: 'exact' });
+
+    // Apply filters
+    if (filters?.makes && filters.makes.length > 0) {
+      // In Marketcheck, make is nested in build object but already flattened in DB
+      // However the database columns don't exist yet - query raw columns
+      query = query.in('build->make', filters.makes);
+    }
+
+    if (filters?.models && filters.models.length > 0) {
+      query = query.in('build->model', filters.models);
+    }
+
+    if (filters?.yearMin) {
+      query = query.gte('build->year', filters.yearMin);
+    }
+
+    if (filters?.yearMax) {
+      query = query.lte('build->year', filters.yearMax);
+    }
+
+    if (filters?.priceMin) {
+      query = query.gte('price', filters.priceMin);
+    }
+
+    if (filters?.priceMax) {
+      query = query.lte('price', filters.priceMax);
+    }
+
+    if (filters?.mileageMax) {
+      query = query.lte('miles', filters.mileageMax);
+    }
+
+    if (filters?.maxOwners === 1) {
+      // Filter for single-owner only
+      query = query.eq('carfax_1_owner', true);
+    }
+
+    // Pagination
+    const limit = filters?.limit || 100;
+    const offset = filters?.offset || 0;
+    query = query.range(offset, offset + limit - 1);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      // Silently throw connection errors (expected when Supabase not configured)
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        pageSize: limit,
+        hasMore: false,
+      };
+    }
+
+    // Transform raw Marketcheck data to ListingSummary
+    const transformed = data.map(transformMarketcheckToListingSummary);
+
+    // Client-side sorting by priority_score (since it's calculated)
+    const sortBy = filters?.sortBy || 'priority';
+    const sortOrder = filters?.sortOrder || 'desc';
+
+    if (sortBy === 'priority') {
+      transformed.sort((a, b) =>
+        sortOrder === 'desc'
+          ? b.priority_score - a.priority_score
+          : a.priority_score - b.priority_score
+      );
+    } else if (sortBy === 'price') {
+      transformed.sort((a, b) =>
+        sortOrder === 'desc' ? b.price - a.price : a.price - b.price
+      );
+    } else if (sortBy === 'mileage') {
+      transformed.sort((a, b) =>
+        sortOrder === 'desc' ? b.mileage - a.mileage : a.mileage - b.mileage
+      );
+    }
+
+    return {
+      data: transformed,
+      total: count || transformed.length,
+      page: Math.floor(offset / limit) + 1,
+      pageSize: limit,
+      hasMore: (count || 0) > offset + limit,
+    };
+  } catch (error) {
+    // Silently throw error for expected Supabase connection failures
+    throw error;
+  }
+}
+
+/**
+ * Get a single Marketcheck listing by VIN (case-insensitive)
+ */
+export async function getMarketcheckListingByVin(vin: string): Promise<Vehicle | null> {
+  try {
+    const { data, error} = await supabase
+      .from('marketcheck_listings')
+      .select('*')
+      .ilike('vin', vin) // Case-insensitive match
+      .maybeSingle();
+
+    if (error) {
+      // Silently throw connection errors (expected when Supabase not configured)
+      throw error;
+    }
+
+    if (!data) {
+      return null;
+    }
+
+    // Transform to full Vehicle type
+    return transformMarketcheckToVehicle(data);
+  } catch (error) {
+    // Silently throw - expected when Supabase not configured
+    throw error;
+  }
+}
+
+/**
+ * Get Marketcheck dashboard stats
+ */
+export async function getMarketcheckStats(): Promise<{
+  total: number;
+  singleOwner: number;
+  avgPrice: number;
+  avgMileage: number;
+}> {
+  try {
+    const { data, error } = await supabase
+      .from('marketcheck_listings')
+      .select('price, miles, carfax_1_owner');
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      return { total: 0, singleOwner: 0, avgPrice: 0, avgMileage: 0 };
+    }
+
+    return {
+      total: data.length,
+      singleOwner: data.filter(d => d.carfax_1_owner).length,
+      avgPrice: data.reduce((sum, d) => sum + d.price, 0) / data.length,
+      avgMileage: data.reduce((sum, d) => sum + d.miles, 0) / data.length,
+    };
+  } catch (error) {
+    console.error('Error fetching Marketcheck stats:', error);
+    return { total: 0, singleOwner: 0, avgPrice: 0, avgMileage: 0 };
   }
 }
 
