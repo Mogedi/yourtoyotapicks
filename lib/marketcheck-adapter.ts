@@ -8,7 +8,7 @@
 import type { ListingSummary, Vehicle, MileageRating } from './types';
 
 /**
- * Marketcheck raw data type (from JSON file)
+ * Marketcheck raw data type (from database - flattened columns)
  */
 export interface MarketcheckRawListing {
   id: string;
@@ -23,32 +23,35 @@ export interface MarketcheckRawListing {
   dom_active?: number;
   dom_180?: number;
   vdp_url?: string;
-  build: {
-    year: number;
-    make: string;
-    model: string;
-    trim?: string;
-    body_type?: string;
-    transmission?: string;
-    drivetrain?: string;
-    fuel_type?: string;
-    engine?: string;
-    engine_size?: number;
-    city_mpg?: number;
-    highway_mpg?: number;
-  };
-  dealer?: {
-    name?: string;
-    city?: string;
-    state?: string;
-    dealer_type?: string;
-    latitude?: string;
-    longitude?: string;
-  };
-  media?: {
-    photo_links?: string[];
-  };
+
+  // Flattened build fields
+  year: number;
+  make: string;
+  model: string;
+  trim?: string;
+  body_type?: string;
+  transmission?: string;
+  drivetrain?: string;
+  fuel_type?: string;
+  engine?: string;
+  engine_size?: number;
+  city_mpg?: number;
+  highway_mpg?: number;
+
+  // Flattened dealer fields
+  dealer_name?: string;
+  dealer_city?: string;
+  dealer_state?: string;
+  dealer_type?: string;
+  dealer_latitude?: number;
+  dealer_longitude?: number;
+
+  // Photo links (JSONB in database)
+  photo_links?: string[] | any;
+
   dist?: number;
+  first_seen_at_date?: string;
+  created_at?: string;
   [key: string]: any;
 }
 
@@ -88,7 +91,7 @@ function calculatePreliminaryScore(raw: MarketcheckRawListing): number {
 
   // Low mileage bonus
   const currentYear = new Date().getFullYear();
-  const age = Math.max(currentYear - raw.build.year, 1);
+  const age = Math.max(currentYear - raw.year, 1);
   const milesPerYear = raw.miles / age;
   if (milesPerYear < 10000) {
     score += 15;
@@ -102,7 +105,7 @@ function calculatePreliminaryScore(raw: MarketcheckRawListing): number {
   }
 
   // Model preference
-  const model = raw.build.model?.toLowerCase() || '';
+  const model = raw.model?.toLowerCase() || '';
   if (model.includes('rav4') || model.includes('cr-v')) {
     score += 10;
   } else if (model.includes('camry') || model.includes('accord')) {
@@ -116,19 +119,30 @@ function calculatePreliminaryScore(raw: MarketcheckRawListing): number {
  * Transform Marketcheck listing to ListingSummary
  */
 export function transformMarketcheckToListingSummary(raw: MarketcheckRawListing): ListingSummary {
-  // Calculate location string from dealer info
-  const location = raw.dealer?.city && raw.dealer?.state
-    ? `${raw.dealer.city}, ${raw.dealer.state}`
+  // Calculate location string from dealer info (flattened columns)
+  const location = raw.dealer_city && raw.dealer_state
+    ? `${raw.dealer_city}, ${raw.dealer_state}`
     : 'Location not available';
 
-  // Get photo links from media object
-  const images = raw.media?.photo_links || [];
+  // Get photo links (JSONB column)
+  let images: string[] = [];
+  if (raw.photo_links) {
+    if (Array.isArray(raw.photo_links)) {
+      images = raw.photo_links;
+    } else if (typeof raw.photo_links === 'string') {
+      try {
+        images = JSON.parse(raw.photo_links);
+      } catch {
+        images = [];
+      }
+    }
+  }
 
   // Determine owner count from boolean
   const ownerCount = raw.carfax_1_owner === true ? 1 : 2;
 
   // Calculate mileage rating
-  const mileageRating = calculateMileageRating(raw.miles, raw.build.year);
+  const mileageRating = calculateMileageRating(raw.miles, raw.year);
 
   // Calculate priority score
   const priorityScore = calculatePreliminaryScore(raw);
@@ -136,16 +150,16 @@ export function transformMarketcheckToListingSummary(raw: MarketcheckRawListing)
   return {
     id: raw.id,
     vin: raw.vin,
-    make: raw.build.make as any, // Type assertion - API returns Toyota/Honda
-    model: raw.build.model,
-    year: raw.build.year,
+    make: raw.make as any, // Type assertion - API returns Toyota/Honda
+    model: raw.model,
+    year: raw.year,
     price: raw.price,
     mileage: raw.miles, // Field name mapping: miles → mileage
     mileage_rating: mileageRating,
     priority_score: priorityScore,
     current_location: location,
     distance_miles: raw.dist || 0,
-    dealer_name: raw.dealer?.name || 'Dealer not listed',
+    dealer_name: raw.dealer_name || 'Dealer not listed',
     images_url: images,
     source_url: raw.vdp_url || '',
     created_at: raw.first_seen_at_date || new Date().toISOString(),
@@ -165,21 +179,32 @@ export function transformMarketcheckToVehicle(raw: MarketcheckRawListing): Vehic
   // Start with summary fields
   const summary = transformMarketcheckToListingSummary(raw);
 
-  // Get photo links
-  const images = raw.media?.photo_links || [];
+  // Get photo links (JSONB column)
+  let images: string[] = [];
+  if (raw.photo_links) {
+    if (Array.isArray(raw.photo_links)) {
+      images = raw.photo_links;
+    } else if (typeof raw.photo_links === 'string') {
+      try {
+        images = JSON.parse(raw.photo_links);
+      } catch {
+        images = [];
+      }
+    }
+  }
 
   // Calculate age and miles per year
   const currentYear = new Date().getFullYear();
-  const age = Math.max(currentYear - raw.build.year, 0);
+  const age = Math.max(currentYear - raw.year, 0);
   const milesPerYear = age > 0 ? Math.round(raw.miles / age) : raw.miles;
 
   return {
     id: raw.id,
     vin: raw.vin,
-    make: raw.build.make as any, // Type assertion - API returns Toyota/Honda
-    model: raw.build.model,
-    year: raw.build.year,
-    body_type: raw.build.body_type,
+    make: raw.make as any, // Type assertion - API returns Toyota/Honda
+    model: raw.model,
+    year: raw.year,
+    body_type: raw.body_type,
     price: raw.price,
     mileage: raw.miles,
     age_in_years: age,
@@ -192,7 +217,7 @@ export function transformMarketcheckToVehicle(raw: MarketcheckRawListing): Vehic
     is_fleet: false, // Marketcheck doesn't provide this
     has_lien: false, // Marketcheck doesn't provide this
     flood_damage: false, // Marketcheck doesn't provide this
-    state_of_origin: raw.dealer?.state || 'Unknown',
+    state_of_origin: raw.dealer_state || 'Unknown',
     is_rust_belt_state: false, // Would need lookup logic
     current_location: summary.current_location,
     distance_miles: summary.distance_miles,
@@ -205,22 +230,22 @@ export function transformMarketcheckToVehicle(raw: MarketcheckRawListing): Vehic
     images_url: images,
     reviewed_by_user: false,
     first_seen_at: raw.first_seen_at_date || new Date().toISOString(),
-    last_updated_at: raw.last_seen_at_date || new Date().toISOString(),
+    last_updated_at: raw.created_at || new Date().toISOString(),
     created_at: raw.created_at || new Date().toISOString(),
 
     // Additional Marketcheck-specific fields stored as metadata
     // These can be used in detail pages
     vin_decode_data: {
       vin: raw.vin,
-      make: raw.build.make,
-      model: raw.build.model,
-      year: raw.build.year.toString(),
-      body_type: raw.build.body_type,
-      engine_type: raw.build.engine,
-      trim: raw.build.trim,
-      drive_type: raw.build.drivetrain,
-      transmission: raw.build.transmission,
-      fuel_type: raw.build.fuel_type,
+      make: raw.make,
+      model: raw.model,
+      year: raw.year.toString(),
+      body_type: raw.body_type,
+      engine_type: raw.engine,
+      trim: raw.trim,
+      drive_type: raw.drivetrain,
+      transmission: raw.transmission,
+      fuel_type: raw.fuel_type,
     },
   };
 }
@@ -241,9 +266,8 @@ export function isValidMarketcheckListing(raw: any): raw is MarketcheckRawListin
     typeof raw.vin === 'string' &&
     typeof raw.price === 'number' &&
     typeof raw.miles === 'number' &&
-    raw.build &&
-    typeof raw.build.year === 'number' &&
-    typeof raw.build.make === 'string' &&
-    typeof raw.build.model === 'string'
+    typeof raw.year === 'number' &&
+    typeof raw.make === 'string' &&
+    typeof raw.model === 'string'
   );
 }
