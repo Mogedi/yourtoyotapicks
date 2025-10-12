@@ -547,23 +547,21 @@ export async function getMarketcheckListings(
       .from('marketcheck_listings')
       .select('*', { count: 'exact' });
 
-    // Apply filters
+    // Apply filters (columns are flattened in database)
     if (filters?.makes && filters.makes.length > 0) {
-      // In Marketcheck, make is nested in build object but already flattened in DB
-      // However the database columns don't exist yet - query raw columns
-      query = query.in('build->make', filters.makes);
+      query = query.in('make', filters.makes);
     }
 
     if (filters?.models && filters.models.length > 0) {
-      query = query.in('build->model', filters.models);
+      query = query.in('model', filters.models);
     }
 
     if (filters?.yearMin) {
-      query = query.gte('build->year', filters.yearMin);
+      query = query.gte('year', filters.yearMin);
     }
 
     if (filters?.yearMax) {
-      query = query.lte('build->year', filters.yearMax);
+      query = query.lte('year', filters.yearMax);
     }
 
     if (filters?.priceMin) {
