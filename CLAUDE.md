@@ -18,9 +18,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Comprehensive E2E test suite (all passing ✅)
 - Automated error detection system (`npm run watch:errors`)
 - Responsive UI with Tailwind CSS + shadcn/ui
+- **Case-insensitive VIN lookups** - Works with any VIN case
+- **Supabase database schema** - Complete migrations and seeding scripts
+- **Local Supabase setup** - Can run database locally for development
 
 🚧 **Not Yet Implemented:**
-- Supabase database integration (currently uses mock data)
+- Live Supabase connection (database scripts ready, not connected to production)
 - Automated data ingestion from listing APIs
 - Cron job scheduling for daily updates
 - Email notification system
@@ -214,9 +217,10 @@ Tests automatically:
 
 - ✅ Client configured
 - ✅ Query functions written
-- ✅ Schema designed
-- ❌ Database not created
-- ❌ Not connected to live instance
+- ✅ Schema designed with migrations
+- ✅ Database seeding scripts created
+- ✅ Local Supabase development setup
+- ⚠️ Not connected to production instance (can run locally)
 
 ### Console Errors Handled
 
