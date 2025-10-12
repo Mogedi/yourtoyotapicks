@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { getListingByVin } from '@/lib/supabase';
+import { getListingByVin, getMarketcheckListingByVin } from '@/lib/supabase';
 import { mockListings } from '@/lib/mock-data';
 import { VehicleDetail } from '@/components/VehicleDetail';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -98,23 +98,29 @@ export default async function VehicleDetailPage({ params }: { params: Promise<Pa
     notFound();
   }
 
-  // Fetch vehicle data - try Supabase, fallback to mock data
+  // Fetch vehicle data - try Marketcheck first, then legacy, then mock data
   let vehicle: Vehicle | null = null;
+
+  // Try Marketcheck data first (case-insensitive VIN lookup)
   try {
-    // VINs are stored in uppercase, so normalize the input
-    vehicle = await getListingByVin(vin.toUpperCase());
-  } catch (error) {
-    // Supabase not configured or error - fallback to mock data
-    const mockVehicle = mockListings.find(listing => listing.vin.toUpperCase() === vin.toUpperCase());
-    if (mockVehicle) {
-      vehicle = {
-        ...mockVehicle,
-        id: '', // Mock data doesn't have ID
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        first_seen_at: new Date().toISOString(),
-        last_updated_at: new Date().toISOString(),
-      } as Vehicle;
+    vehicle = await getMarketcheckListingByVin(vin);
+  } catch (marketcheckError) {
+    // Try legacy curated_listings table
+    try {
+      vehicle = await getListingByVin(vin.toUpperCase());
+    } catch (error) {
+      // Supabase not configured or error - fallback to mock data
+      const mockVehicle = mockListings.find(listing => listing.vin.toUpperCase() === vin.toUpperCase());
+      if (mockVehicle) {
+        vehicle = {
+          ...mockVehicle,
+          id: '', // Mock data doesn't have ID
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          first_seen_at: new Date().toISOString(),
+          last_updated_at: new Date().toISOString(),
+        } as Vehicle;
+      }
     }
   }
 
@@ -135,22 +141,26 @@ export default async function VehicleDetailPage({ params }: { params: Promise<Pa
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { vin } = await params;
 
-  // Try Supabase, fallback to mock data
+  // Try Marketcheck, then legacy, fallback to mock data
   let vehicle: Vehicle | null = null;
   try {
-    vehicle = await getListingByVin(vin);
-  } catch (error) {
-    // Fallback to mock data
-    const mockVehicle = mockListings.find(listing => listing.vin === vin);
-    if (mockVehicle) {
-      vehicle = {
-        ...mockVehicle,
-        id: '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        first_seen_at: new Date().toISOString(),
-        last_updated_at: new Date().toISOString(),
-      } as Vehicle;
+    vehicle = await getMarketcheckListingByVin(vin);
+  } catch (marketcheckError) {
+    try {
+      vehicle = await getListingByVin(vin);
+    } catch (error) {
+      // Fallback to mock data
+      const mockVehicle = mockListings.find(listing => listing.vin === vin);
+      if (mockVehicle) {
+        vehicle = {
+          ...mockVehicle,
+          id: '',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          first_seen_at: new Date().toISOString(),
+          last_updated_at: new Date().toISOString(),
+        } as Vehicle;
+      }
     }
   }
 
