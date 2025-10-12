@@ -6,10 +6,10 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@supabase-url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase-service-role-key",
-    "CRON_SECRET": "@cron-secret",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://placeholder.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "placeholder-key",
+    "SUPABASE_SERVICE_ROLE_KEY": "placeholder-service-key",
+    "CRON_SECRET": "placeholder-cron-secret",
     "DATA_SOURCE": "mock",
     "SKIP_VIN_VALIDATION": "true"
   },
