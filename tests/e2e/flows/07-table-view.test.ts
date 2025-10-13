@@ -21,7 +21,7 @@ import {
 } from '../helpers';
 
 const TEST_NAME = '07-table-view';
-const BASE_URL = `${getBaseUrl()}/dashboard/table`;
+const BASE_URL = `${getBaseUrl()}/dashboard`;
 
 /**
  * Test: Table view page functionality
