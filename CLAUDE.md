@@ -13,6 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### The 5-Second Clarity Rule
 
 When a user lands on the dashboard, within 5 seconds they should:
+
 1. **Know which cars are the top picks** for them personally
 2. **Understand why each one ranks highly**
 3. **Be able to compare or act** (contact, save, hide) without hunting through noise
@@ -21,11 +22,11 @@ When a user lands on the dashboard, within 5 seconds they should:
 
 Every UX decision must answer three questions at a glance:
 
-| Question | Visual Cue | Implementation |
-|----------|-----------|----------------|
-| **"Which cars are top-tier picks for me?"** | Sorted by `priority_score`, color-coded badges, "Top Match" labels | Priority score ≥80 = Green, 65-79 = Yellow, <65 = Gray/hidden |
-| **"Why are they good?"** | AI-generated 2-line summary directly below or on hover | Short, fact-grounded explanations: "✅ 1-owner • 📉 $1.8k below market • 🧰 Clean title" |
-| **"How do they compare?"** | Quick stat chips (price vs median, miles vs median, owner count) | Contextual comparison data, not just raw numbers |
+| Question                                    | Visual Cue                                                         | Implementation                                                                           |
+| ------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| **"Which cars are top-tier picks for me?"** | Sorted by `priority_score`, color-coded badges, "Top Match" labels | Priority score ≥80 = Green, 65-79 = Yellow, <65 = Gray/hidden                            |
+| **"Why are they good?"**                    | AI-generated 2-line summary directly below or on hover             | Short, fact-grounded explanations: "✅ 1-owner • 📉 $1.8k below market • 🧰 Clean title" |
+| **"How do they compare?"**                  | Quick stat chips (price vs median, miles vs median, owner count)   | Contextual comparison data, not just raw numbers                                         |
 
 ### Design Philosophy
 
@@ -52,6 +53,7 @@ See [docs/UX_PRINCIPLES.md](docs/UX_PRINCIPLES.md) for detailed UX specification
 ### Current State
 
 ✅ **Production Ready** - Core features implemented:
+
 - Dashboard with vehicle listing and filtering
 - Vehicle detail pages with comprehensive information
 - **Real car images** - IMAGIN.studio API integration (5 angles per vehicle)
@@ -66,6 +68,7 @@ See [docs/UX_PRINCIPLES.md](docs/UX_PRINCIPLES.md) for detailed UX specification
 - **Local Supabase setup** - Can run database locally for development
 
 🚧 **Not Yet Implemented:**
+
 - Live Supabase connection (database scripts ready, not connected to production)
 - Automated data ingestion from listing APIs
 - Cron job scheduling for daily updates
@@ -147,6 +150,7 @@ Render: Component with data
 - **Progressive disclosure**: Core info visible, details on demand
 
 ### 2. Vehicle Detail Page (`/dashboard/[vin]`)
+
 - Comprehensive vehicle information
 - **5-angle image gallery** (side, 3/4, front, rear, interior)
 - Interactive thumbnail navigation
@@ -159,6 +163,7 @@ Render: Component with data
 ### 3. Filtering Criteria (Implemented)
 
 **Auto-reject filters:**
+
 - Price: $10K - $20K
 - Mileage rating: excellent/good/acceptable
 - Model Year: 2015+
@@ -170,6 +175,7 @@ Render: Component with data
 **Priority scoring algorithm** (transparent to users):
 
 Weighted factors (100-point scale):
+
 - **Title & accident history**: 25% (Clean title = +25)
 - **Mileage vs year**: 20% (Below average for age = +15)
 - **Price vs comps**: 20% (Below median = +10)
@@ -182,6 +188,7 @@ Weighted factors (100-point scale):
 ### 4. Mock Data System
 
 32 curated test vehicles in `lib/mock-data.ts`:
+
 - **Real car images** from IMAGIN.studio API (5 angles each)
 - **Static unique VINs** for consistent navigation
 - 12 excellent listings (pass all filters)
@@ -226,9 +233,9 @@ Supabase client is configured in `lib/supabase.ts`:
 
 ```typescript
 // Set these in .env.local:
-NEXT_PUBLIC_SUPABASE_URL=your_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_key
+NEXT_PUBLIC_SUPABASE_URL = your_url;
+NEXT_PUBLIC_SUPABASE_ANON_KEY = your_key;
+SUPABASE_SERVICE_ROLE_KEY = your_service_key;
 ```
 
 Schema is defined in `docs/setup/DATABASE_SETUP.md`.
@@ -251,6 +258,7 @@ npm run test:ui:03  # Vehicle details
 ```
 
 Tests automatically:
+
 - Take screenshots
 - Verify functionality
 - Check for console errors
@@ -277,6 +285,7 @@ Tests automatically:
 ### Console Errors Handled
 
 ✅ **Fixed**: Supabase connection errors are now silently handled
+
 - No console errors appear in browser
 - App gracefully falls back to mock data
 - Tests pass with zero console errors
@@ -284,6 +293,7 @@ Tests automatically:
 ### Image System
 
 ✅ **Implemented**: Real car images from IMAGIN.studio API
+
 - Free, no API key required
 - 5 angles per vehicle (side, 3/4, front, rear, interior)
 - Automatic loading states and fallbacks
@@ -294,6 +304,7 @@ See [docs/CAR_IMAGES_IMPLEMENTATION.md](docs/CAR_IMAGES_IMPLEMENTATION.md) for d
 ### Error Detection System
 
 ✅ **Implemented**: Automated error capture for development
+
 - `npm run watch:errors` - Auto-run tests on file changes
 - `/fix-errors` - Claude analyzes and fixes errors automatically
 - All errors logged to `.claude/errors.json`
@@ -318,17 +329,20 @@ See [docs/README.md](docs/README.md) for full index.
 ## Future Enhancements
 
 **Phase 2 (Database Integration):**
+
 - Connect Supabase
 - Seed with real data
 - Implement cron jobs
 
 **Phase 3 (Automation):**
+
 - API integration (Marketcheck/Auto.dev)
 - Daily vehicle ingestion
 - Email notifications
 - VIN history checks (VinAudit)
 
 **Phase 4 (SaaS Expansion):**
+
 - Multi-region support
 - User authentication
 - Subscription tiers

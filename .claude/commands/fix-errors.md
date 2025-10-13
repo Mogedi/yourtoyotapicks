@@ -1,6 +1,7 @@
 Read and analyze errors from .claude/errors.json, then propose fixes for each error.
 
 Steps:
+
 1. Read the error log file using the Read tool: /Users/mogedi/dev/yourtoyotapicks/.claude/errors.json
 2. If no errors found, tell the user all tests are passing
 3. For each error:

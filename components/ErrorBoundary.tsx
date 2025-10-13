@@ -16,7 +16,10 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -56,7 +59,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 </h2>
 
                 <p className="text-sm text-gray-600 mb-6">
-                  An error occurred while displaying this page. Please try refreshing or contact support if the problem persists.
+                  An error occurred while displaying this page. Please try
+                  refreshing or contact support if the problem persists.
                 </p>
 
                 {process.env.NODE_ENV === 'development' && this.state.error && (
@@ -71,7 +75,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                   <Button onClick={this.handleReset} variant="outline">
                     Try Again
                   </Button>
-                  <Button onClick={() => window.location.href = '/'}>
+                  <Button onClick={() => (window.location.href = '/')}>
                     Go Home
                   </Button>
                 </div>

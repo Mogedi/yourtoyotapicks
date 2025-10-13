@@ -16,7 +16,7 @@ export function QualityTierBadge({
   score,
   showLabel = true,
   size = 'md',
-  className
+  className,
 }: QualityTierBadgeProps) {
   // Determine tier based on score
   const getTier = (score: number) => {
@@ -86,14 +86,18 @@ export function QualityTierBadge({
 }
 
 // Export tier helper for use in other components
-export function getQualityTier(score: number): 'top_pick' | 'good_buy' | 'caution' {
+export function getQualityTier(
+  score: number
+): 'top_pick' | 'good_buy' | 'caution' {
   if (score >= 80) return 'top_pick';
   if (score >= 65) return 'good_buy';
   return 'caution';
 }
 
 // Export tier label helper
-export function getQualityTierLabel(tier: 'top_pick' | 'good_buy' | 'caution'): string {
+export function getQualityTierLabel(
+  tier: 'top_pick' | 'good_buy' | 'caution'
+): string {
   const labels = {
     top_pick: 'Top Pick',
     good_buy: 'Good Buy',

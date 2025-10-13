@@ -53,14 +53,13 @@ export async function GET(
     const decoded = await decodeVIN(vin);
 
     return NextResponse.json(decoded);
-
   } catch (error) {
     console.error('Error in VIN check API:', error);
 
     return NextResponse.json(
       {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

@@ -3,7 +3,13 @@
 // Pagination - Reusable pagination component with page numbers
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { PaginationService } from '@/lib/services/pagination-service';
 import { cn } from '@/lib/utils';
 

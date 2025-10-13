@@ -29,7 +29,11 @@ interface FilterBarProps {
   onClearFilters: () => void;
 }
 
-export function FilterBar({ filters, onFilterChange, onClearFilters }: FilterBarProps) {
+export function FilterBar({
+  filters,
+  onFilterChange,
+  onClearFilters,
+}: FilterBarProps) {
   const updateFilter = (key: keyof FilterState, value: string) => {
     onFilterChange({ ...filters, [key]: value });
   };
@@ -61,7 +65,10 @@ export function FilterBar({ filters, onFilterChange, onClearFilters }: FilterBar
         <SlidersHorizontal className="h-4 w-4 text-muted-foreground shrink-0" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 flex-1">
           {/* Make */}
-          <Select value={filters.make} onValueChange={(value) => updateFilter('make', value)}>
+          <Select
+            value={filters.make}
+            onValueChange={(value) => updateFilter('make', value)}
+          >
             <SelectTrigger data-testid="filter-make">
               <SelectValue placeholder="Make" />
             </SelectTrigger>
@@ -73,7 +80,10 @@ export function FilterBar({ filters, onFilterChange, onClearFilters }: FilterBar
           </Select>
 
           {/* Model */}
-          <Select value={filters.model} onValueChange={(value) => updateFilter('model', value)}>
+          <Select
+            value={filters.model}
+            onValueChange={(value) => updateFilter('model', value)}
+          >
             <SelectTrigger data-testid="filter-model">
               <SelectValue placeholder="Model" />
             </SelectTrigger>
@@ -142,7 +152,10 @@ export function FilterBar({ filters, onFilterChange, onClearFilters }: FilterBar
           </Select>
 
           {/* Sort By */}
-          <Select value={filters.sortBy} onValueChange={(value) => updateFilter('sortBy', value)}>
+          <Select
+            value={filters.sortBy}
+            onValueChange={(value) => updateFilter('sortBy', value)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>

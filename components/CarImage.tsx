@@ -17,7 +17,13 @@ export interface CarImageProps {
  * Shows placeholder if image fails to load
  * Handles SSR and hydration properly for direct page loads
  */
-export function CarImage({ src, alt, className, onError, priority }: CarImageProps) {
+export function CarImage({
+  src,
+  alt,
+  className,
+  onError,
+  priority,
+}: CarImageProps) {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [mounted, setMounted] = React.useState(false);
@@ -92,10 +98,14 @@ export function CarImage({ src, alt, className, onError, priority }: CarImagePro
         ref={imgRef}
         src={src}
         alt={alt}
-        className={cn('w-full h-full object-cover transition-opacity', className, {
-          'opacity-0': loading && mounted,
-          'opacity-100': !loading || !mounted,
-        })}
+        className={cn(
+          'w-full h-full object-cover transition-opacity',
+          className,
+          {
+            'opacity-0': loading && mounted,
+            'opacity-100': !loading || !mounted,
+          }
+        )}
         onError={handleError}
         onLoad={handleLoad}
         loading={priority ? 'eager' : 'lazy'}

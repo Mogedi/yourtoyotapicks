@@ -6,14 +6,23 @@ import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import type { FilterState } from '@/hooks/useVehicleFilters';
 import { cn } from '@/lib/utils';
 
 interface FilterSidebarProps {
   filters: FilterState;
-  onFilterChange: <K extends keyof FilterState>(key: K, value: FilterState[K]) => void;
+  onFilterChange: <K extends keyof FilterState>(
+    key: K,
+    value: FilterState[K]
+  ) => void;
   onClearFilters: () => void;
   makes: string[];
   models: string[];
@@ -53,7 +62,12 @@ export function FilterSidebar({
     filters.qualityTier !== 'all';
 
   return (
-    <aside className={cn('w-64 bg-white border-r border-gray-200 overflow-y-auto', className)}>
+    <aside
+      className={cn(
+        'w-64 bg-white border-r border-gray-200 overflow-y-auto',
+        className
+      )}
+    >
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -199,7 +213,9 @@ export function FilterSidebar({
               <Label htmlFor="filter-mileage-rating">Mileage Rating</Label>
               <Select
                 value={filters.mileageRating}
-                onValueChange={(value: any) => onFilterChange('mileageRating', value)}
+                onValueChange={(value: any) =>
+                  onFilterChange('mileageRating', value)
+                }
               >
                 <SelectTrigger id="filter-mileage-rating">
                   <SelectValue />
@@ -227,7 +243,9 @@ export function FilterSidebar({
             <Label htmlFor="filter-quality-tier">Tier</Label>
             <Select
               value={filters.qualityTier}
-              onValueChange={(value: any) => onFilterChange('qualityTier', value)}
+              onValueChange={(value: any) =>
+                onFilterChange('qualityTier', value)
+              }
             >
               <SelectTrigger id="filter-quality-tier">
                 <SelectValue />
@@ -254,7 +272,12 @@ interface FilterSectionProps {
   children: React.ReactNode;
 }
 
-function FilterSection({ title, expanded, onToggle, children }: FilterSectionProps) {
+function FilterSection({
+  title,
+  expanded,
+  onToggle,
+  children,
+}: FilterSectionProps) {
   return (
     <div>
       <button

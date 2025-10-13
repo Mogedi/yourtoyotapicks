@@ -10,14 +10,13 @@ interface StatCardsProps {
   className?: string;
 }
 
-export function StatCards({
-  vehicles,
-  className,
-}: StatCardsProps) {
+export function StatCards({ vehicles, className }: StatCardsProps) {
   // Calculate quality tier counts
-  const topPicks = vehicles.filter(v => v.priority_score >= 80).length;
-  const goodBuys = vehicles.filter(v => v.priority_score >= 65 && v.priority_score < 80).length;
-  const caution = vehicles.filter(v => v.priority_score < 65).length;
+  const topPicks = vehicles.filter((v) => v.priority_score >= 80).length;
+  const goodBuys = vehicles.filter(
+    (v) => v.priority_score >= 65 && v.priority_score < 80
+  ).length;
+  const caution = vehicles.filter((v) => v.priority_score < 65).length;
 
   const stats = [
     {
@@ -61,7 +60,9 @@ export function StatCards({
             </div>
 
             <div className="flex items-baseline justify-between">
-              <h3 className={cn('text-3xl font-bold', stat.textClass)}>{stat.value}</h3>
+              <h3 className={cn('text-3xl font-bold', stat.textClass)}>
+                {stat.value}
+              </h3>
             </div>
 
             <p className="mt-2 text-xs text-gray-500">{stat.description}</p>

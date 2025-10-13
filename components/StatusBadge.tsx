@@ -6,7 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { getMileageRatingColor } from '@/lib/design-tokens';
 import { cn } from '@/lib/utils';
 
-type StatusType = 'excellent' | 'good' | 'acceptable' | 'reviewed' | 'not-reviewed';
+type StatusType =
+  | 'excellent'
+  | 'good'
+  | 'acceptable'
+  | 'reviewed'
+  | 'not-reviewed';
 
 interface StatusBadgeProps {
   status: StatusType;
@@ -53,16 +58,16 @@ export function StatusBadge({
     status === 'excellent' || status === 'good' || status === 'acceptable'
       ? getMileageRatingColor(status)
       : status === 'reviewed'
-      ? {
-          bg: 'bg-green-50',
-          text: 'text-green-700',
-          border: 'border-green-200',
-        }
-      : {
-          bg: 'bg-gray-50',
-          text: 'text-gray-700',
-          border: 'border-gray-200',
-        };
+        ? {
+            bg: 'bg-green-50',
+            text: 'text-green-700',
+            border: 'border-green-200',
+          }
+        : {
+            bg: 'bg-gray-50',
+            text: 'text-gray-700',
+            border: 'border-gray-200',
+          };
 
   return (
     <Badge

@@ -30,7 +30,11 @@ function VehicleNotFound() {
 }
 
 // Main page component
-export default async function VehicleDetailPage({ params }: { params: Promise<Params> }) {
+export default async function VehicleDetailPage({
+  params,
+}: {
+  params: Promise<Params>;
+}) {
   // Get the VIN from params
   const { vin } = await params;
 
@@ -60,7 +64,9 @@ export default async function VehicleDetailPage({ params }: { params: Promise<Pa
 
   // If still not found, fallback to mock data
   if (!vehicle) {
-    const mockVehicle = mockListings.find(listing => listing.vin.toUpperCase() === vin.toUpperCase());
+    const mockVehicle = mockListings.find(
+      (listing) => listing.vin.toUpperCase() === vin.toUpperCase()
+    );
     if (mockVehicle) {
       vehicle = {
         ...mockVehicle,
@@ -83,7 +89,11 @@ export default async function VehicleDetailPage({ params }: { params: Promise<Pa
 }
 
 // Generate metadata for SEO
-export async function generateMetadata({ params }: { params: Promise<Params> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>;
+}) {
   const { vin } = await params;
 
   // Try Marketcheck, then legacy, fallback to mock data
@@ -107,7 +117,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
 
   // If still not found, fallback to mock data (case-insensitive)
   if (!vehicle) {
-    const mockVehicle = mockListings.find(listing => listing.vin.toUpperCase() === vin.toUpperCase());
+    const mockVehicle = mockListings.find(
+      (listing) => listing.vin.toUpperCase() === vin.toUpperCase()
+    );
     if (mockVehicle) {
       vehicle = {
         ...mockVehicle,

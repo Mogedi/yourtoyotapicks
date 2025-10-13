@@ -1,7 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -14,7 +20,11 @@ export interface ReviewSectionProps {
   initialReviewed?: boolean;
   initialRating?: number;
   initialNotes?: string;
-  onReviewUpdate?: (data: { reviewed: boolean; rating?: number; notes?: string }) => void;
+  onReviewUpdate?: (data: {
+    reviewed: boolean;
+    rating?: number;
+    notes?: string;
+  }) => void;
 }
 
 interface SaveState {
@@ -33,7 +43,9 @@ export function ReviewSection({
   const [rating, setRating] = React.useState<number>(initialRating || 0);
   const [hoverRating, setHoverRating] = React.useState<number>(0);
   const [notes, setNotes] = React.useState(initialNotes);
-  const [saveState, setSaveState] = React.useState<SaveState>({ status: 'idle' });
+  const [saveState, setSaveState] = React.useState<SaveState>({
+    status: 'idle',
+  });
 
   // Check if form has unsaved changes
   const hasChanges =
@@ -86,7 +98,8 @@ export function ReviewSection({
       console.error('Error saving review:', error);
       setSaveState({
         status: 'error',
-        message: error instanceof Error ? error.message : 'Failed to save review',
+        message:
+          error instanceof Error ? error.message : 'Failed to save review',
       });
 
       // Clear error message after 5 seconds

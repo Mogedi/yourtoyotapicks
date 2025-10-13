@@ -77,7 +77,8 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Unauthorized: Invalid or missing authorization header',
-          message: 'This endpoint requires a valid CRON_SECRET in the Authorization header',
+          message:
+            'This endpoint requires a valid CRON_SECRET in the Authorization header',
         },
         { status: 401 }
       );
@@ -135,7 +136,8 @@ export async function POST(request: NextRequest) {
     // ========================================================================
 
     const executionTime = Date.now() - startTime;
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
 
     console.error('[Cron] Unhandled error:', error);
 
@@ -181,7 +183,8 @@ export async function GET(request: NextRequest) {
     usage: {
       method: 'POST',
       authentication: 'Required: Authorization header with CRON_SECRET',
-      example: 'curl -X POST /api/cron/daily-search -H "Authorization: Bearer YOUR_SECRET"',
+      example:
+        'curl -X POST /api/cron/daily-search -H "Authorization: Bearer YOUR_SECRET"',
     },
     timestamp: new Date().toISOString(),
   });

@@ -32,7 +32,9 @@ interface SendDigestResponse {
 // API ROUTE HANDLER
 // ============================================================================
 
-export async function POST(request: NextRequest): Promise<NextResponse<SendDigestResponse>> {
+export async function POST(
+  request: NextRequest
+): Promise<NextResponse<SendDigestResponse>> {
   try {
     // Parse request body
     const body: SendDigestRequest = await request.json();
@@ -59,7 +61,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<SendDiges
         {
           success: false,
           message: 'No recipient email configured',
-          error: 'Please configure user_email in notification-settings.json or provide email in request',
+          error:
+            'Please configure user_email in notification-settings.json or provide email in request',
         },
         { status: 400 }
       );
@@ -92,7 +95,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<SendDiges
 
     // Apply filters from notification settings
     if (notificationSettings.min_priority_score) {
-      query = query.gte('priority_score', notificationSettings.min_priority_score);
+      query = query.gte(
+        'priority_score',
+        notificationSettings.min_priority_score
+      );
     }
 
     if (notificationSettings.preferences.only_high_priority) {
@@ -138,7 +144,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<SendDiges
       !notificationSettings.include_all_vehicles &&
       notificationSettings.max_vehicles_per_email
     ) {
-      vehiclesToSend = vehiclesToSend.slice(0, notificationSettings.max_vehicles_per_email);
+      vehiclesToSend = vehiclesToSend.slice(
+        0,
+        notificationSettings.max_vehicles_per_email
+      );
     }
 
     // Send the appropriate digest email
@@ -220,7 +229,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         endpoint: '/api/notifications/send-digest',
         body: {
           type: 'daily | weekly (optional, defaults to daily)',
-          email: 'recipient@example.com (optional, uses config if not provided)',
+          email:
+            'recipient@example.com (optional, uses config if not provided)',
           cronSecret: 'your_cron_secret (optional, for automated calls)',
         },
       },

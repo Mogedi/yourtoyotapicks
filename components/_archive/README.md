@@ -5,17 +5,21 @@ This directory contains outdated components, examples, and documentation.
 ## Directory Structure
 
 ### `examples/`
+
 Demo and example files for learning purposes:
+
 - `VehicleCard.example.tsx` - Example vehicle card implementation
 - `VehicleCard.quickstart.tsx` - Quick start example
 - `VehicleCard.README.md` - Component documentation example
 
 ### Root Archive
+
 - `FEATURE7_SUMMARY.md` - Feature 7 implementation summary (completed)
 
 ## Current Active Components
 
 For current, production-ready components, see:
+
 - `../VehicleCard.tsx` - Active vehicle card component
 - `../VehicleDetail.tsx` - Active vehicle detail component
 - `../VehicleList.tsx` - Active vehicle list component
@@ -26,6 +30,7 @@ For current, production-ready components, see:
 ## Upcoming Components
 
 Dashboard V2 will introduce new modular components:
+
 - `../dashboard/shared/` - Shared components (filters, inputs)
 - `../dashboard/table-view/` - Table-specific components
 - `../dashboard/card-view/` - Card view (to be deprecated)
@@ -38,6 +43,7 @@ Dashboard V2 will introduce new modular components:
 ## Usage
 
 These archived files can be referenced for:
+
 - Understanding component evolution
 - Quick start examples for new components
 - Historical context for design decisions

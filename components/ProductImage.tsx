@@ -26,7 +26,11 @@ const iconSizes = {
   lg: 'h-8 w-8',
 };
 
-export function ProductImage({ vehicle, size = 'md', className }: ProductImageProps) {
+export function ProductImage({
+  vehicle,
+  size = 'md',
+  className,
+}: ProductImageProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
