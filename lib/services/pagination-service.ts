@@ -57,7 +57,7 @@ export class PaginationService {
   /**
    * Get page size options for dropdown
    */
-  static getPageSizeOptions(): number[] {
+  static getPageSizeOptions(): readonly number[] {
     return PAGINATION.PAGE_SIZE_OPTIONS;
   }
 
