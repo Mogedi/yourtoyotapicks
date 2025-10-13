@@ -4,7 +4,39 @@
 
 Personal automation tool to filter and curate high-quality used Toyota/Honda SUV listings within 30 miles, using strict quality criteria to eliminate manual search work on CarGurus and similar sites.
 
+**Core Mission**: Act as a **trustworthy curator**, not a data table. Users should know their best matches in <5 seconds.
+
 **Expected Output**: 0-5 curated vehicles per day (sometimes zero is acceptable)
+
+---
+
+## UX Architecture (Core Principle)
+
+### The 5-Second Clarity Rule
+
+Every technical decision must support users achieving these goals within 5 seconds:
+1. **Identify top picks** - Which cars are best for me?
+2. **Understand why** - What makes them good?
+3. **Take action** - Compare or contact without hunting
+
+### Signal over Noise Implementation
+
+**Default Behavior:**
+- ALWAYS sort by `priority_score` (descending)
+- Show comparisons, not raw data ("$1.2k below median" vs "$16,500")
+- Generate AI summaries explaining quality
+
+**Visual Hierarchy:**
+| Score | Tier | Visual Treatment | Display Priority |
+|-------|------|------------------|------------------|
+| 80+ | 🟩 Top Pick | Green badge/border, prominent | Always visible, top of list |
+| 65-79 | 🟨 Good Buy | Yellow badge, standard | Visible, below top picks |
+| <65 | 🟥 Caution | Gray/muted, collapsible | Hidden by default or at bottom |
+
+**Transparency Requirement:**
+- Priority score breakdown MUST be accessible on hover/click
+- Users must understand why a car scores 85 vs 70
+- No "black box" algorithms
 
 ---
 
@@ -25,9 +57,7 @@ Personal automation tool to filter and curate high-quality used Toyota/Honda SUV
 [Stage 4: Store] → PostgreSQL (Supabase) - only passing vehicles
     ↓
 [Output Layer]
-    ├─ Web Dashboard (Next.js) - primary interface
-    ├─ Email Digest (Resend) - configurable daily/weekly
-    └─ SMS Alerts (Twilio) - new match notifications
+    └─ Web Dashboard (Next.js) - primary interface
 ```
 
 ---
@@ -151,28 +181,238 @@ if (rustBeltStates.includes(listing.state_of_origin)) {
 }
 ```
 
-### Stage 6: Model Priority Scoring
+### Stage 6: Comprehensive Priority Scoring (100-point scale)
+
+**Curator Algorithm**: Weighted scoring to surface best matches first
+
 ```javascript
-// SUV preference scoring
-const modelPriority = {
-  "RAV4": 10,        // Highest priority
-  "C-HR": 9,
-  "CR-V": 9,         // Honda equivalent
-  "HR-V": 8,
-  "Highlander": 8,   // If in budget
-  "4Runner": 7,
-  "Venza": 7,
-  "Pilot": 6,        // Honda
-  // Other models get default score of 5
+// Calculate 100-point priority score with transparent breakdown
+const calculatePriorityScore = (listing, marketData) => {
+  let score = 0;
+  const breakdown = {};
+
+  // 1. Title & Accident History (25 points max)
+  if (listing.title_status === 'clean') {
+    score += 25;
+    breakdown.title = { points: 25, reason: 'Clean title' };
+  }
+  if (listing.accident_count === 0) {
+    breakdown.title.reason += ', No accidents';
+  }
+
+  // 2. Mileage vs Year (20 points max)
+  const mileageRatio = listing.mileage / (listing.age_in_years * 15000);
+  if (mileageRatio < 0.67) {
+    score += 20;
+    breakdown.mileage = { points: 20, reason: 'Excellent mileage for age' };
+  } else if (mileageRatio < 1.0) {
+    score += 15;
+    breakdown.mileage = { points: 15, reason: 'Good mileage for age' };
+  } else {
+    score += 5;
+    breakdown.mileage = { points: 5, reason: 'Acceptable mileage' };
+  }
+
+  // 3. Price vs Market (20 points max)
+  const medianPrice = marketData.medianPriceForModel[listing.model];
+  const priceDiff = medianPrice - listing.price;
+  if (priceDiff > 1500) {
+    score += 20;
+    breakdown.price = { points: 20, reason: `$${(priceDiff/1000).toFixed(1)}k below market` };
+  } else if (priceDiff > 0) {
+    score += 10;
+    breakdown.price = { points: 10, reason: 'Below market price' };
+  }
+
+  // 4. Distance (15 points max)
+  if (listing.distance_miles <= 15) {
+    score += 15;
+    breakdown.distance = { points: 15, reason: 'Very close' };
+  } else if (listing.distance_miles <= 30) {
+    score += 10;
+    breakdown.distance = { points: 10, reason: 'Nearby' };
+  }
+
+  // 5. Model Demand (10 points max)
+  const modelPriority = {
+    "RAV4": 10, "CR-V": 10, "C-HR": 8, "HR-V": 8,
+    "Highlander": 7, "4Runner": 6, "Venza": 6, "Pilot": 5
+  };
+  const modelPoints = modelPriority[listing.model] || 3;
+  score += modelPoints;
+  breakdown.model = { points: modelPoints, reason: `${listing.model} model` };
+
+  // 6. Condition Signals (10 points max)
+  if (listing.owner_count === 1) {
+    score += 5;
+    breakdown.condition = { points: 5, reason: 'Single owner' };
+  }
+  if (!listing.is_rust_belt_state) {
+    score += 5;
+    breakdown.condition.points += 5;
+    breakdown.condition.reason += ', No rust belt origin';
+  }
+
+  listing.priority_score = Math.min(score, 100);
+  listing.score_breakdown = breakdown;
+  return listing;
 };
 
-listing.priority_score = modelPriority[listing.model] || 5;
-
-// Sort results by:
-// 1. priority_score (desc)
-// 2. mileage (asc)
-// 3. price (asc)
+// ALWAYS sort by priority_score descending
+// This is the core curator value proposition
 ```
+
+### Stage 7: AI Summary Generation
+
+**Purpose**: Generate 2-line human-readable explanations for transparency and quick understanding
+
+```javascript
+const generateAISummary = (listing, breakdown) => {
+  const highlights = [];
+
+  // Extract key selling points from score breakdown
+  if (breakdown.title?.points === 25) {
+    highlights.push('✅ Clean history');
+  }
+
+  if (listing.owner_count === 1) {
+    highlights.push('1-owner');
+  }
+
+  if (breakdown.price?.points >= 10) {
+    // Show the contextual comparison
+    highlights.push(breakdown.price.reason); // e.g., "$1.8k below market"
+  }
+
+  if (breakdown.mileage?.points >= 15) {
+    highlights.push('📉 Low miles for age');
+  }
+
+  if (!listing.is_rust_belt_state) {
+    highlights.push('🧊 No rust belt');
+  }
+
+  if (listing.distance_miles <= 15) {
+    highlights.push('📍 Very close');
+  }
+
+  // Join top 4-5 highlights into concise summary
+  const summary = highlights.slice(0, 5).join(' • ');
+
+  listing.ai_summary = summary;
+  return listing;
+};
+
+// Assign quality tier based on final score
+const assignQualityTier = (listing) => {
+  if (listing.priority_score >= 80) {
+    listing.quality_tier = 'top_pick';
+  } else if (listing.priority_score >= 65) {
+    listing.quality_tier = 'good_buy';
+  } else {
+    listing.quality_tier = 'caution';
+  }
+  return listing;
+};
+```
+
+**Example Outputs:**
+- Score 92: "✅ Clean history • 1-owner • $1.8k below market • 📉 Low miles for age • 📍 Very close"
+- Score 78: "✅ Clean history • $900 below market • 📍 Very close"
+- Score 68: "✅ Clean history • 1-owner • 🧊 No rust belt"
+
+---
+
+## Market Data Collection
+
+**Purpose**: Enable contextual price/mileage comparisons ("$1.2k below market" vs raw numbers)
+
+### Collection Strategy
+
+During the daily pipeline, calculate market statistics for each model before scoring individual listings.
+
+```javascript
+const calculateMarketStats = (allFetchedListings) => {
+  const statsByModel = {};
+
+  const models = ['RAV4', 'CR-V', 'C-HR', 'HR-V', 'Highlander', '4Runner', 'Venza', 'Pilot'];
+
+  for (const model of models) {
+    const modelListings = allFetchedListings.filter(l => l.model === model);
+
+    if (modelListings.length === 0) continue;
+
+    // Calculate median price
+    const prices = modelListings.map(l => l.price).sort((a, b) => a - b);
+    const medianPrice = prices[Math.floor(prices.length / 2)];
+
+    // Calculate median mileage
+    const mileages = modelListings.map(l => l.mileage).sort((a, b) => a - b);
+    const medianMileage = mileages[Math.floor(mileages.length / 2)];
+
+    // Calculate average mileage per year
+    const mileagePerYearValues = modelListings.map(l => {
+      const age = 2025 - l.year;
+      return age > 0 ? l.mileage / age : 0;
+    });
+    const avgMileagePerYear = mileagePerYearValues.reduce((a, b) => a + b, 0) / mileagePerYearValues.length;
+
+    statsByModel[model] = {
+      medianPrice: Math.round(medianPrice),
+      medianMileage: Math.round(medianMileage),
+      avgMileagePerYear: Math.round(avgMileagePerYear),
+      sampleSize: modelListings.length,
+      calculatedAt: new Date().toISOString().split('T')[0]
+    };
+  }
+
+  return statsByModel;
+};
+
+// Use market stats in priority scoring
+const scoringPipeline = async (listings) => {
+  // 1. Calculate market stats from all fetched listings
+  const marketData = calculateMarketStats(listings);
+
+  // 2. Store market stats for reference
+  await storeMarketStats(marketData);
+
+  // 3. Score each listing using market data
+  const scoredListings = listings.map(listing => {
+    const scored = calculatePriorityScore(listing, { medianPriceForModel: marketData });
+    const withSummary = generateAISummary(scored, scored.score_breakdown);
+    const withTier = assignQualityTier(withSummary);
+    return withTier;
+  });
+
+  return scoredListings;
+};
+```
+
+### Market Stats Database Table
+
+```sql
+CREATE TABLE market_stats (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  model VARCHAR(50) NOT NULL,
+  median_price INTEGER,
+  median_mileage INTEGER,
+  avg_mileage_per_year DECIMAL,
+  sample_size INTEGER,
+  calculated_at DATE NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+
+  UNIQUE(model, calculated_at)
+);
+
+CREATE INDEX idx_market_stats_model ON market_stats(model, calculated_at DESC);
+```
+
+**Why This Matters:**
+- Contextual comparisons are core to the curator philosophy
+- Users see "$1.8k below market" instead of just "$16,500"
+- Market data refreshes daily with real-time market conditions
+- Transparent and explainable pricing context
 
 ---
 
@@ -215,9 +455,11 @@ CREATE TABLE curated_listings (
   dealer_name VARCHAR(200),
 
   -- Priority & Scoring
-  priority_score INTEGER DEFAULT 5,
-  flag_rust_concern BOOLEAN DEFAULT false,
-  overall_rating VARCHAR(20), -- 'high' | 'medium' | 'low'
+  priority_score INTEGER DEFAULT 0 CHECK (priority_score >= 0 AND priority_score <= 100),
+  score_breakdown JSONB, -- Transparent breakdown: { title: {points: 25, reason: "Clean title"}, mileage: {...}, ... }
+  quality_tier VARCHAR(20), -- 'top_pick' | 'good_buy' | 'caution'
+  ai_summary TEXT, -- 2-line auto-generated explanation (e.g., "✅ 1-owner • 📉 $1.8k below market • Clean history")
+  flag_rust_concern BOOLEAN DEFAULT false
 
   -- Source Info
   source_platform VARCHAR(50) NOT NULL, -- 'Marketcheck' | 'Auto.dev' | 'Carapis'
@@ -243,9 +485,9 @@ CREATE TABLE curated_listings (
 -- Indexes
 CREATE INDEX idx_curated_make_model ON curated_listings(make, model);
 CREATE INDEX idx_curated_price ON curated_listings(price);
-CREATE INDEX idx_curated_priority ON curated_listings(priority_score DESC, mileage ASC);
+CREATE INDEX idx_curated_priority ON curated_listings(priority_score DESC, quality_tier, mileage ASC);
 CREATE INDEX idx_curated_created ON curated_listings(created_at DESC);
-CREATE INDEX idx_curated_reviewed ON curated_listings(reviewed_by_user);
+CREATE INDEX idx_curated_quality_tier ON curated_listings(quality_tier);
 ```
 
 ### Table: `search_logs`
@@ -379,11 +621,6 @@ const runCarSearchPipeline = async () => {
     const stored = await storeListings(historyChecked);
     logEntry.final_curated_count = stored.length;
 
-    // 6. Send notifications if new matches
-    if (stored.length > 0) {
-      await sendNotifications(stored);
-    }
-
     logEntry.execution_time_seconds = (Date.now() - startTime) / 1000;
     await logSearchExecution(logEntry);
 
@@ -401,85 +638,34 @@ const runCarSearchPipeline = async () => {
 
 ### 1. Web Dashboard (Primary - Next.js)
 
+**Core Experience:** Trustworthy curator that surfaces best matches in <5 seconds
+
 **Pages:**
-- `/dashboard` - List all curated vehicles
-- `/dashboard/[vin]` - Detailed vehicle view
+- `/dashboard` - Curated vehicle grid (priority-first display)
+- `/dashboard/[vin]` - Detailed vehicle view with score breakdown
 - `/settings` - Configure search preferences, notification settings
 
-**Features:**
-- Card-based layout with images
-- Filter by model, price, mileage
-- Sort by priority score, date added, price, mileage
-- Mark as reviewed/favorite
-- Rate vehicles (1-5 stars)
-- Add notes
-- "View on source" button → external listing
-- Export to CSV/PDF
+**Curator Features:**
+- **Priority-first display**: ALWAYS sorted by priority_score (descending)
+- **Color-coded quality tiers**:
+  - 🟩 Top Picks (80+): Green badges/borders, prominent
+  - 🟨 Good Buys (65-79): Yellow badges, standard
+  - 🟥 Caution (<65): Muted/collapsible
+- **AI-generated summaries**: 2-line explanations per vehicle
+- **Contextual comparisons**: "$1.2k below median" vs raw prices
+- **Transparent scoring**: Hover/click to see breakdown
+- **Smart filtering**: Preserve priority sorting when filtering
+- **Card-based layout**: 5-angle car images (IMAGIN.studio API)
+- **Filter by**: Model, price, mileage, quality tier
+- **Quick actions**: "View on source" button → external listing
+- **Export**: CSV/PDF export of curated results
 
 **Tech:**
-- Next.js 14 (App Router)
+- Next.js 15.5.4 (App Router)
 - Tailwind CSS + shadcn/ui components
 - Vercel hosting
-- Supabase Auth (optional, for multi-user later)
-
-### 2. Email Digest (Configurable)
-
-**Frequency Options:**
-- Daily (every morning after cron runs)
-- Weekly (Sunday evenings)
-- Only when new matches found
-
-**Email Content:**
-```html
-Subject: 🚗 [3 New] Toyota/Honda Picks - [Date]
-
-Body:
-Hi [Name],
-
-Your daily search found 3 new vehicles matching your criteria:
-
-1. 2018 Toyota RAV4 XLE - $16,500 | 95K miles | ⭐ Excellent
-   📍 Silver Spring, MD (12 miles away)
-   ✅ 1 owner, Clean title, No accidents
-   [View Details] [View on CarGurus]
-
-2. 2019 Honda CR-V EX - $18,200 | 78K miles | ⭐ Excellent
-   📍 Arlington, VA (18 miles away)
-   ✅ 2 owners, Clean title, No accidents
-   [View Details] [View on Auto.com]
-
-3. 2017 Toyota C-HR XLE - $14,800 | 105K miles | ⭐ Good
-   📍 Baltimore, MD (28 miles away)
-   ✅ 1 owner, Clean title, No accidents
-   ⚠️ Rust belt origin (PA)
-   [View Details] [View on Dealership]
-
----
-View all listings: [Dashboard Link]
-Update preferences: [Settings Link]
-```
-
-**Tech:**
-- Resend API (transactional email)
-- HTML email templates
-- Unsubscribe handling
-
-### 3. SMS Alerts (Optional - Twilio)
-
-**Trigger:** Only when priority score >= 9 (RAV4, C-HR, CR-V, HR-V)
-
-**Message:**
-```
-🚗 New high-priority match!
-2018 RAV4 XLE - $16.5K | 95K mi
-📍 12 miles away
-View: [short link]
-```
-
-**Tech:**
-- Twilio SMS API
-- SMS opt-in/opt-out handling
-- Rate limiting (max 3 SMS per day)
+- Supabase (PostgreSQL)
+- IMAGIN.studio API (car images)
 
 ---
 
@@ -526,12 +712,6 @@ View: [short link]
     "Pilot": 6
   },
   "rust_belt_states": ["OH", "MI", "WI", "IL", "IN", "MN", "IA", "PA", "NY", "MA", "CT", "VT", "NH", "ME"],
-  "notifications": {
-    "email_enabled": true,
-    "email_frequency": "daily",
-    "sms_enabled": false,
-    "sms_priority_threshold": 9
-  },
   "api_settings": {
     "primary_source": "marketcheck",
     "backup_sources": ["auto.dev"],
@@ -561,8 +741,6 @@ View: [short link]
 **Infrastructure:**
 - Vercel (Next.js hosting): $0 (hobby tier) → $20/month (pro)
 - Supabase (Database): $0 (free tier) → $25/month (pro)
-- Resend (Email): $0 (free tier 100 emails/day)
-- Twilio (SMS): ~$0.0075 per SMS (optional)
 
 **Total infrastructure: $0-45/month**
 
@@ -588,11 +766,11 @@ View: [short link]
 - [ ] Implement user review/rating system
 - [ ] Add search logs and analytics
 
-### Phase 3: Notifications (Week 5)
-- [ ] Set up Resend email integration
-- [ ] Build email templates
-- [ ] Implement email digest (daily/weekly)
-- [ ] (Optional) Add Twilio SMS alerts
+### Phase 3: Refinement & Optimization (Week 5)
+- [ ] Optimize priority scoring algorithm based on real data
+- [ ] Refine quality tier thresholds
+- [ ] Add market trend tracking (price changes over time)
+- [ ] Performance optimization for large datasets
 
 ### Phase 4: Polish & Launch (Week 6)
 - [ ] Add CSV/PDF export
@@ -620,20 +798,10 @@ SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 DATABASE_URL=your_postgres_connection_string
 
-# Email
-RESEND_API_KEY=your_resend_key
-
-# SMS (Optional)
-TWILIO_ACCOUNT_SID=your_twilio_sid
-TWILIO_AUTH_TOKEN=your_twilio_token
-TWILIO_PHONE_NUMBER=your_twilio_number
-
 # App Config
 NEXT_PUBLIC_APP_URL=https://yourtoyotapicks.com
 USER_LOCATION_LAT=38.9072
 USER_LOCATION_LON=-77.0369
-USER_EMAIL=user@example.com
-USER_PHONE=+1234567890
 
 # Cron Job
 CRON_SECRET=your_cron_secret_for_vercel
@@ -656,15 +824,18 @@ CRON_SECRET=your_cron_secret_for_vercel
 - Database CRUD operations
 
 ### End-to-End Tests
-- Full pipeline: fetch → filter → store
-- Email sending
-- Dashboard rendering
+- Full pipeline: fetch → filter → score → store
+- Dashboard rendering with quality tiers
+- Score breakdown display
+- Filtering with priority preservation
 
 ### Manual Testing
-- Review actual curated results
+- Review actual curated results for quality
 - Verify VIN history accuracy
 - Test edge cases (0 results, 100+ results)
-- Validate email templates
+- Verify score breakdowns are accurate
+- Check quality tier color coding
+- Test filtering preserves priority sort
 
 ---
 

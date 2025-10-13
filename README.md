@@ -1,18 +1,30 @@
 # 🚗 YourToyotaPicks
 
-> **Automated curation of high-quality used Toyota & Honda vehicles**
+> **Your trustworthy curator for finding the perfect Toyota or Honda**
 
-A personal automation tool that fetches, filters, and curates the best used Toyota and Honda vehicles in your area based on strict quality criteria. Built with Next.js, Supabase, and 100% free resources.
+YourToyotaPicks isn't just another car listing aggregator—it's an intelligent curator that shows you the best matches first, explains why they're good, and makes comparison effortless. Within 5 seconds of opening the dashboard, you'll know which cars are worth your time.
+
+Built with Next.js, Supabase, and 100% free resources.
 
 ---
 
 ## ✨ Features
 
-- 🎯 **Automated Daily Search** - Runs daily to find new vehicle listings
-- 🔍 **Advanced Filtering** - 8 filter types with strict quality criteria
-- ⭐ **Review System** - Rate and take notes on vehicles
-- 📧 **Email Notifications** - Daily/weekly digest of new matches
-- 🚀 **Beautiful Dashboard** - Responsive UI with shadcn/ui components
+### 🎯 Core Philosophy: Signal over Noise
+
+**The 5-Second Clarity Rule**: When you open the dashboard, within 5 seconds you'll:
+1. Know which cars are your top picks
+2. Understand why each one ranks highly
+3. Be able to compare or act without hunting through noise
+
+### Key Features
+
+- 🏆 **Priority-First Curation** - Best matches shown first with AI-generated explanations
+- 🎨 **Color-Coded Quality Tiers** - Green (Top Picks 80+), Yellow (Good 65-79), Gray (Caution <65)
+- 📊 **Contextual Comparisons** - See "$1.2k below median", not just raw prices
+- 🔍 **Smart Filtering** - 8 filter types that preserve priority sorting
+- 🤖 **Transparent Scoring** - Hover to see exactly why each car ranks where it does
+- 📧 **Email Digests** - Daily/weekly summaries of top matches
 - 🔒 **VIN Validation** - Free NHTSA API integration
 - 💯 **100% Free** - Runs entirely on free tier services
 
@@ -120,37 +132,46 @@ yourtoyotapicks/
 
 ---
 
-## 🎯 Key Features
+## 🎯 How It Works
 
-### 1. Smart Filtering
-Automatically filters vehicles based on:
-- **Price**: $10K - $20K range
-- **Mileage**: Dynamic (age × 15K ideal, age × 20K max)
-- **Year**: 2015 or newer
-- **Title**: Clean only
-- **Accidents**: Zero tolerance
-- **Owners**: Maximum 2 owners
-- **Location**: Southern states preferred (no rust belt)
-- **Brands**: Toyota & Honda only
+### 1. Intelligent Priority Scoring (Transparent Algorithm)
 
-### 2. Priority Scoring
-Vehicles are ranked by priority:
-- RAV4: 10/10 (highest)
-- C-HR, CR-V: 9/10
-- HR-V, Highlander: 8/10
-- Other models: 5-7/10
+Every vehicle gets a 0-100 score based on weighted factors:
+- **Title & Accident History** (25%): Clean title = +25
+- **Mileage vs Year** (20%): Below average for age = +15
+- **Price vs Market** (20%): Below median = +10
+- **Distance** (15%): Within 50 mi = +10
+- **Model Demand** (10%): RAV4/CR-V models = +5
+- **Condition Signals** (10%): Well-maintained keywords = +3
 
-### 3. Review System
-- ⭐ 5-star rating
-- 📝 Personal notes
-- ✅ Mark as reviewed
-- 🏷️ Filter by review status
+**Transparency**: Hover over any score to see the exact breakdown.
 
-### 4. Email Digests
-- 📧 Daily or weekly emails
+### 2. Quality Tier Visualization
+
+- 🟩 **Top Picks (80+)**: Green badges, shown first—these are the cream of the crop
+- 🟨 **Good Buys (65-79)**: Yellow badges—solid options worth considering
+- 🟥 **Caution (<65)**: Muted display, collapsible—proceed with care
+
+### 3. AI-Generated Summaries
+
+Each vehicle shows a 2-line explanation like:
+> ✅ 1-owner • 📉 $1.8k below market • 🧰 Clean title • 🧊 Not from rust belt
+
+### 4. Smart Filtering (Preserves Priority)
+
+Auto-reject filters:
+- Price: $10K-$20K range
+- Year: 2015 or newer
+- Title: Clean only
+- Accidents: Zero tolerance
+- Owners: Maximum 2
+- Location: Non-rust belt preferred
+- Brands: Toyota & Honda only
+
+### 5. Email Digests
+- 📧 Daily/weekly summaries
 - 🎨 Beautiful HTML templates
-- 📱 Mobile responsive
-- 🚀 Top 5 vehicles per email
+- 🚀 Top 5 vehicles only (no noise)
 
 ---
 

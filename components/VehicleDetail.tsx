@@ -30,13 +30,10 @@ import {
   FileText,
   History,
   Settings,
-  Eye,
-  Star,
 } from 'lucide-react';
 import type { Vehicle, MileageRating, OverallRating } from '@/lib/types';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { ReviewSection } from '@/components/ReviewSection';
 import { CarImage } from '@/components/CarImage';
 
 export interface VehicleDetailProps {
@@ -136,15 +133,6 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
   const overallRatingBadge = getOverallRatingBadge(vehicle.overall_rating);
   const images = vehicle.images_url || [];
 
-  // Handle review update callback
-  const handleReviewUpdate = (data: { reviewed: boolean; rating?: number; notes?: string }) => {
-    setVehicle({
-      ...vehicle,
-      reviewed_by_user: data.reviewed,
-      user_rating: data.rating,
-      user_notes: data.notes,
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -338,12 +326,8 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
       </Card>
 
       {/* Detailed Information Tabs */}
-      <Tabs defaultValue="review" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="review">
-            <Eye className="w-4 h-4 mr-2" />
-            Review
-          </TabsTrigger>
+      <Tabs defaultValue="specifications" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="specifications">
             <Settings className="w-4 h-4 mr-2" />
             Specifications
@@ -361,17 +345,6 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
             Details
           </TabsTrigger>
         </TabsList>
-
-        {/* Review Tab */}
-        <TabsContent value="review" className="space-y-4">
-          <ReviewSection
-            vin={vehicle.vin}
-            initialReviewed={vehicle.reviewed_by_user}
-            initialRating={vehicle.user_rating}
-            initialNotes={vehicle.user_notes}
-            onReviewUpdate={handleReviewUpdate}
-          />
-        </TabsContent>
 
         {/* Specifications Tab */}
         <TabsContent value="specifications" className="space-y-4">
@@ -699,63 +672,6 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Review</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <SpecItem
-                label="Reviewed"
-                value={vehicle.reviewed_by_user ? "Yes" : "No"}
-                badge={
-                  vehicle.reviewed_by_user ? (
-                    <Badge className="bg-green-500 hover:bg-green-600 text-white border-0">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      Reviewed
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline">Not Reviewed</Badge>
-                  )
-                }
-              />
-              {vehicle.user_rating && vehicle.user_rating > 0 && (
-                <SpecItem
-                  label="Your Rating"
-                  value={`${vehicle.user_rating}/5 stars`}
-                  badge={
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={cn(
-                            'w-4 h-4',
-                            i < vehicle.user_rating!
-                              ? 'fill-yellow-400 text-yellow-400'
-                              : 'text-gray-300'
-                          )}
-                        />
-                      ))}
-                    </div>
-                  }
-                />
-              )}
-              {vehicle.user_notes && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Your Notes:</p>
-                  <div className="p-3 bg-muted rounded-lg">
-                    <p className="text-sm">{vehicle.user_notes}</p>
-                  </div>
-                </div>
-              )}
-              {!vehicle.reviewed_by_user && (
-                <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm text-muted-foreground">
-                    You haven't reviewed this vehicle yet. Click the "Review" tab to add your review, rating, and notes.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

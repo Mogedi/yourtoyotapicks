@@ -4,7 +4,50 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**YourToyotaPicks** is a personal automation tool for finding high-quality used Toyota and Honda vehicles. The project automates the manual car search process with intelligent filtering, VIN validation, and a review system.
+**YourToyotaPicks** is a personal automation tool for finding high-quality used Toyota and Honda vehicles. The project automates the manual car search process with intelligent filtering, VIN validation, and AI-assisted curation.
+
+## 🎯 Core Mission & UX Principles
+
+**CRITICAL**: This project is NOT a data table — it's a **trustworthy curator**.
+
+### The 5-Second Clarity Rule
+
+When a user lands on the dashboard, within 5 seconds they should:
+1. **Know which cars are the top picks** for them personally
+2. **Understand why each one ranks highly**
+3. **Be able to compare or act** (contact, save, hide) without hunting through noise
+
+### Foundational Principle: "Signal over noise"
+
+Every UX decision must answer three questions at a glance:
+
+| Question | Visual Cue | Implementation |
+|----------|-----------|----------------|
+| **"Which cars are top-tier picks for me?"** | Sorted by `priority_score`, color-coded badges, "Top Match" labels | Priority score ≥80 = Green, 65-79 = Yellow, <65 = Gray/hidden |
+| **"Why are they good?"** | AI-generated 2-line summary directly below or on hover | Short, fact-grounded explanations: "✅ 1-owner • 📉 $1.8k below market • 🧰 Clean title" |
+| **"How do they compare?"** | Quick stat chips (price vs median, miles vs median, owner count) | Contextual comparison data, not just raw numbers |
+
+### Design Philosophy
+
+- **Default sort**: ALWAYS by `priority_score` (descending)
+- **Visual hierarchy**: Best cars should look special without looking like ads
+  - 🟩 80+ "Top Pick" - Soft green border/glow or badge
+  - 🟨 65-79 "Good Buy" - Neutral highlight
+  - 🟥 <65 "Caution" - Muted, maybe folded away by default
+- **Transparency**: Show priority score breakdowns on hover so users trust the algorithm
+- **Progressive clarity**: Maximum clarity upfront, details on demand (use popovers/tooltips)
+
+### When Building Features
+
+✅ **ALWAYS ask**: Does this help users find their best match faster?
+✅ **ALWAYS ask**: Does this reduce noise or add it?
+✅ **ALWAYS ask**: Can users understand this in <5 seconds?
+
+❌ **NEVER**: Add features that make the interface more complex without clear value
+❌ **NEVER**: Show raw data without context (always add "vs median" comparisons)
+❌ **NEVER**: Hide the priority score - it's the core value proposition
+
+See [docs/UX_PRINCIPLES.md](docs/UX_PRINCIPLES.md) for detailed UX specifications.
 
 ### Current State
 
@@ -89,15 +132,19 @@ Render: Component with data
 
 ## Key Features
 
-### 1. Dashboard (`/dashboard`)
-- Grid of vehicle cards with images and key stats
-- Real-time filtering by:
-  - Make (Toyota/Honda)
-  - Model (RAV4, CR-V, etc.)
-  - Price range
-  - Mileage rating
-  - Review status
-- Sorting by priority score, price, mileage, date
+### 1. Dashboard (`/dashboard`) - Curator Experience
+
+**Primary Goal**: Users see their best matches first, with clear explanations why.
+
+- **Priority-first display**: Sorted by `priority_score` by default (descending)
+- **Color-coded quality tiers**:
+  - 🟩 Top Picks (80+): Green badges/borders
+  - 🟨 Good Buys (65-79): Yellow badges
+  - 🟥 Caution (<65): Muted/collapsible
+- **AI-generated summaries**: 2-line explanations per vehicle ("Why this is good")
+- **Contextual comparisons**: Stats shown as comparisons (e.g., "$1.2k below median")
+- **Real-time filtering** without losing priority sort
+- **Progressive disclosure**: Core info visible, details on demand
 
 ### 2. Vehicle Detail Page (`/dashboard/[vin]`)
 - Comprehensive vehicle information
@@ -120,12 +167,17 @@ Render: Component with data
 - Owners: 1-2 max
 - Brands: Toyota and Honda only
 
-**Priority scoring factors:**
-- Low mileage for age
-- Single owner
-- Clean history
-- Non-rust belt origin
-- RAV4/CR-V models (highest priority)
+**Priority scoring algorithm** (transparent to users):
+
+Weighted factors (100-point scale):
+- **Title & accident history**: 25% (Clean title = +25)
+- **Mileage vs year**: 20% (Below average for age = +15)
+- **Price vs comps**: 20% (Below median = +10)
+- **Distance (locality)**: 15% (Within 50 mi = +10)
+- **Model demand**: 10% (RAV4/CR-V = +5)
+- **Condition signals**: 10% (Maintena nce keywords = +3)
+
+**Must be transparent**: Show score breakdown on hover/click so users trust the algorithm.
 
 ### 4. Mock Data System
 
