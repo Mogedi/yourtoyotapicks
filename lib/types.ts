@@ -342,3 +342,46 @@ export function isMileageRating(value: string): value is MileageRating {
 export function isOverallRating(value: string): value is OverallRating {
   return value === 'high' || value === 'medium' || value === 'low';
 }
+
+// ============================================================================
+// DASHBOARD V2 QUERY TYPES
+// ============================================================================
+
+// Query options for fetching vehicles with filters, sorting, and pagination
+export interface VehicleQueryOptions {
+  // Filters
+  make?: string;
+  model?: string;
+  yearMin?: number;
+  yearMax?: number;
+  priceMin?: number;
+  priceMax?: number;
+  mileageMax?: number;
+  mileageRating?: MileageRating | 'all';
+  reviewStatus?: 'all' | 'reviewed' | 'not-reviewed';
+  search?: string;
+
+  // Sorting
+  sortField?: 'priority' | 'price' | 'mileage' | 'year' | 'make' | 'model' | 'date';
+  sortOrder?: 'asc' | 'desc';
+
+  // Pagination
+  page?: number;
+  pageSize?: number;
+}
+
+// Query result with data and metadata
+export interface VehicleQueryResult {
+  data: Vehicle[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+  filters: {
+    activeCount: number;
+  };
+}
