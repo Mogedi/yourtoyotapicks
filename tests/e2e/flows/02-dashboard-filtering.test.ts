@@ -15,13 +15,14 @@ import {
   logWarning,
   logTestResult,
   createTestResult,
+  getBaseUrl,
   type BrowserContext,
   type TestResult,
   type ScreenshotMetadata,
 } from '../helpers';
 
 const TEST_NAME = '02-dashboard-filtering';
-const BASE_URL = 'http://localhost:3001/dashboard';
+const BASE_URL = `${getBaseUrl()}/dashboard`;
 
 /**
  * Test: Dashboard filtering functionality

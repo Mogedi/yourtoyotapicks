@@ -15,13 +15,14 @@ import {
   logWarning,
   logTestResult,
   createTestResult,
+  getBaseUrl,
   type BrowserContext,
   type TestResult,
   type ScreenshotMetadata,
 } from '../helpers';
 
 const TEST_NAME = '01-landing-to-dashboard';
-const BASE_URL = 'http://localhost:3001';
+const BASE_URL = getBaseUrl();
 
 /**
  * Test: Navigate from landing page to dashboard

@@ -18,10 +18,11 @@ import {
   type BrowserContext,
   type TestResult,
   type ScreenshotMetadata,
+  getBaseUrl,
 } from '../helpers';
 
 const TEST_NAME = '03-vehicle-details';
-const BASE_URL = 'http://localhost:3001/dashboard';
+const BASE_URL = `${getBaseUrl()}/dashboard`;
 
 /**
  * Test: Vehicle details page navigation and tabs
@@ -281,6 +282,9 @@ export async function runTest(): Promise<TestResult> {
       logError('Navigation back to dashboard may have failed');
     }
 
+    // Wait a moment for vehicle cards to hydrate/load
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // Take final screenshot
     const finalScreenshot = await takeFullPageScreenshot(
       page,
@@ -290,16 +294,26 @@ export async function runTest(): Promise<TestResult> {
     logSuccess(`Screenshot saved: ${finalScreenshot.fullPath}`);
 
     // Verify vehicle cards are visible again
-    const backOnDashboard = await elementExists(
-      page,
-      '[data-testid="vehicle-card"], article, .vehicle-card'
-    );
-
-    if (backOnDashboard) {
+    try {
+      await waitForSelector(
+        page,
+        '[data-testid="vehicle-card"], article, .vehicle-card',
+        5000
+      );
       logSuccess('Vehicle cards visible on dashboard');
-    } else {
-      errors.push('Vehicle cards not visible after returning to dashboard');
-      logError('Vehicle cards not visible');
+    } catch {
+      // Cards might be there but in skeleton state - check if any exist at all
+      const backOnDashboard = await elementExists(
+        page,
+        '[data-testid="vehicle-card"], article, .vehicle-card'
+      );
+
+      if (backOnDashboard) {
+        logSuccess('Vehicle cards visible on dashboard (may still be loading)');
+      } else {
+        errors.push('Vehicle cards not visible after returning to dashboard');
+        logError('Vehicle cards not visible');
+      }
     }
 
     // Check for console errors

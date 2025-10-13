@@ -3,6 +3,7 @@ export * from './types';
 export * from './screenshot';
 export * from './logger';
 export * from './error-detector';
+export * from './config';
 
 // Export from browser (some functions may overlap with test-utils)
 export {
