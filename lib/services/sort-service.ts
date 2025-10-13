@@ -40,9 +40,9 @@ export class SortService {
         case 'quality_tier':
           // Calculate tier rank (1 = Top Pick, 2 = Good Buy, 3 = Caution)
           const getTierRank = (score: number) => {
-            if (score >= 80) return 1; // Top Pick
-            if (score >= 65) return 2; // Good Buy
-            return 3; // Caution
+            if (score >= 80) return 1; // Top Pick (80+)
+            if (score >= 65) return 2; // Good Buy (65-79)
+            return 3; // Caution (<65)
           };
 
           const aTier = getTierRank(a.priority_score);

@@ -67,11 +67,11 @@ export class FilterService {
       filtered = filtered.filter((v) => {
         const score = v.priority_score;
         if (filters.qualityTier === 'top_pick') {
-          return score >= 80;
+          return score >= 80; // QUALITY_TIER.TOP_PICK.MIN_SCORE
         } else if (filters.qualityTier === 'good_buy') {
-          return score >= 65 && score < 80;
+          return score >= 65 && score < 80; // GOOD_BUY range
         } else if (filters.qualityTier === 'caution') {
-          return score < 65;
+          return score < 65; // Below GOOD_BUY
         }
         return true;
       });
