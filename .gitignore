@@ -5,6 +5,9 @@
 
 # testing
 /coverage
+/test-results
+/playwright-report
+/tests/screenshots
 
 # next.js
 /.next/
