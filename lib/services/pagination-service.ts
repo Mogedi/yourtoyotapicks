@@ -1,5 +1,4 @@
 // PaginationService - Handles pagination logic
-import type { Vehicle, ListingSummary } from '@/lib/types';
 import { PAGINATION } from '@/lib/constants';
 
 export interface PaginationOptions {

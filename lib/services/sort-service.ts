@@ -1,6 +1,6 @@
 // SortService - Handles all vehicle sorting logic
 import type { Vehicle, ListingSummary } from '@/lib/types';
-import { QUALITY_TIER, getQualityTier } from '@/lib/constants';
+import { getQualityTier } from '@/lib/constants';
 
 export type SortField =
   | 'priority'

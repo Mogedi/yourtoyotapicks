@@ -1,6 +1,6 @@
 // FilterService - Handles all vehicle filtering logic
 import type { Vehicle, ListingSummary, MileageRating, QualityTier } from '@/lib/types';
-import { QUALITY_TIER, getQualityTier } from '@/lib/constants';
+import { getQualityTier } from '@/lib/constants';
 
 export interface FilterOptions {
   make?: string;
