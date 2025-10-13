@@ -163,6 +163,21 @@ lib/
 
 **Implementation Order:**
 
+#### 1.0 Create Directory Structure
+
+Before implementing, create necessary directories:
+```bash
+mkdir -p lib/types
+mkdir -p lib/utils
+mkdir -p lib/services
+mkdir -p lib/api/vehicles
+mkdir -p lib/hooks
+mkdir -p components/dashboard/shared
+mkdir -p components/dashboard/table-view
+mkdir -p app/dashboard/table
+mkdir -p tests/e2e/flows
+```
+
 #### 1.1 Type Definitions
 
 Create `lib/types/filters.ts`:
@@ -340,7 +355,19 @@ export function queryParamsToFilters(params: URLSearchParams): Partial<VehicleFi
     filters.mileageRange = { min: Number(minMileage), max: Number(maxMileage) };
   }
 
-  // ... similar for year, score
+  // Year range
+  const minYear = params.get('minYear');
+  const maxYear = params.get('maxYear');
+  if (minYear && maxYear) {
+    filters.yearRange = { min: Number(minYear), max: Number(maxYear) };
+  }
+
+  // Score range
+  const minScore = params.get('minScore');
+  const maxScore = params.get('maxScore');
+  if (minScore && maxScore) {
+    filters.scoreRange = { min: Number(minScore), max: Number(maxScore) };
+  }
 
   const makes = params.get('makes');
   if (makes) {
@@ -355,6 +382,16 @@ export function queryParamsToFilters(params: URLSearchParams): Partial<VehicleFi
   const searchQuery = params.get('q');
   if (searchQuery) {
     filters.searchQuery = searchQuery;
+  }
+
+  // Zip code and radius
+  const zipCode = params.get('zip');
+  if (zipCode) {
+    filters.zipCode = zipCode;
+    const radius = params.get('radius');
+    if (radius) {
+      filters.radius = Number(radius);
+    }
   }
 
   return filters;
@@ -554,6 +591,39 @@ export function useVehicles(options: VehicleQueryOptions) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // Serialize options to prevent infinite loop (objects are recreated on each render)
+  const optionsKey = JSON.stringify(options);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetch() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await fetchVehicles(options);
+        if (!cancelled) {
+          setData(result);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err as Error);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetch();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [optionsKey]); // Use serialized key instead of object reference
+
   const refetch = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -566,11 +636,7 @@ export function useVehicles(options: VehicleQueryOptions) {
     } finally {
       setLoading(false);
     }
-  }, [options]);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
+  }, [optionsKey]);
 
   return { data, loading, error, refetch };
 }
@@ -685,6 +751,56 @@ export function usePagination(
     prevPage,
     setPageSize,
   };
+}
+```
+
+#### 2.5 URL Sync Hook
+
+Create `lib/hooks/useUrlSync.ts`:
+```typescript
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import type { VehicleFilters, SortConfig, PaginationConfig } from '@/lib/types/filters';
+import { filtersToQueryParams } from '@/lib/utils/url-helpers';
+
+/**
+ * Syncs filter, sort, and pagination state to URL query parameters
+ * Enables shareable links
+ */
+export function useUrlSync(
+  filters: VehicleFilters,
+  sort: SortConfig,
+  pagination: PaginationConfig
+) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    // Add filter params
+    const filterParams = filtersToQueryParams(filters);
+    filterParams.forEach((value, key) => params.set(key, value));
+
+    // Add sort params
+    params.set('sortBy', sort.field);
+    params.set('order', sort.direction);
+
+    // Add pagination params
+    params.set('page', String(pagination.page));
+    params.set('pageSize', String(pagination.pageSize));
+
+    const newUrl = `${pathname}?${params.toString()}`;
+    const currentUrl = `${pathname}?${searchParams.toString()}`;
+
+    // Only update if URL changed (avoid unnecessary re-renders)
+    if (newUrl !== currentUrl) {
+      router.replace(newUrl, { scroll: false });
+    }
+  }, [filters, sort, pagination, router, pathname, searchParams]);
 }
 ```
 
@@ -946,6 +1062,7 @@ import { useVehicles } from '@/lib/hooks/useVehicles';
 import { useVehicleFilters } from '@/lib/hooks/useVehicleFilters';
 import { useVehicleSort } from '@/lib/hooks/useVehicleSort';
 import { usePagination } from '@/lib/hooks/usePagination';
+import { useUrlSync } from '@/lib/hooks/useUrlSync';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -959,6 +1076,9 @@ export default function TableViewPage() {
     sort,
     pagination: { page, pageSize },
   });
+
+  // Sync state to URL for shareable links
+  useUrlSync(filters, sort, { page, pageSize });
 
   return (
     <div className="flex h-screen">
