@@ -1,5 +1,6 @@
 // SortService - Handles all vehicle sorting logic
 import type { Vehicle, ListingSummary } from '@/lib/types';
+import { QUALITY_TIER, getQualityTier } from '@/lib/constants';
 
 export type SortField =
   | 'priority'
@@ -39,10 +40,11 @@ export class SortService {
 
         case 'quality_tier':
           // Calculate tier rank (1 = Top Pick, 2 = Good Buy, 3 = Caution)
-          const getTierRank = (score: number) => {
-            if (score >= 80) return 1; // Top Pick (80+)
-            if (score >= 65) return 2; // Good Buy (65-79)
-            return 3; // Caution (<65)
+          const getTierRank = (score: number): number => {
+            const tier = getQualityTier(score);
+            if (tier === 'top_pick') return 1;
+            if (tier === 'good_buy') return 2;
+            return 3;
           };
 
           const aTier = getTierRank(a.priority_score);

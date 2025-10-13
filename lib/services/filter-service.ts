@@ -1,5 +1,6 @@
 // FilterService - Handles all vehicle filtering logic
 import type { Vehicle, ListingSummary, MileageRating, QualityTier } from '@/lib/types';
+import { QUALITY_TIER, getQualityTier } from '@/lib/constants';
 
 export interface FilterOptions {
   make?: string;
@@ -17,6 +18,10 @@ export interface FilterOptions {
 export class FilterService {
   /**
    * Apply all filters to a list of vehicles
+   * Filters are applied sequentially to progressively narrow down results
+   * @param vehicles - Array of vehicles to filter
+   * @param filters - Filter options to apply
+   * @returns Filtered array of vehicles
    */
   static applyFilters(
     vehicles: (Vehicle | ListingSummary)[],
@@ -24,72 +29,132 @@ export class FilterService {
   ): (Vehicle | ListingSummary)[] {
     let filtered = [...vehicles];
 
-    // Filter by make
-    if (filters.make && filters.make !== 'all') {
-      filtered = filtered.filter((v) => v.make === filters.make);
-    }
-
-    // Filter by model
-    if (filters.model && filters.model !== 'all') {
-      filtered = filtered.filter((v) => v.model === filters.model);
-    }
-
-    // Filter by year range
-    if (filters.yearMin !== undefined) {
-      filtered = filtered.filter((v) => v.year >= filters.yearMin!);
-    }
-    if (filters.yearMax !== undefined) {
-      filtered = filtered.filter((v) => v.year <= filters.yearMax!);
-    }
-
-    // Filter by price range
-    if (filters.priceMin !== undefined) {
-      filtered = filtered.filter((v) => v.price >= filters.priceMin!);
-    }
-    if (filters.priceMax !== undefined) {
-      filtered = filtered.filter((v) => v.price <= filters.priceMax!);
-    }
-
-    // Filter by mileage max
-    if (filters.mileageMax !== undefined) {
-      filtered = filtered.filter((v) => v.mileage <= filters.mileageMax!);
-    }
-
-    // Filter by mileage rating
-    if (filters.mileageRating && filters.mileageRating !== 'all') {
-      filtered = filtered.filter(
-        (v) => v.mileage_rating === filters.mileageRating
-      );
-    }
-
-    // Filter by quality tier
-    if (filters.qualityTier && filters.qualityTier !== 'all') {
-      filtered = filtered.filter((v) => {
-        const score = v.priority_score;
-        if (filters.qualityTier === 'top_pick') {
-          return score >= 80; // QUALITY_TIER.TOP_PICK.MIN_SCORE
-        } else if (filters.qualityTier === 'good_buy') {
-          return score >= 65 && score < 80; // GOOD_BUY range
-        } else if (filters.qualityTier === 'caution') {
-          return score < 65; // Below GOOD_BUY
-        }
-        return true;
-      });
-    }
-
-    // Filter by search (VIN, make, model, year)
-    if (filters.search && filters.search.trim() !== '') {
-      const searchLower = filters.search.toLowerCase().trim();
-      filtered = filtered.filter((v) => {
-        const vinMatch = v.vin.toLowerCase().includes(searchLower);
-        const makeMatch = v.make.toLowerCase().includes(searchLower);
-        const modelMatch = v.model.toLowerCase().includes(searchLower);
-        const yearMatch = v.year.toString().includes(searchLower);
-        return vinMatch || makeMatch || modelMatch || yearMatch;
-      });
-    }
+    // Apply each filter if specified
+    filtered = this.filterByMake(filtered, filters.make);
+    filtered = this.filterByModel(filtered, filters.model);
+    filtered = this.filterByYearRange(filtered, filters.yearMin, filters.yearMax);
+    filtered = this.filterByPriceRange(filtered, filters.priceMin, filters.priceMax);
+    filtered = this.filterByMileage(filtered, filters.mileageMax);
+    filtered = this.filterByMileageRating(filtered, filters.mileageRating);
+    filtered = this.filterByQualityTier(filtered, filters.qualityTier);
+    filtered = this.filterBySearch(filtered, filters.search);
 
     return filtered;
+  }
+
+  /**
+   * Filter vehicles by make
+   */
+  private static filterByMake(
+    vehicles: (Vehicle | ListingSummary)[],
+    make?: string
+  ): (Vehicle | ListingSummary)[] {
+    if (!make || make === 'all') return vehicles;
+    return vehicles.filter((v) => v.make === make);
+  }
+
+  /**
+   * Filter vehicles by model
+   */
+  private static filterByModel(
+    vehicles: (Vehicle | ListingSummary)[],
+    model?: string
+  ): (Vehicle | ListingSummary)[] {
+    if (!model || model === 'all') return vehicles;
+    return vehicles.filter((v) => v.model === model);
+  }
+
+  /**
+   * Filter vehicles by year range
+   */
+  private static filterByYearRange(
+    vehicles: (Vehicle | ListingSummary)[],
+    yearMin?: number,
+    yearMax?: number
+  ): (Vehicle | ListingSummary)[] {
+    let filtered = vehicles;
+    if (yearMin !== undefined) {
+      filtered = filtered.filter((v) => v.year >= yearMin);
+    }
+    if (yearMax !== undefined) {
+      filtered = filtered.filter((v) => v.year <= yearMax);
+    }
+    return filtered;
+  }
+
+  /**
+   * Filter vehicles by price range
+   */
+  private static filterByPriceRange(
+    vehicles: (Vehicle | ListingSummary)[],
+    priceMin?: number,
+    priceMax?: number
+  ): (Vehicle | ListingSummary)[] {
+    let filtered = vehicles;
+    if (priceMin !== undefined) {
+      filtered = filtered.filter((v) => v.price >= priceMin);
+    }
+    if (priceMax !== undefined) {
+      filtered = filtered.filter((v) => v.price <= priceMax);
+    }
+    return filtered;
+  }
+
+  /**
+   * Filter vehicles by maximum mileage
+   */
+  private static filterByMileage(
+    vehicles: (Vehicle | ListingSummary)[],
+    mileageMax?: number
+  ): (Vehicle | ListingSummary)[] {
+    if (mileageMax === undefined) return vehicles;
+    return vehicles.filter((v) => v.mileage <= mileageMax);
+  }
+
+  /**
+   * Filter vehicles by mileage rating
+   */
+  private static filterByMileageRating(
+    vehicles: (Vehicle | ListingSummary)[],
+    mileageRating?: MileageRating | 'all'
+  ): (Vehicle | ListingSummary)[] {
+    if (!mileageRating || mileageRating === 'all') return vehicles;
+    return vehicles.filter((v) => v.mileage_rating === mileageRating);
+  }
+
+  /**
+   * Filter vehicles by quality tier
+   * Uses getQualityTier helper to determine tier from priority score
+   */
+  private static filterByQualityTier(
+    vehicles: (Vehicle | ListingSummary)[],
+    qualityTier?: QualityTier | 'all'
+  ): (Vehicle | ListingSummary)[] {
+    if (!qualityTier || qualityTier === 'all') return vehicles;
+    return vehicles.filter((v) => {
+      const vehicleTier = getQualityTier(v.priority_score);
+      return vehicleTier === qualityTier;
+    });
+  }
+
+  /**
+   * Filter vehicles by search query
+   * Searches across VIN, make, model, and year
+   */
+  private static filterBySearch(
+    vehicles: (Vehicle | ListingSummary)[],
+    search?: string
+  ): (Vehicle | ListingSummary)[] {
+    if (!search || search.trim() === '') return vehicles;
+
+    const searchLower = search.toLowerCase().trim();
+    return vehicles.filter((v) => {
+      const vinMatch = v.vin.toLowerCase().includes(searchLower);
+      const makeMatch = v.make.toLowerCase().includes(searchLower);
+      const modelMatch = v.model.toLowerCase().includes(searchLower);
+      const yearMatch = v.year.toString().includes(searchLower);
+      return vinMatch || makeMatch || modelMatch || yearMatch;
+    });
   }
 
   /**

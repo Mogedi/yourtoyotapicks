@@ -1,5 +1,6 @@
 // PaginationService - Handles pagination logic
 import type { Vehicle, ListingSummary } from '@/lib/types';
+import { PAGINATION } from '@/lib/constants';
 
 export interface PaginationOptions {
   page: number;
@@ -58,7 +59,7 @@ export class PaginationService {
    * Get page size options for dropdown
    */
   static getPageSizeOptions(): number[] {
-    return [10, 25, 50, 100];
+    return PAGINATION.PAGE_SIZE_OPTIONS;
   }
 
   /**
@@ -67,7 +68,7 @@ export class PaginationService {
   static getPageNumbers(
     currentPage: number,
     totalPages: number,
-    maxVisible: number = 5
+    maxVisible: number = PAGINATION.MAX_VISIBLE_PAGES
   ): (number | 'ellipsis')[] {
     if (totalPages <= maxVisible) {
       return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -121,8 +122,8 @@ export class PaginationService {
    */
   static getDefaultOptions(): PaginationOptions {
     return {
-      page: 1,
-      pageSize: 25,
+      page: PAGINATION.DEFAULT_PAGE,
+      pageSize: PAGINATION.DEFAULT_PAGE_SIZE,
     };
   }
 }

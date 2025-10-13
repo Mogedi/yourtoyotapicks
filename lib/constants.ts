@@ -235,3 +235,41 @@ export function isValidVIN(vin: string): boolean {
 export function isValidYear(year: number): boolean {
   return year >= VALIDATION.YEAR.MIN && year <= VALIDATION.YEAR.MAX;
 }
+
+/**
+ * Check if price is within valid range
+ */
+export function isValidPrice(price: number): boolean {
+  return price >= VALIDATION.PRICE.MIN && price <= VALIDATION.PRICE.MAX;
+}
+
+/**
+ * Check if mileage is within valid range
+ */
+export function isValidMileage(mileage: number): boolean {
+  return mileage >= VALIDATION.MILEAGE.MIN && mileage <= VALIDATION.MILEAGE.MAX;
+}
+
+/**
+ * Get mileage rating based on mileage per year
+ */
+export function getMileageRating(
+  mileagePerYear: number
+): 'excellent' | 'good' | 'acceptable' | 'high' {
+  if (mileagePerYear <= MILEAGE_RATING.EXCELLENT.MAX_PER_YEAR) {
+    return 'excellent';
+  }
+  if (
+    mileagePerYear >= MILEAGE_RATING.GOOD.MIN_PER_YEAR &&
+    mileagePerYear <= MILEAGE_RATING.GOOD.MAX_PER_YEAR
+  ) {
+    return 'good';
+  }
+  if (
+    mileagePerYear >= MILEAGE_RATING.ACCEPTABLE.MIN_PER_YEAR &&
+    mileagePerYear <= MILEAGE_RATING.ACCEPTABLE.MAX_PER_YEAR
+  ) {
+    return 'acceptable';
+  }
+  return 'high';
+}
