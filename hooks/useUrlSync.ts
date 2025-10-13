@@ -40,8 +40,8 @@ export function useUrlSync(state: UrlSyncState) {
     if (state.filters.mileageRating && state.filters.mileageRating !== 'all') {
       params.set('mileageRating', state.filters.mileageRating);
     }
-    if (state.filters.reviewStatus && state.filters.reviewStatus !== 'all') {
-      params.set('reviewStatus', state.filters.reviewStatus);
+    if (state.filters.qualityTier && state.filters.qualityTier !== 'all') {
+      params.set('qualityTier', state.filters.qualityTier);
     }
     if (state.filters.search) params.set('search', state.filters.search);
 
@@ -82,7 +82,7 @@ export function useUrlSync(state: UrlSyncState) {
         priceMax: searchParams.get('priceMax') || '',
         mileageMax: searchParams.get('mileageMax') || '',
         mileageRating: (searchParams.get('mileageRating') as any) || 'all',
-        reviewStatus: (searchParams.get('reviewStatus') as any) || 'all',
+        qualityTier: (searchParams.get('qualityTier') as any) || 'all',
         search: searchParams.get('search') || '',
       },
       sort: {
