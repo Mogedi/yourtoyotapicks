@@ -13,13 +13,13 @@ Old Marketcheck integration planning documents (multiple iterations):
 - `MARKETCHECK_QUICK_START.md` - Quick start guide (outdated)
 - `MARKETCHECK_READY_TO_IMPORT.md` - Import readiness assessment
 
-**Superseded by**:
-- `../MARKETCHECK_INTEGRATION_PLAN.md` (comprehensive integration plan)
-- `../MARKETCHECK_INTEGRATION_STATUS.md` (current status)
+**Status**: Integration complete, moved to completed/ folder
 
 ### `completed/`
 Features that have been fully implemented:
 - `FEATURE_9_VEHICLE_DETAIL.md` - Vehicle detail page implementation (completed)
+- `MARKETCHECK_INTEGRATION_PLAN.md` - Comprehensive Marketcheck integration guide (completed 2025-10-12)
+- `MARKETCHECK_INTEGRATION_STATUS.md` - Final integration status (88 cars integrated)
 
 ### `planned/`
 Features that were planned but postponed or deprioritized:
@@ -27,12 +27,19 @@ Features that were planned but postponed or deprioritized:
 - `FEATURE_12_EMAIL_NOTIFICATIONS.md` - Email digest system (Phase 3)
 - `FEATURE_12_SUMMARY.md` - Email feature summary
 
+### Sub-Agent Plans (archived)
+Dashboard V2 implementation plans:
+- `DASHBOARD_V2_IMPLEMENTATION_PLAN_SUBAGENT.md` - Original parallel sub-agent plan (complex, not used)
+- `DASHBOARD_V2_FEEDBACK.md` - Feedback on sub-agent approach (too complex)
+- `DASHBOARD_V2_SIMPLIFIED_FEEDBACK.md` - Feedback on simplified plan
+
+**Superseded by**: `../DASHBOARD_V2_SIMPLIFIED.md` (single Claude execution plan)
+
 ## Current Active Documentation
 
 For up-to-date feature documentation, see:
-- [`../DASHBOARD_V2_IMPLEMENTATION_PLAN.md`](../DASHBOARD_V2_IMPLEMENTATION_PLAN.md) - Table view implementation
-- [`../MARKETCHECK_INTEGRATION_PLAN.md`](../MARKETCHECK_INTEGRATION_PLAN.md) - Complete Marketcheck integration guide
-- [`../MARKETCHECK_INTEGRATION_STATUS.md`](../MARKETCHECK_INTEGRATION_STATUS.md) - Current integration status
+- [`../DASHBOARD_V2_SIMPLIFIED.md`](../DASHBOARD_V2_SIMPLIFIED.md) - ⭐ **Active** - Table view implementation plan
+- [`../DASHBOARD_V2_README.md`](../DASHBOARD_V2_README.md) - Quick reference for Dashboard V2
 
 ## Why These Were Archived
 
