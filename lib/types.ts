@@ -377,7 +377,7 @@ export interface VehicleQueryOptions {
   search?: string;
 
   // Sorting
-  sortField?: 'priority' | 'price' | 'mileage' | 'year' | 'make' | 'model' | 'date';
+  sortField?: 'priority' | 'quality_tier' | 'price' | 'mileage' | 'year' | 'make' | 'model' | 'date';
   sortOrder?: 'asc' | 'desc';
 
   // Pagination
