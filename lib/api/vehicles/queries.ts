@@ -57,7 +57,7 @@ function processVehicles(
     priceMax: options.priceMax,
     mileageMax: options.mileageMax,
     mileageRating: options.mileageRating,
-    reviewStatus: options.reviewStatus,
+    qualityTier: options.qualityTier,
     search: options.search,
   };
 

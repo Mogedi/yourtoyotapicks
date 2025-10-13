@@ -1,5 +1,5 @@
 // FilterService - Handles all vehicle filtering logic
-import type { Vehicle, ListingSummary, MileageRating } from '@/lib/types';
+import type { Vehicle, ListingSummary, MileageRating, QualityTier } from '@/lib/types';
 
 export interface FilterOptions {
   make?: string;
@@ -10,7 +10,7 @@ export interface FilterOptions {
   priceMax?: number;
   mileageMax?: number;
   mileageRating?: MileageRating | 'all';
-  reviewStatus?: 'all' | 'reviewed' | 'not-reviewed';
+  qualityTier?: QualityTier | 'all';
   search?: string;
 }
 
@@ -62,13 +62,19 @@ export class FilterService {
       );
     }
 
-    // Filter by review status
-    if (filters.reviewStatus && filters.reviewStatus !== 'all') {
-      if (filters.reviewStatus === 'reviewed') {
-        filtered = filtered.filter((v) => v.reviewed_by_user === true);
-      } else if (filters.reviewStatus === 'not-reviewed') {
-        filtered = filtered.filter((v) => v.reviewed_by_user === false);
-      }
+    // Filter by quality tier
+    if (filters.qualityTier && filters.qualityTier !== 'all') {
+      filtered = filtered.filter((v) => {
+        const score = v.priority_score;
+        if (filters.qualityTier === 'top_pick') {
+          return score >= 80;
+        } else if (filters.qualityTier === 'good_buy') {
+          return score >= 65 && score < 80;
+        } else if (filters.qualityTier === 'caution') {
+          return score < 65;
+        }
+        return true;
+      });
     }
 
     // Filter by search (VIN, make, model, year)
@@ -112,7 +118,7 @@ export class FilterService {
     if (filters.priceMax !== undefined) count++;
     if (filters.mileageMax !== undefined) count++;
     if (filters.mileageRating && filters.mileageRating !== 'all') count++;
-    if (filters.reviewStatus && filters.reviewStatus !== 'all') count++;
+    if (filters.qualityTier && filters.qualityTier !== 'all') count++;
     if (filters.search && filters.search.trim() !== '') count++;
     return count;
   }

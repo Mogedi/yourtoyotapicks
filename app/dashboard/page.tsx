@@ -37,7 +37,7 @@ export default function TableViewPage() {
       priceMax: filters.priceMax ? parseFloat(filters.priceMax) : undefined,
       mileageMax: filters.mileageMax ? parseInt(filters.mileageMax) : undefined,
       mileageRating: filters.mileageRating,
-      reviewStatus: filters.reviewStatus,
+      qualityTier: filters.qualityTier,
       search: filters.search,
       // Sorting
       sortField: sort.field,
