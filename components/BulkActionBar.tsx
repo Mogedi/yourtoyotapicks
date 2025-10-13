@@ -2,7 +2,7 @@
 
 // BulkActionBar - Floating action bar for bulk operations with animations
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Download, Trash2 } from 'lucide-react';
+import { X, Download, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import type { Vehicle } from '@/lib/types';
@@ -10,7 +10,6 @@ import type { Vehicle } from '@/lib/types';
 interface BulkActionBarProps {
   selectedVehicles: Vehicle[];
   onClearSelection: () => void;
-  onMarkReviewed?: () => void;
   onExport?: () => void;
   onDelete?: () => void;
 }
@@ -18,7 +17,6 @@ interface BulkActionBarProps {
 export function BulkActionBar({
   selectedVehicles,
   onClearSelection,
-  onMarkReviewed,
   onExport,
   onDelete,
 }: BulkActionBarProps) {
@@ -53,18 +51,6 @@ export function BulkActionBar({
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              {onMarkReviewed && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onMarkReviewed}
-                  className="transition-all hover:scale-105 active:scale-95"
-                >
-                  <Check className="h-4 w-4 mr-1" />
-                  Mark Reviewed
-                </Button>
-              )}
-
               {onExport && (
                 <Button
                   variant="outline"

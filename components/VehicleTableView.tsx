@@ -4,6 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ProductImage } from '@/components/ProductImage';
+import { QualityTierBadge } from '@/components/QualityTierBadge';
 import { TableHeader, TableHeaderCell } from '@/components/TableHeader';
 import { TableRow, TableCell } from '@/components/TableRow';
 import { SortableColumnHeader } from '@/components/SortableColumnHeader';
@@ -103,16 +104,14 @@ export function VehicleTableView({
             <TableHeaderCell>Location</TableHeaderCell>
 
             <SortableColumnHeader
-              field="priority"
+              field="quality_tier"
               currentSortField={sortField}
               currentSortOrder={sortOrder}
               onSort={onSort}
               align="center"
             >
-              Priority
+              Quality Tier
             </SortableColumnHeader>
-
-            <TableHeaderCell align="center">Rating</TableHeaderCell>
           </tr>
         </TableHeader>
 
@@ -147,7 +146,12 @@ export function VehicleTableView({
                   <div className="font-medium text-gray-900">
                     {vehicle.make} {vehicle.model}
                   </div>
-                  <div className="text-xs text-gray-500 truncate max-w-[200px]">
+                  {vehicle.ai_summary && (
+                    <div className="text-xs text-gray-600 mt-1 max-w-[300px]">
+                      {vehicle.ai_summary}
+                    </div>
+                  )}
+                  <div className="text-xs text-gray-400 mt-1 truncate max-w-[200px]">
                     VIN: {vehicle.vin}
                   </div>
                 </TableCell>
@@ -178,23 +182,9 @@ export function VehicleTableView({
                   </div>
                 </TableCell>
 
-                {/* Priority */}
+                {/* Quality Tier */}
                 <TableCell align="center">
-                  <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {vehicle.priority_score}
-                  </div>
-                </TableCell>
-
-                {/* Rating */}
-                <TableCell align="center">
-                  {vehicle.user_rating ? (
-                    <div className="flex items-center justify-center">
-                      <span className="text-yellow-500">★</span>
-                      <span className="ml-1">{vehicle.user_rating.toFixed(1)}</span>
-                    </div>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
+                  <QualityTierBadge score={vehicle.priority_score} showLabel={true} size="md" />
                 </TableCell>
               </TableRow>
             );

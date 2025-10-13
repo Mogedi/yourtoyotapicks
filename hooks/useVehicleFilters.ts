@@ -2,7 +2,7 @@
 
 // useVehicleFilters - Manage filter state
 import { useState, useCallback } from 'react';
-import type { MileageRating } from '@/lib/types';
+import type { MileageRating, QualityTier } from '@/lib/types';
 
 export interface FilterState {
   make: string;
@@ -13,7 +13,7 @@ export interface FilterState {
   priceMax: string;
   mileageMax: string;
   mileageRating: MileageRating | 'all';
-  reviewStatus: 'all' | 'reviewed' | 'not-reviewed';
+  qualityTier: QualityTier | 'all';
   search: string;
 }
 
@@ -26,7 +26,7 @@ const initialFilters: FilterState = {
   priceMax: '',
   mileageMax: '',
   mileageRating: 'all',
-  reviewStatus: 'all',
+  qualityTier: 'all',
   search: '',
 };
 
@@ -61,7 +61,7 @@ export function useVehicleFilters(): UseVehicleFiltersReturn {
     filters.priceMax !== '' ||
     filters.mileageMax !== '' ||
     filters.mileageRating !== 'all' ||
-    filters.reviewStatus !== 'all' ||
+    filters.qualityTier !== 'all' ||
     filters.search !== '';
 
   return {

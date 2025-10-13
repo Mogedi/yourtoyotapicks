@@ -10,6 +10,7 @@ export type OverallRating = 'high' | 'medium' | 'low';
 export type TitleStatus = 'clean';
 export type SourcePlatform = 'Marketcheck' | 'Auto.dev' | 'Carapis';
 export type Make = 'Toyota' | 'Honda';
+export type QualityTier = 'top_pick' | 'good_buy' | 'caution';
 
 // Main vehicle/listing interface matching curated_listings table
 export interface Vehicle {
@@ -49,6 +50,16 @@ export interface Vehicle {
   priority_score: number;
   flag_rust_concern: boolean;
   overall_rating?: OverallRating;
+  quality_tier?: QualityTier;
+  ai_summary?: string;
+  score_breakdown?: {
+    title?: { points: number; reason: string };
+    mileage?: { points: number; reason: string };
+    price?: { points: number; reason: string };
+    distance?: { points: number; reason: string };
+    model?: { points: number; reason: string };
+    condition?: { points: number; reason: string };
+  };
 
   // Source Info
   source_platform: SourcePlatform;
@@ -343,6 +354,10 @@ export function isOverallRating(value: string): value is OverallRating {
   return value === 'high' || value === 'medium' || value === 'low';
 }
 
+export function isQualityTier(value: string): value is QualityTier {
+  return value === 'top_pick' || value === 'good_buy' || value === 'caution';
+}
+
 // ============================================================================
 // DASHBOARD V2 QUERY TYPES
 // ============================================================================
@@ -358,7 +373,7 @@ export interface VehicleQueryOptions {
   priceMax?: number;
   mileageMax?: number;
   mileageRating?: MileageRating | 'all';
-  reviewStatus?: 'all' | 'reviewed' | 'not-reviewed';
+  qualityTier?: QualityTier | 'all';
   search?: string;
 
   // Sorting
@@ -373,6 +388,7 @@ export interface VehicleQueryOptions {
 // Query result with data and metadata
 export interface VehicleQueryResult {
   data: Vehicle[];
+  allFilteredVehicles?: Vehicle[]; // All vehicles after filtering (before pagination)
   pagination: {
     currentPage: number;
     pageSize: number;

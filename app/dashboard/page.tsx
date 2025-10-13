@@ -75,10 +75,20 @@ export default function TableViewPage() {
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Vehicle Dashboard</h1>
-            <p className="text-sm text-gray-600 mt-1">
-              {data?.pagination.totalItems ?? 0} vehicles found
-              {hasActiveFilters && ` (${data?.filters.activeCount ?? 0} filters active)`}
+            <h1 className="text-2xl font-bold text-gray-900">Your Curated Picks</h1>
+            <p className="text-xs text-gray-500 mt-1">
+              Best matches first • Clear explanations • 5-second clarity
+            </p>
+            <p className="text-sm text-gray-600 mt-2">
+              {data?.pagination.totalItems ?? 0} vehicles
+              {data?.allFilteredVehicles && (() => {
+                const allVehicles = data.allFilteredVehicles;
+                const topPicks = allVehicles.filter((v: any) => v.priority_score >= 80).length;
+                const goodBuys = allVehicles.filter((v: any) => v.priority_score >= 65 && v.priority_score < 80).length;
+                const caution = allVehicles.filter((v: any) => v.priority_score < 65).length;
+                return ` (${topPicks} Top Picks, ${goodBuys} Good Buys, ${caution} Caution)`;
+              })()}
+              {hasActiveFilters && ` • ${data?.filters.activeCount ?? 0} filters active`}
             </p>
           </div>
 
@@ -117,7 +127,7 @@ export default function TableViewPage() {
             transition={{ duration: 0.3 }}
           >
             {/* Stat Cards */}
-            <StatCards vehicles={data?.data ?? []} className="mb-6" />
+            <StatCards vehicles={data?.allFilteredVehicles ?? []} className="mb-6" />
 
             {/* Search Bar */}
             <div className="mb-6">
@@ -186,11 +196,6 @@ export default function TableViewPage() {
       <BulkActionBar
         selectedVehicles={selectedItems}
         onClearSelection={clearSelection}
-        onMarkReviewed={() => {
-          // TODO: Implement mark as reviewed
-          console.log('Mark as reviewed:', selectedItems);
-          clearSelection();
-        }}
         onExport={() => {
           // TODO: Implement export
           console.log('Export:', selectedItems);

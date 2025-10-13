@@ -1,97 +1,73 @@
 'use client';
 
-// StatCards - Top statistics cards with trend indicators
-import { Car, DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
+// StatCards - Quality tier statistics for curator dashboard
 import { Card, CardContent } from '@/components/ui/card';
 import type { Vehicle } from '@/lib/types';
-import { formatPrice, formatPercentage, getTrendColor } from '@/lib/design-tokens';
 import { cn } from '@/lib/utils';
 
 interface StatCardsProps {
   vehicles: Vehicle[];
-  previousCount?: number;
-  previousValue?: number;
-  previousAvgPrice?: number;
   className?: string;
 }
 
 export function StatCards({
   vehicles,
-  previousCount = 0,
-  previousValue = 0,
-  previousAvgPrice = 0,
   className,
 }: StatCardsProps) {
-  const totalVehicles = vehicles.length;
-  const totalValue = vehicles.reduce((sum, v) => sum + v.price, 0);
-  const avgPrice = totalVehicles > 0 ? totalValue / totalVehicles : 0;
-
-  // Calculate trends
-  const countChange =
-    previousCount > 0 ? ((totalVehicles - previousCount) / previousCount) * 100 : 0;
-  const valueChange =
-    previousValue > 0 ? ((totalValue - previousValue) / previousValue) * 100 : 0;
-  const avgPriceChange =
-    previousAvgPrice > 0 ? ((avgPrice - previousAvgPrice) / previousAvgPrice) * 100 : 0;
+  // Calculate quality tier counts
+  const topPicks = vehicles.filter(v => v.priority_score >= 80).length;
+  const goodBuys = vehicles.filter(v => v.priority_score >= 65 && v.priority_score < 80).length;
+  const caution = vehicles.filter(v => v.priority_score < 65).length;
 
   const stats = [
     {
-      label: 'Total Vehicles',
-      value: totalVehicles.toString(),
-      icon: Car,
-      trend: countChange,
-      trendLabel: 'vs. previous',
+      label: '🟩 Top Picks',
+      value: topPicks.toString(),
+      description: 'Score 80+',
+      bgClass: 'bg-green-50',
+      iconColorClass: 'text-green-600',
+      textClass: 'text-green-900',
     },
     {
-      label: 'Total Value',
-      value: formatPrice(totalValue),
-      icon: DollarSign,
-      trend: valueChange,
-      trendLabel: 'vs. previous',
+      label: '🟨 Good Buys',
+      value: goodBuys.toString(),
+      description: 'Score 65-79',
+      bgClass: 'bg-yellow-50',
+      iconColorClass: 'text-yellow-600',
+      textClass: 'text-yellow-900',
     },
     {
-      label: 'Avg. Price',
-      value: formatPrice(avgPrice),
-      icon: DollarSign,
-      trend: avgPriceChange,
-      trendLabel: 'vs. previous',
+      label: '⚪ Needs Review',
+      value: caution.toString(),
+      description: 'Score <65',
+      bgClass: 'bg-gray-50',
+      iconColorClass: 'text-gray-600',
+      textClass: 'text-gray-900',
     },
   ];
 
   return (
     <div className={cn('grid grid-cols-1 md:grid-cols-3 gap-4', className)}>
-      {stats.map((stat, index) => {
-        const Icon = stat.icon;
-        const trendColor = getTrendColor(stat.trend);
-        const TrendIcon = stat.trend > 0 ? TrendingUp : TrendingDown;
-
-        return (
-          <Card key={index} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                <div className="p-2 bg-blue-50 rounded-lg">
-                  <Icon className="h-5 w-5 text-blue-600" />
+      {stats.map((stat, index) => (
+        <Card key={index} className="hover:shadow-md transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+              <div className={cn('p-2 rounded-lg', stat.bgClass)}>
+                <div className={cn('text-2xl', stat.iconColorClass)}>
+                  {stat.label.split(' ')[0]}
                 </div>
               </div>
+            </div>
 
-              <div className="flex items-baseline justify-between">
-                <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-                {stat.trend !== 0 && (
-                  <div className={cn('flex items-center text-sm', trendColor.textClass)}>
-                    <TrendIcon className="h-4 w-4 mr-1" />
-                    {formatPercentage(Math.abs(stat.trend))}
-                  </div>
-                )}
-              </div>
+            <div className="flex items-baseline justify-between">
+              <h3 className={cn('text-3xl font-bold', stat.textClass)}>{stat.value}</h3>
+            </div>
 
-              {stat.trend !== 0 && (
-                <p className="mt-2 text-xs text-gray-500">{stat.trendLabel}</p>
-              )}
-            </CardContent>
-          </Card>
-        );
-      })}
+            <p className="mt-2 text-xs text-gray-500">{stat.description}</p>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }

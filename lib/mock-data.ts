@@ -1,8 +1,92 @@
 // Mock data generator for YourToyotaPicks testing
 // Contains realistic Toyota/Honda vehicle listings with a mix of passing and failing criteria
 
-import type { VehicleInsert } from './types';
+import type { VehicleInsert, QualityTier } from './types';
 import { getCarImageGallery } from './car-images';
+
+// Helper to calculate quality tier from priority score
+function getQualityTier(score: number): QualityTier {
+  if (score >= 80) return 'top_pick';
+  if (score >= 65) return 'good_buy';
+  return 'caution';
+}
+
+// Helper to generate AI summary based on vehicle attributes
+function generateAISummary(vehicle: Partial<VehicleInsert>): string {
+  const highlights: string[] = [];
+
+  // Title & accident history
+  if (vehicle.title_status === 'clean' && vehicle.accident_count === 0) {
+    highlights.push('✅ Clean history');
+  }
+
+  // Owner count
+  if (vehicle.owner_count === 1) {
+    highlights.push('1-owner');
+  }
+
+  // Price context (simplified - in real implementation this would use market data)
+  const score = vehicle.priority_score || 0;
+  if (score >= 90) {
+    highlights.push('📉 $1.8k below market');
+  } else if (score >= 85) {
+    highlights.push('📉 $1.2k below market');
+  } else if (score >= 75) {
+    highlights.push('💰 Below market');
+  }
+
+  // Mileage quality
+  if (vehicle.mileage_rating === 'excellent') {
+    highlights.push('📉 Low miles for age');
+  }
+
+  // Rust belt
+  if (!vehicle.is_rust_belt_state) {
+    highlights.push('🧊 No rust belt');
+  }
+
+  // Distance
+  if (vehicle.distance_miles && vehicle.distance_miles <= 20) {
+    highlights.push('📍 Very close');
+  } else if (vehicle.distance_miles && vehicle.distance_miles <= 40) {
+    highlights.push('📍 Nearby');
+  }
+
+  // Handle caution cases
+  if (score < 65) {
+    const warnings: string[] = [];
+    if (vehicle.accident_count && vehicle.accident_count > 0) {
+      warnings.push(`⚠️ ${vehicle.accident_count} accident${vehicle.accident_count > 1 ? 's' : ''}`);
+    }
+    if (vehicle.mileage && vehicle.mileage > 120000) {
+      warnings.push('⚠️ High mileage');
+    }
+    if (vehicle.owner_count && vehicle.owner_count > 2) {
+      warnings.push('⚠️ Multiple owners');
+    }
+    if (vehicle.is_rental) {
+      warnings.push('⚠️ Former rental');
+    }
+    if (vehicle.is_fleet) {
+      warnings.push('⚠️ Fleet vehicle');
+    }
+    if (warnings.length > 0) {
+      return warnings.slice(0, 3).join(' • ');
+    }
+  }
+
+  // Return top 5 highlights
+  return highlights.slice(0, 5).join(' • ') || 'Clean vehicle';
+}
+
+// Helper to enrich vehicle with curator fields
+function enrichVehicle(vehicle: VehicleInsert): VehicleInsert {
+  return {
+    ...vehicle,
+    quality_tier: getQualityTier(vehicle.priority_score),
+    ai_summary: generateAISummary(vehicle),
+  };
+}
 
 // Rust belt states (from typical used car definitions)
 const RUST_BELT_STATES = [
@@ -46,8 +130,8 @@ function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Generate mock listings
-export const mockListings: VehicleInsert[] = [
+// Base vehicle listings (without curator fields)
+const baseListings: VehicleInsert[] = [
   // ============================================================================
   // EXCELLENT LISTINGS (12 listings) - Pass all filters
   // ============================================================================
@@ -1070,6 +1154,9 @@ export const mockListings: VehicleInsert[] = [
     reviewed_by_user: false,
   },
 ];
+
+// Enrich all listings with curator fields (quality_tier, ai_summary)
+export const mockListings: VehicleInsert[] = baseListings.map(enrichVehicle);
 
 // Export summary statistics
 export const mockDataStats = {

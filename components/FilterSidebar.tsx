@@ -34,7 +34,7 @@ export function FilterSidebar({
     vehicle: true,
     price: true,
     mileage: true,
-    status: true,
+    quality: true,
   });
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -50,7 +50,7 @@ export function FilterSidebar({
     filters.priceMax !== '' ||
     filters.mileageMax !== '' ||
     filters.mileageRating !== 'all' ||
-    filters.reviewStatus !== 'all';
+    filters.qualityTier !== 'all';
 
   return (
     <aside className={cn('w-64 bg-white border-r border-gray-200 overflow-y-auto', className)}>
@@ -217,25 +217,26 @@ export function FilterSidebar({
 
         <Separator className="my-6" />
 
-        {/* Status Section */}
+        {/* Quality Tier Section */}
         <FilterSection
-          title="Review Status"
-          expanded={expandedSections.status}
-          onToggle={() => toggleSection('status')}
+          title="Quality Tier"
+          expanded={expandedSections.quality}
+          onToggle={() => toggleSection('quality')}
         >
           <div>
-            <Label htmlFor="filter-review-status">Status</Label>
+            <Label htmlFor="filter-quality-tier">Tier</Label>
             <Select
-              value={filters.reviewStatus}
-              onValueChange={(value: any) => onFilterChange('reviewStatus', value)}
+              value={filters.qualityTier}
+              onValueChange={(value: any) => onFilterChange('qualityTier', value)}
             >
-              <SelectTrigger id="filter-review-status">
+              <SelectTrigger id="filter-quality-tier">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="reviewed">Reviewed</SelectItem>
-                <SelectItem value="not-reviewed">Not Reviewed</SelectItem>
+                <SelectItem value="all">All Tiers</SelectItem>
+                <SelectItem value="top_pick">🟩 Top Picks (80+)</SelectItem>
+                <SelectItem value="good_buy">🟨 Good Buys (65-79)</SelectItem>
+                <SelectItem value="caution">⚪ Caution (&lt;65)</SelectItem>
               </SelectContent>
             </Select>
           </div>
