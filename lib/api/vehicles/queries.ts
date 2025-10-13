@@ -82,6 +82,7 @@ function processVehicles(
   // Return result with metadata
   return {
     data: paginated.data as Vehicle[],
+    allFilteredVehicles: sorted as Vehicle[], // Include all filtered vehicles before pagination
     pagination: paginated.pagination,
     filters: {
       activeCount: FilterService.getActiveFilterCount(filterOptions),
