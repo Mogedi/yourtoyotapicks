@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { LayoutGrid, LayoutList } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { FilterBar, type FilterState } from '@/components/FilterBar';
 import { VehicleList } from '@/components/VehicleList';
 import { getListings, getMarketcheckListings } from '@/lib/supabase';
@@ -184,11 +187,27 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Browse and filter curated vehicle listings matching your preferences.
-        </p>
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Browse and filter curated vehicle listings matching your preferences.
+          </p>
+        </div>
+
+        {/* View Toggle */}
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="default">
+            <LayoutGrid className="h-4 w-4 mr-2" />
+            Card View
+          </Button>
+          <Link href="/dashboard/table">
+            <Button variant="outline" size="sm">
+              <LayoutList className="h-4 w-4 mr-2" />
+              Table View
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Filter Bar */}
