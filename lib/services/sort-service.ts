@@ -3,6 +3,7 @@ import type { Vehicle, ListingSummary } from '@/lib/types';
 
 export type SortField =
   | 'priority'
+  | 'quality_tier'
   | 'price'
   | 'mileage'
   | 'year'
@@ -33,7 +34,27 @@ export class SortService {
 
       switch (field) {
         case 'priority':
-          compareResult = b.priority_score - a.priority_score;
+          compareResult = a.priority_score - b.priority_score;
+          break;
+
+        case 'quality_tier':
+          // Calculate tier rank (1 = Top Pick, 2 = Good Buy, 3 = Caution)
+          const getTierRank = (score: number) => {
+            if (score >= 80) return 1; // Top Pick
+            if (score >= 65) return 2; // Good Buy
+            return 3; // Caution
+          };
+
+          const aTier = getTierRank(a.priority_score);
+          const bTier = getTierRank(b.priority_score);
+
+          // Sort by tier first (low number = high tier)
+          compareResult = aTier - bTier;
+
+          // If same tier, sort by priority_score as secondary sort
+          if (compareResult === 0) {
+            compareResult = b.priority_score - a.priority_score;
+          }
           break;
 
         case 'price':
@@ -64,7 +85,7 @@ export class SortService {
 
         default:
           // Default to priority
-          compareResult = b.priority_score - a.priority_score;
+          compareResult = a.priority_score - b.priority_score;
       }
 
       // Apply order
@@ -97,6 +118,7 @@ export class SortService {
   static getSortLabel(field: SortField): string {
     const labels: Record<SortField, string> = {
       priority: 'Priority Score',
+      quality_tier: 'Quality Tier',
       price: 'Price',
       mileage: 'Mileage',
       year: 'Year',
