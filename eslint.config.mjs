@@ -30,21 +30,24 @@ export default [
     // Custom rules
     {
         rules: {
+            // Strict rules (fail on these)
             "@typescript-eslint/no-unused-vars": ["error", {
                 argsIgnorePattern: "^_",
                 varsIgnorePattern: "^_",
             }],
+            "react-hooks/rules-of-hooks": "error",
+            "react-hooks/exhaustive-deps": "error", // Strict: Must fix missing deps
+            "prefer-const": "error",
+            "no-var": "error",
+
+            // Flexible rules (allow for development)
             "@typescript-eslint/no-explicit-any": "off", // Allow any for flexibility
             "@typescript-eslint/explicit-function-return-type": "off",
             "@typescript-eslint/explicit-module-boundary-types": "off",
             "@typescript-eslint/no-non-null-assertion": "warn",
             "react/prop-types": "off",
             "react/react-in-jsx-scope": "off",
-            "react-hooks/rules-of-hooks": "error",
-            "react-hooks/exhaustive-deps": "warn",
             "no-console": "off", // Allow console for development
-            "prefer-const": "error",
-            "no-var": "error",
         },
     }
 ];
