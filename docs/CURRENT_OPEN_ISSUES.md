@@ -100,7 +100,7 @@ export const autoDevSource: ListingSource = {
 
 ### 4. TypeScript Type Safety in Data Pipeline (RESOLVED)
 
-**Fixed**: Commit `[PENDING]` - "fix: improve type safety in data pipeline" (October 13, 2025)
+**Fixed**: Commit `58c783f` - "fix: improve type safety in data pipeline and fix ESLint errors" (October 13, 2025)
 
 **Issue**:
 
