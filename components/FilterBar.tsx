@@ -3,6 +3,7 @@
 import { Search, X, SlidersHorizontal } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -11,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { MileageRating } from '@/lib/types';
+import { FilterService, type FilterOptions } from '@/lib/services/filter-service';
 
 export interface FilterState {
   make: string;
@@ -38,14 +40,19 @@ export function FilterBar({
     onFilterChange({ ...filters, [key]: value });
   };
 
-  const hasActiveFilters =
-    filters.make !== 'all' ||
-    filters.model !== 'all' ||
-    filters.priceMin !== '' ||
-    filters.priceMax !== '' ||
-    filters.mileageRating !== 'all' ||
-    filters.reviewStatus !== 'all' ||
-    filters.search !== '';
+  // Convert FilterState to FilterOptions for FilterService
+  const filterOptions: FilterOptions = {
+    make: filters.make !== 'all' ? filters.make : undefined,
+    model: filters.model !== 'all' ? filters.model : undefined,
+    priceMin: filters.priceMin !== '' ? Number(filters.priceMin) : undefined,
+    priceMax: filters.priceMax !== '' ? Number(filters.priceMax) : undefined,
+    mileageRating: filters.mileageRating !== 'all' ? (filters.mileageRating as MileageRating) : undefined,
+    search: filters.search !== '' ? filters.search : undefined,
+  };
+
+  // Use FilterService to count active filters
+  const activeFilterCount = FilterService.getActiveFilterCount(filterOptions);
+  const hasActiveFilters = activeFilterCount > 0;
 
   return (
     <div className="space-y-4">
@@ -62,7 +69,14 @@ export function FilterBar({
 
       {/* Filter Controls */}
       <div className="flex items-center gap-2">
-        <SlidersHorizontal className="h-4 w-4 text-muted-foreground shrink-0" />
+        <div className="flex items-center gap-1.5 shrink-0">
+          <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+          {activeFilterCount > 0 && (
+            <Badge variant="secondary" className="h-5 min-w-5 px-1.5 text-xs">
+              {activeFilterCount}
+            </Badge>
+          )}
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 flex-1">
           {/* Make */}
           <Select

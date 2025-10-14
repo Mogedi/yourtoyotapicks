@@ -23,6 +23,8 @@ import {
 import { cn } from "@/lib/utils";
 import type { Vehicle, ListingSummary, MileageRating } from "@/lib/types";
 import { CarImage } from "@/components/CarImage";
+import { QualityTierBadge } from "@/components/QualityTierBadge";
+import { QUALITY_TIER } from "@/lib/constants";
 
 // Props interface for the VehicleCard component
 export interface VehicleCardProps {
@@ -82,7 +84,7 @@ const getMileageBadgeStyle = (
 
 // Helper function to check if priority score is high
 const isHighPriority = (score: number): boolean => {
-  return score >= 80; // Adjust threshold as needed
+  return score >= QUALITY_TIER.TOP_PICK.MIN_SCORE;
 };
 
 // Placeholder car image component (SVG)
@@ -222,6 +224,18 @@ export function VehicleCard({ vehicle, className }: VehicleCardProps) {
 
           {/* Badges Section */}
           <div className="flex flex-wrap gap-2">
+            {/* Quality Tier Badge */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <QualityTierBadge score={vehicle.priority_score} showLabel={true} size="sm" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Priority score based on multiple factors</p>
+              </TooltipContent>
+            </Tooltip>
+
             {/* Mileage Rating Badge */}
             {vehicle.mileage_rating && (
               <Tooltip>
