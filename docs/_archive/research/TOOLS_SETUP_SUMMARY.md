@@ -82,6 +82,7 @@ npm install -D \
 ```
 
 **What this installs**:
+
 - **Testing**: Jest, React Testing Library, jest-dom
 - **Formatting**: Prettier, ESLint integration
 - **Git Hooks**: Husky, lint-staged
@@ -136,6 +137,7 @@ npm run lint
 **Expected**: Some warnings about `console.log` statements and unused variables.
 
 **Manual fixes needed**:
+
 - Remove or replace `console.log` statements (use `console.warn` or `console.error` for important logs)
 - Remove unused imports
 - Fix any `@typescript-eslint/no-explicit-any` warnings
@@ -180,6 +182,7 @@ git commit -m "chore: remove test file"
 ```
 
 **Expected**:
+
 - Pre-commit hook runs lint-staged (formats and lints the file)
 - Commit-msg hook validates the commit message format
 - Commit succeeds if message follows conventional commit format
@@ -215,28 +218,33 @@ See the full test example in `docs/DEVELOPMENT_TOOLS_SETUP.md` under "Testing In
 Use this checklist to verify everything is set up correctly:
 
 ### Core Setup
+
 - [ ] All dependencies installed successfully (`npm install` completed)
 - [ ] Husky initialized (`.husky/` directory exists)
 - [ ] Pre-commit hook exists (`.husky/pre-commit`)
 - [ ] Commit-msg hook exists (`.husky/commit-msg`)
 
 ### Formatting & Linting
+
 - [ ] Prettier formats code (`npm run format` works)
 - [ ] ESLint runs without errors (`npm run lint` passes)
 - [ ] Format checking passes (`npm run format:check` succeeds)
 - [ ] Type checking passes (`npm run type-check` succeeds)
 
 ### Testing
+
 - [ ] Jest runs without errors (`npm run test` works)
 - [ ] Test coverage generates (`npm run test:coverage` works)
 - [ ] E2E tests still pass (`npm run test:e2e` succeeds)
 
 ### Git Hooks
+
 - [ ] Pre-commit hook runs on `git commit`
 - [ ] Commit-msg validation works
 - [ ] Conventional commits are enforced
 
 ### CI/CD
+
 - [ ] GitHub Actions workflow file exists (`.github/workflows/ci.yml`)
 - [ ] Dependabot config exists (`.github/dependabot.yml`)
 - [ ] CI will run on next push to GitHub
@@ -250,6 +258,7 @@ Use this checklist to verify everything is set up correctly:
 **Symptoms**: Commits succeed without running lint-staged
 
 **Solution**:
+
 ```bash
 # Reinstall husky
 rm -rf .husky
@@ -263,6 +272,7 @@ chmod +x .husky/pre-commit
 **Symptoms**: `Cannot find module '@/...'` errors in tests
 
 **Solution**: Verify `jest.config.js` has the correct `moduleNameMapper`:
+
 ```javascript
 moduleNameMapper: {
   '^@/(.*)$': '<rootDir>/$1',
@@ -274,6 +284,7 @@ moduleNameMapper: {
 **Symptoms**: Running `npm run lint` after `npm run format` shows errors
 
 **Solution**: Install `eslint-config-prettier`:
+
 ```bash
 npm install -D eslint-config-prettier
 ```
@@ -285,6 +296,7 @@ This is already included in the installation command above.
 **Symptoms**: `Cannot find name 'jest'` or `'describe' is not defined`
 
 **Solution**: Ensure `@types/jest` is installed and `jest.setup.js` imports `@testing-library/jest-dom`:
+
 ```bash
 npm install -D @types/jest
 ```
@@ -294,6 +306,7 @@ npm install -D @types/jest
 **Symptoms**: GitHub Actions fails because Jest tests don't exist yet
 
 **Solution**: Either:
+
 1. Write at least one test before pushing
 2. Or temporarily modify `.github/workflows/ci.yml` to skip the test job until tests are written
 
@@ -410,11 +423,13 @@ npm run type-check
 ## Resources & Documentation
 
 ### Main Guides
+
 - **Setup Guide**: `docs/DEVELOPMENT_TOOLS_SETUP.md` - Complete tool setup with examples
 - **Code Review**: `docs/CODE_REVIEW_REFACTORING_SUGGESTIONS.md` - Refactoring roadmap
 - **Testing Guide**: See DEVELOPMENT_TOOLS_SETUP.md sections on Jest and React Testing Library
 
 ### External Documentation
+
 - **Jest**: https://jestjs.io/docs/getting-started
 - **React Testing Library**: https://testing-library.com/docs/react-testing-library/intro/
 - **ESLint**: https://eslint.org/docs/latest/
@@ -423,7 +438,9 @@ npm run type-check
 - **Conventional Commits**: https://www.conventionalcommits.org/
 
 ### Tool-Specific Configs
+
 All configuration files include comments explaining what each option does. For questions:
+
 1. Check the comments in the config file
 2. Refer to DEVELOPMENT_TOOLS_SETUP.md
 3. Check the official documentation for that tool
@@ -433,6 +450,7 @@ All configuration files include comments explaining what each option does. For q
 ## Summary
 
 **What You Have Now**:
+
 - ✅ Professional-grade linting and formatting setup
 - ✅ Testing infrastructure ready to use (Jest + RTL)
 - ✅ Pre-commit hooks configured
@@ -442,6 +460,7 @@ All configuration files include comments explaining what each option does. For q
 - ✅ Comprehensive documentation
 
 **What You Need To Do**:
+
 1. Install dependencies (`npm install -D ...`)
 2. Initialize Husky (`npx husky init`)
 3. Format and lint codebase
@@ -449,12 +468,14 @@ All configuration files include comments explaining what each option does. For q
 5. Push to GitHub (CI will run automatically)
 
 **Time Investment**:
+
 - Initial setup: ~30 minutes
 - First tests: ~1 hour
 - Complete service tests: ~4-6 hours
 - **Total to production-ready testing**: ~6-8 hours
 
 **The Payoff**:
+
 - Catch bugs before deployment
 - Refactor with confidence
 - Consistent code quality

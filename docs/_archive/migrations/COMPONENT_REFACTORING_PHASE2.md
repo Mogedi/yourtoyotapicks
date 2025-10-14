@@ -24,6 +24,7 @@ This document summarizes Phase 2 of component-level refactoring, focusing on Fil
 **File**: `components/FilterSidebar.tsx`
 
 #### Issues Found:
+
 1. **Duplicate filter counting logic** (lines 53-62) - Manually checking each filter
 2. **Hardcoded quality tier labels** (lines 255-257) - "80+", "65-79", "<65"
 3. **Hardcoded placeholder values** - "10000", "20000", "100000"
@@ -31,6 +32,7 @@ This document summarizes Phase 2 of component-level refactoring, focusing on Fil
 #### Changes Made:
 
 ##### a) Replaced manual filter counting with FilterService
+
 ```typescript
 // Before:
 const hasActiveFilters =
@@ -45,7 +47,10 @@ const hasActiveFilters =
   filters.qualityTier !== 'all';
 
 // After:
-import { FilterService, type FilterOptions } from '@/lib/services/filter-service';
+import {
+  FilterService,
+  type FilterOptions,
+} from '@/lib/services/filter-service';
 import { QUALITY_TIER, SEARCH_CRITERIA } from '@/lib/constants';
 
 // Convert FilterState to FilterOptions
@@ -56,8 +61,10 @@ const filterOptions: FilterOptions = {
   yearMax: filters.yearMax !== '' ? parseInt(filters.yearMax) : undefined,
   priceMin: filters.priceMin !== '' ? parseFloat(filters.priceMin) : undefined,
   priceMax: filters.priceMax !== '' ? parseFloat(filters.priceMax) : undefined,
-  mileageMax: filters.mileageMax !== '' ? parseInt(filters.mileageMax) : undefined,
-  mileageRating: filters.mileageRating !== 'all' ? filters.mileageRating : undefined,
+  mileageMax:
+    filters.mileageMax !== '' ? parseInt(filters.mileageMax) : undefined,
+  mileageRating:
+    filters.mileageRating !== 'all' ? filters.mileageRating : undefined,
   qualityTier: filters.qualityTier !== 'all' ? filters.qualityTier : undefined,
 };
 
@@ -66,6 +73,7 @@ const hasActiveFilters = FilterService.getActiveFilterCount(filterOptions) > 0;
 ```
 
 ##### b) Replaced hardcoded placeholders with constants
+
 ```typescript
 // Price Min - Before:
 placeholder="10000"
@@ -87,6 +95,7 @@ placeholder={String(SEARCH_CRITERIA.MILEAGE.MAX)}
 ```
 
 ##### c) Replaced hardcoded quality tier labels with constants
+
 ```typescript
 // Before:
 <SelectContent>
@@ -112,6 +121,7 @@ placeholder={String(SEARCH_CRITERIA.MILEAGE.MAX)}
 ```
 
 #### Benefits:
+
 - **Single source of truth**: Uses FilterService (98% test coverage) for counting
 - **No more magic numbers**: All values come from constants
 - **Maintainability**: Changing thresholds updates UI automatically
@@ -125,6 +135,7 @@ placeholder={String(SEARCH_CRITERIA.MILEAGE.MAX)}
 **File**: `app/dashboard/page.tsx`
 
 #### Issues Found:
+
 1. **Magic numbers** (lines 91, 94, 97) - Hardcoded `80` and `65` for quality tier thresholds
 2. **Inline quality tier filtering** - Manual comparison instead of using helper function
 3. **Hardcoded labels** - "Top Picks", "Good Buys", "Caution"
@@ -132,43 +143,49 @@ placeholder={String(SEARCH_CRITERIA.MILEAGE.MAX)}
 #### Changes Made:
 
 ##### Replaced magic numbers with getQualityTier helper
+
 ```typescript
 // Before:
-{data?.allFilteredVehicles &&
-  (() => {
-    const allVehicles = data.allFilteredVehicles;
-    const topPicks = allVehicles.filter(
-      (v: any) => v.priority_score >= 80
-    ).length;
-    const goodBuys = allVehicles.filter(
-      (v: any) => v.priority_score >= 65 && v.priority_score < 80
-    ).length;
-    const caution = allVehicles.filter(
-      (v: any) => v.priority_score < 65
-    ).length;
-    return ` (${topPicks} Top Picks, ${goodBuys} Good Buys, ${caution} Caution)`;
-  })()}
+{
+  data?.allFilteredVehicles &&
+    (() => {
+      const allVehicles = data.allFilteredVehicles;
+      const topPicks = allVehicles.filter(
+        (v: any) => v.priority_score >= 80
+      ).length;
+      const goodBuys = allVehicles.filter(
+        (v: any) => v.priority_score >= 65 && v.priority_score < 80
+      ).length;
+      const caution = allVehicles.filter(
+        (v: any) => v.priority_score < 65
+      ).length;
+      return ` (${topPicks} Top Picks, ${goodBuys} Good Buys, ${caution} Caution)`;
+    })();
+}
 
 // After:
 import { getQualityTier, QUALITY_TIER } from '@/lib/constants';
 
-{data?.allFilteredVehicles &&
-  (() => {
-    const allVehicles = data.allFilteredVehicles;
-    const topPicks = allVehicles.filter(
-      (v: any) => getQualityTier(v.priority_score) === 'top_pick'
-    ).length;
-    const goodBuys = allVehicles.filter(
-      (v: any) => getQualityTier(v.priority_score) === 'good_buy'
-    ).length;
-    const caution = allVehicles.filter(
-      (v: any) => getQualityTier(v.priority_score) === 'caution'
-    ).length;
-    return ` (${topPicks} ${QUALITY_TIER.TOP_PICK.LABEL}s, ${goodBuys} ${QUALITY_TIER.GOOD_BUY.LABEL}s, ${caution} ${QUALITY_TIER.CAUTION.LABEL})`;
-  })()}
+{
+  data?.allFilteredVehicles &&
+    (() => {
+      const allVehicles = data.allFilteredVehicles;
+      const topPicks = allVehicles.filter(
+        (v: any) => getQualityTier(v.priority_score) === 'top_pick'
+      ).length;
+      const goodBuys = allVehicles.filter(
+        (v: any) => getQualityTier(v.priority_score) === 'good_buy'
+      ).length;
+      const caution = allVehicles.filter(
+        (v: any) => getQualityTier(v.priority_score) === 'caution'
+      ).length;
+      return ` (${topPicks} ${QUALITY_TIER.TOP_PICK.LABEL}s, ${goodBuys} ${QUALITY_TIER.GOOD_BUY.LABEL}s, ${caution} ${QUALITY_TIER.CAUTION.LABEL})`;
+    })();
+}
 ```
 
 #### Benefits:
+
 - **No more magic numbers**: Uses `getQualityTier()` helper function
 - **Consistent logic**: Same tier calculation as everywhere else
 - **Dynamic labels**: Labels come from constants, not hardcoded
@@ -180,6 +197,7 @@ import { getQualityTier, QUALITY_TIER } from '@/lib/constants';
 ## Test Results
 
 ### Unit Tests ✅
+
 ```
 Test Suites: 9 passed, 9 total
 Tests:       219 passed, 219 total
@@ -189,11 +207,13 @@ Time:        2.505 s
 All service layer and hook tests continue to pass - no regressions.
 
 ### E2E Tests ✅
+
 ```
 10 passed (19.7s)
 ```
 
 All E2E tests passing, validating:
+
 - ✅ FilterSidebar displays correct placeholders
 - ✅ Quality tier labels show correctly
 - ✅ Active filter detection still works
@@ -206,18 +226,19 @@ All E2E tests passing, validating:
 
 ### Metrics
 
-| Component | Metric | Before | After | Change |
-|-----------|--------|--------|-------|--------|
-| **FilterSidebar** | Magic numbers | 3 | 0 | -100% |
-| **FilterSidebar** | Duplicated logic lines | ~10 | 0 | -100% |
-| **FilterSidebar** | Hardcoded labels | 3 | 0 | -100% |
-| **Dashboard page** | Magic numbers | 2 | 0 | -100% |
-| **Dashboard page** | Hardcoded labels | 3 | 0 | -100% |
-| **Overall** | Magic numbers | 5 | 0 | -100% |
+| Component          | Metric                 | Before | After | Change |
+| ------------------ | ---------------------- | ------ | ----- | ------ |
+| **FilterSidebar**  | Magic numbers          | 3      | 0     | -100%  |
+| **FilterSidebar**  | Duplicated logic lines | ~10    | 0     | -100%  |
+| **FilterSidebar**  | Hardcoded labels       | 3      | 0     | -100%  |
+| **Dashboard page** | Magic numbers          | 2      | 0     | -100%  |
+| **Dashboard page** | Hardcoded labels       | 3      | 0     | -100%  |
+| **Overall**        | Magic numbers          | 5      | 0     | -100%  |
 
 ### Single Source of Truth Progress
 
 **Before Phase 2**:
+
 - VehicleCard: Uses constants ✅ (from Phase 1)
 - FilterBar: Uses FilterService ✅ (from Phase 1)
 - QualityTierBadge: Uses constants ✅ (already correct)
@@ -225,6 +246,7 @@ All E2E tests passing, validating:
 - Dashboard page: Magic numbers ❌
 
 **After Phase 2**:
+
 - VehicleCard: Uses constants ✅
 - FilterBar: Uses FilterService ✅
 - QualityTierBadge: Uses constants ✅
@@ -238,7 +260,9 @@ All E2E tests passing, validating:
 ## Files Modified
 
 ### 1. `components/FilterSidebar.tsx`
+
 **Changes**: 4 major refactorings
+
 - Added FilterService import and filter counting logic (+17 lines)
 - Replaced 3 hardcoded placeholders with constants (3 changes)
 - Replaced 3 hardcoded quality tier labels with constants (+3 lines)
@@ -247,7 +271,9 @@ All E2E tests passing, validating:
 **Net**: +11 lines, but much better organized
 
 ### 2. `app/dashboard/page.tsx`
+
 **Changes**: 2 major refactorings
+
 - Added imports for getQualityTier and QUALITY_TIER (+1 line)
 - Replaced magic number comparisons with getQualityTier() calls (3 filters)
 - Replaced hardcoded labels with QUALITY_TIER constants (3 labels)
@@ -261,6 +287,7 @@ All E2E tests passing, validating:
 ### 1. Consistent Quality Tier Labels
 
 **Impact**: All quality tier labels now match exactly across:
+
 - VehicleCard badges
 - FilterSidebar options
 - Dashboard statistics
@@ -283,15 +310,17 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 ## Risk Assessment
 
 ### Changes Made
-| Change | Risk Level | Mitigation | Status |
-|--------|-----------|------------|--------|
-| FilterSidebar - Use FilterService | Very Low | 98% test coverage | ✅ Verified |
-| FilterSidebar - Replace placeholders | Very Low | Constants tested indirectly | ✅ Verified |
-| FilterSidebar - Replace tier labels | Very Low | Constants tested | ✅ Verified |
-| Dashboard - Use getQualityTier | Very Low | Function tested in service layer | ✅ Verified |
-| Dashboard - Replace labels | Very Low | Constants tested | ✅ Verified |
+
+| Change                               | Risk Level | Mitigation                       | Status      |
+| ------------------------------------ | ---------- | -------------------------------- | ----------- |
+| FilterSidebar - Use FilterService    | Very Low   | 98% test coverage                | ✅ Verified |
+| FilterSidebar - Replace placeholders | Very Low   | Constants tested indirectly      | ✅ Verified |
+| FilterSidebar - Replace tier labels  | Very Low   | Constants tested                 | ✅ Verified |
+| Dashboard - Use getQualityTier       | Very Low   | Function tested in service layer | ✅ Verified |
+| Dashboard - Replace labels           | Very Low   | Constants tested                 | ✅ Verified |
 
 ### No Breaking Changes
+
 - ✅ All public APIs unchanged
 - ✅ All props interfaces unchanged
 - ✅ All user interactions work identically
@@ -304,6 +333,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 ### Before Refactoring (Phases 1 & 2)
 
 **Magic Numbers Found**:
+
 1. VehicleCard.tsx: `score >= 80` (line 85)
 2. QualityTierBadge.tsx: `score >= 80`, `score >= 65` (lines 23-24)
 3. FilterSidebar.tsx: "80+", "65-79", "<65" (lines 255-257)
@@ -317,6 +347,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 **Magic Numbers**: 0 ✅
 
 **All values come from**:
+
 - `QUALITY_TIER.TOP_PICK.MIN_SCORE` (80)
 - `QUALITY_TIER.GOOD_BUY.MIN_SCORE` (65)
 - `QUALITY_TIER.GOOD_BUY.MAX_SCORE` (79)
@@ -363,6 +394,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 ## Next Steps
 
 ### Completed ✅
+
 - [x] FilterSidebar refactoring
 - [x] Dashboard page refactoring
 - [x] All tests passing
@@ -371,6 +403,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 ### Potential Future Refactoring (Phase 3)
 
 #### High Priority
+
 1. **Extract dashboard statistics component**
    - Current: Inline function with quality tier filtering
    - Goal: `<VehicleStatsSummary>` component
@@ -382,6 +415,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
    - Extract review section
 
 #### Medium Priority
+
 3. **Create filter input sub-components**
    - `PriceRangeInput` component
    - `YearRangeInput` component
@@ -393,6 +427,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
    - Could be `<MileageBadge rating={} />` component
 
 #### Low Priority
+
 5. **Add UI constants file**
    - Extract colors, sizes, spacing
    - Currently mixed with data constants
@@ -412,18 +447,21 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 ## Refactoring Checklist (Phase 2)
 
 ### Before Starting ✅
+
 - [x] Phase 1 complete
 - [x] Service layer 98%+ coverage
 - [x] E2E tests passing
 - [x] Git backup created
 
 ### During Refactoring ✅
+
 - [x] Made small, focused changes
 - [x] Tested after each change
 - [x] Kept all tests passing
 - [x] No breaking API changes
 
 ### After Refactoring ✅
+
 - [x] All unit tests passing (219/219)
 - [x] All E2E tests passing (10/10)
 - [x] No TypeScript errors
@@ -434,14 +472,14 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 
 ## Comparison: Phase 1 vs Phase 2
 
-| Metric | Phase 1 | Phase 2 | Total |
-|--------|---------|---------|-------|
-| **Components refactored** | 2 | 2 | 4 |
-| **Magic numbers removed** | 1 | 11+ | 12+ |
+| Metric                      | Phase 1  | Phase 2   | Total     |
+| --------------------------- | -------- | --------- | --------- |
+| **Components refactored**   | 2        | 2         | 4         |
+| **Magic numbers removed**   | 1        | 11+       | 12+       |
 | **Duplicate logic removed** | ~7 lines | ~10 lines | ~17 lines |
-| **Time taken** | ~45 min | ~30 min | ~75 min |
-| **Test failures** | 0 | 0 | 0 |
-| **Confidence level** | High | Very High | Very High |
+| **Time taken**              | ~45 min  | ~30 min   | ~75 min   |
+| **Test failures**           | 0        | 0         | 0         |
+| **Confidence level**        | High     | Very High | Very High |
 
 ---
 
@@ -450,6 +488,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 ✅ **Success**: Phase 2 refactoring complete with zero test failures
 
 **Key Achievements**:
+
 - Eliminated all remaining magic numbers from components
 - Centralized all filter counting logic in FilterService
 - Unified all quality tier labels across the app
@@ -457,6 +496,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 - Completed in ~30 minutes
 
 **Overall Progress** (Phases 1 + 2):
+
 - 4 components refactored (VehicleCard, FilterBar, FilterSidebar, Dashboard)
 - 12+ magic numbers eliminated
 - 100% consistency in quality tier logic
@@ -464,6 +504,7 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 - Total time: ~75 minutes
 
 **Confidence Level**: ✅ **Very High**
+
 - Service layer has 98%+ coverage
 - All components use tested code paths
 - E2E tests validate UI behavior
@@ -473,4 +514,4 @@ If search criteria change (e.g., min price becomes $12,000), placeholders update
 
 ---
 
-*This refactoring demonstrates the compound value of well-tested services. Phase 2 was faster than Phase 1 because the foundation (FilterService, constants) was already solid and tested.*
+_This refactoring demonstrates the compound value of well-tested services. Phase 2 was faster than Phase 1 because the foundation (FilterService, constants) was already solid and tested._

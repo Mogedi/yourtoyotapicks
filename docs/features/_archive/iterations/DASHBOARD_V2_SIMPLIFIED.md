@@ -1,4 +1,5 @@
 # Dashboard V2: Table View Implementation Plan
+
 **Single Claude Execution - Simplified**
 
 ## Document Status
@@ -8,6 +9,7 @@
 **Changes**: Updated with codebase alignment feedback
 
 ### Key Updates from Review
+
 - ✅ Verified existing `lib/types.ts` - will extend instead of creating new files
 - ✅ Verified existing `lib/utils.ts` - will add new utility files alongside
 - ✅ Verified shadcn/ui components installed (Button, Input, Select, Checkbox, Label, etc.)
@@ -25,6 +27,7 @@
 This is a streamlined implementation plan for Dashboard V2, optimized for a single Claude session executing sequentially. This modular, maintainable table-based view will eventually replace the current card-based dashboard.
 
 **Key Features:**
+
 - 🧪 **Test-Driven**: Write tests alongside implementation
 - 🎯 **Incremental**: Build and verify piece by piece
 - 📦 **Modular**: Small, focused components
@@ -40,6 +43,7 @@ This is a streamlined implementation plan for Dashboard V2, optimized for a sing
 ### Visual Design Goals
 
 This implementation follows modern dashboard UI patterns with:
+
 - **Clean, professional aesthetic** with subtle shadows and rounded corners
 - **Card-based layout** for visual hierarchy
 - **Smooth micro-interactions** (hover effects, transitions, animations)
@@ -50,6 +54,7 @@ This implementation follows modern dashboard UI patterns with:
 ### Layout Structure
 
 **Top Stats Section (NEW):**
+
 - Three stat cards with sparkline charts:
   - Total Vehicles (with trend indicator)
   - Total Inventory Value (revenue sparkline)
@@ -58,6 +63,7 @@ This implementation follows modern dashboard UI patterns with:
 - Responsive grid layout
 
 **Search & Actions Bar:**
+
 - Brand/Model search input with icon (left)
 - Zip Code input with radius selector (right)
 - View toggle buttons (table/card)
@@ -65,6 +71,7 @@ This implementation follows modern dashboard UI patterns with:
 - Filters toggle button (mobile)
 
 **Left Sidebar:**
+
 - Collapsible filter sections with dividers
 - Price Range filter [min] - [max] with $ prefix
 - Mileage Range filter [min] - [max]
@@ -77,6 +84,7 @@ This implementation follows modern dashboard UI patterns with:
 - Smooth expand/collapse animations
 
 **Main Content:**
+
 - Card-wrapped table with shadow and rounded corners
 - Selectable rows with checkboxes
 - Data columns:
@@ -98,12 +106,14 @@ This implementation follows modern dashboard UI patterns with:
 - Empty state with illustration
 
 **Bulk Actions Bar (NEW):**
+
 - Floating bar appears when rows selected
 - Shows count: "2 Selected"
 - Actions: Copy VINs, Mark Reviewed, Export, Delete
 - Smooth slide-up animation
 
 **Pagination:**
+
 - Previous/Next buttons
 - Page number indicators (current page highlighted)
 - Items per page selector (25, 50, 100)
@@ -191,13 +201,13 @@ lib/
 ```typescript
 // Professional, modern color scheme
 const colors = {
-  primary: '#3B82F6',      // Blue - Primary actions
-  success: '#10B981',      // Green - Success states, positive trends
-  warning: '#F59E0B',      // Orange - Warnings, moderate states
-  danger: '#EF4444',       // Red - Errors, critical states
-  muted: '#6B7280',        // Gray - Secondary text
-  border: '#E5E7EB',       // Light gray - Borders
-  background: '#F9FAFB',   // Very light gray - Background
+  primary: '#3B82F6', // Blue - Primary actions
+  success: '#10B981', // Green - Success states, positive trends
+  warning: '#F59E0B', // Orange - Warnings, moderate states
+  danger: '#EF4444', // Red - Errors, critical states
+  muted: '#6B7280', // Gray - Secondary text
+  border: '#E5E7EB', // Light gray - Borders
+  background: '#F9FAFB', // Very light gray - Background
 };
 ```
 
@@ -205,10 +215,10 @@ const colors = {
 
 ```typescript
 const shadows = {
-  sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',           // Cards, buttons
-  DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1)',       // Elevated elements
-  md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',         // Dropdowns, modals
-  lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)',       // Popovers
+  sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)', // Cards, buttons
+  DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1)', // Elevated elements
+  md: '0 4px 6px -1px rgb(0 0 0 / 0.1)', // Dropdowns, modals
+  lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)', // Popovers
 };
 ```
 
@@ -216,11 +226,11 @@ const shadows = {
 
 ```typescript
 const borderRadius = {
-  sm: '0.25rem',    // 4px - Small elements
+  sm: '0.25rem', // 4px - Small elements
   DEFAULT: '0.5rem', // 8px - Buttons, inputs
-  md: '0.75rem',     // 12px - Cards
-  lg: '1rem',        // 16px - Large cards
-  full: '9999px',    // Circular elements
+  md: '0.75rem', // 12px - Cards
+  lg: '1rem', // 16px - Large cards
+  full: '9999px', // Circular elements
 };
 ```
 
@@ -229,21 +239,21 @@ const borderRadius = {
 ```typescript
 const typography = {
   heading: {
-    h1: 'text-3xl font-bold',        // 30px
-    h2: 'text-2xl font-semibold',    // 24px
-    h3: 'text-xl font-semibold',     // 20px
-    h4: 'text-lg font-medium',       // 18px
+    h1: 'text-3xl font-bold', // 30px
+    h2: 'text-2xl font-semibold', // 24px
+    h3: 'text-xl font-semibold', // 20px
+    h4: 'text-lg font-medium', // 18px
   },
   body: {
-    large: 'text-base',              // 16px
-    DEFAULT: 'text-sm',              // 14px
-    small: 'text-xs',                // 12px
+    large: 'text-base', // 16px
+    DEFAULT: 'text-sm', // 14px
+    small: 'text-xs', // 12px
   },
   weight: {
-    normal: 'font-normal',           // 400
-    medium: 'font-medium',           // 500
-    semibold: 'font-semibold',       // 600
-    bold: 'font-bold',               // 700
+    normal: 'font-normal', // 400
+    medium: 'font-medium', // 500
+    semibold: 'font-semibold', // 600
+    bold: 'font-bold', // 700
   },
 };
 ```
@@ -252,12 +262,12 @@ const typography = {
 
 ```typescript
 const spacing = {
-  xs: '0.5rem',    // 8px
-  sm: '0.75rem',   // 12px
-  md: '1rem',      // 16px
-  lg: '1.5rem',    // 24px
-  xl: '2rem',      // 32px
-  '2xl': '3rem',   // 48px
+  xs: '0.5rem', // 8px
+  sm: '0.75rem', // 12px
+  md: '1rem', // 16px
+  lg: '1.5rem', // 24px
+  xl: '2rem', // 32px
+  '2xl': '3rem', // 48px
 };
 ```
 
@@ -280,18 +290,22 @@ const transitions = {
 **Before starting, verify:**
 
 1. **Dev environment works:**
+
    ```bash
    npm run dev  # Should start without errors
    ```
 
 2. **Test infrastructure exists:**
+
    ```bash
    npm run test  # Should run (may have 0 tests)
    ```
+
    - If missing, check package.json for test script
    - Look for jest.config.js or vitest.config.ts
 
 3. **Current state:**
+
    ```bash
    git status
    git branch  # Consider: git checkout -b feature/dashboard-v2
@@ -304,6 +318,7 @@ const transitions = {
    ```
 
 **Context files to read:**
+
 - ✅ `lib/supabase.ts` - Understand Supabase setup
 - ✅ `lib/mock-data.ts` - Understand mock data structure
 - ✅ `lib/types.ts` - Review existing Vehicle type (comprehensive types already exist)
@@ -311,6 +326,7 @@ const transitions = {
 - ✅ `CLAUDE.md` - Project architecture overview
 
 **Existing UI Components (shadcn/ui already installed):**
+
 - ✅ Button, Card, Badge, Input, Select, Dropdown, Checkbox, Label
 - ✅ Avatar, Separator, Tooltip, Skeleton, Tabs, Accordion, Textarea
 
@@ -333,6 +349,7 @@ const transitions = {
 #### 1.0 Create Directory Structure
 
 Before implementing, create necessary directories:
+
 ```bash
 # Note: lib/types.ts and lib/utils.ts already exist
 mkdir -p lib/utils                    # For new utility files
@@ -350,6 +367,7 @@ mkdir -p tests/e2e/flows
 **Note**: `lib/types.ts` already exists with comprehensive Vehicle types. We'll add new filter/sort types to it.
 
 Update `lib/types.ts` by adding these exports at the end:
+
 ```typescript
 // ============================================================================
 // DASHBOARD V2 FILTER TYPES
@@ -421,6 +439,7 @@ export interface VehicleQueryResult {
 **Note**: `lib/utils.ts` already exists but only has the `cn()` function. We'll create new utility files.
 
 Create `lib/utils/format.ts`:
+
 ```typescript
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -441,10 +460,13 @@ export function formatMileage(miles: number): string {
 ```
 
 Create `lib/utils/vehicle-helpers.ts`:
+
 ```typescript
 import type { Vehicle, ListingSummary } from '@/lib/types';
 
-export function getVehicleDisplayName(vehicle: Vehicle | ListingSummary): string {
+export function getVehicleDisplayName(
+  vehicle: Vehicle | ListingSummary
+): string {
   return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
 }
 
@@ -464,6 +486,7 @@ export function getScoreBadgeVariant(
 ```
 
 Create `lib/utils/design-tokens.ts`:
+
 ```typescript
 /**
  * Design system tokens for consistent styling
@@ -507,11 +530,11 @@ export const designTokens = {
 // Helper function to get status color
 export function getStatusColor(status: string): string {
   const statusMap: Record<string, string> = {
-    'in_stock': designTokens.colors.success,
-    'out_of_stock': designTokens.colors.danger,
-    'restock': designTokens.colors.warning,
-    'available': designTokens.colors.success,
-    'sold': designTokens.colors.muted,
+    in_stock: designTokens.colors.success,
+    out_of_stock: designTokens.colors.danger,
+    restock: designTokens.colors.warning,
+    available: designTokens.colors.success,
+    sold: designTokens.colors.muted,
   };
 
   return statusMap[status.toLowerCase()] || designTokens.colors.muted;
@@ -526,6 +549,7 @@ export function getTrendColor(value: number): string {
 ```
 
 Create `lib/utils/url-helpers.ts`:
+
 ```typescript
 import type { VehicleFilters, SortConfig, PaginationConfig } from '@/lib/types';
 
@@ -572,7 +596,9 @@ export function filtersToQueryParams(filters: VehicleFilters): URLSearchParams {
   return params;
 }
 
-export function queryParamsToFilters(params: URLSearchParams): Partial<VehicleFilters> {
+export function queryParamsToFilters(
+  params: URLSearchParams
+): Partial<VehicleFilters> {
   const filters: Partial<VehicleFilters> = {};
 
   const minPrice = params.get('minPrice');
@@ -635,6 +661,7 @@ export function queryParamsToFilters(params: URLSearchParams): Partial<VehicleFi
 #### 1.3 Service Layer
 
 Create `lib/services/filter-service.ts`:
+
 ```typescript
 import type { Vehicle, VehicleFilters } from '@/lib/types';
 
@@ -644,40 +671,47 @@ export class FilterService {
 
     if (filters.priceRange) {
       filtered = filtered.filter(
-        v => v.price >= filters.priceRange!.min && v.price <= filters.priceRange!.max
+        (v) =>
+          v.price >= filters.priceRange!.min &&
+          v.price <= filters.priceRange!.max
       );
     }
 
     if (filters.mileageRange) {
       filtered = filtered.filter(
-        v => v.mileage >= filters.mileageRange!.min && v.mileage <= filters.mileageRange!.max
+        (v) =>
+          v.mileage >= filters.mileageRange!.min &&
+          v.mileage <= filters.mileageRange!.max
       );
     }
 
     if (filters.yearRange) {
       filtered = filtered.filter(
-        v => v.year >= filters.yearRange!.min && v.year <= filters.yearRange!.max
+        (v) =>
+          v.year >= filters.yearRange!.min && v.year <= filters.yearRange!.max
       );
     }
 
     if (filters.scoreRange) {
       filtered = filtered.filter(
-        v => v.priority_score >= filters.scoreRange!.min && v.priority_score <= filters.scoreRange!.max
+        (v) =>
+          v.priority_score >= filters.scoreRange!.min &&
+          v.priority_score <= filters.scoreRange!.max
       );
     }
 
     if (filters.makes.length > 0) {
-      filtered = filtered.filter(v => filters.makes.includes(v.make));
+      filtered = filtered.filter((v) => filters.makes.includes(v.make));
     }
 
     if (filters.models.length > 0) {
-      filtered = filtered.filter(v => filters.models.includes(v.model));
+      filtered = filtered.filter((v) => filters.models.includes(v.model));
     }
 
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
       filtered = filtered.filter(
-        v =>
+        (v) =>
           v.make.toLowerCase().includes(query) ||
           v.model.toLowerCase().includes(query) ||
           v.vin.toLowerCase().includes(query)
@@ -703,6 +737,7 @@ export class FilterService {
 ```
 
 Create `lib/services/sort-service.ts`:
+
 ```typescript
 import type { Vehicle, SortConfig } from '@/lib/types';
 
@@ -734,9 +769,14 @@ export class SortService {
 #### 1.4 Query Builder
 
 Create `lib/api/vehicles/queries.ts`:
+
 ```typescript
 import { getMarketcheckListings } from '@/lib/supabase';
-import type { VehicleQueryOptions, VehicleQueryResult, Vehicle } from '@/lib/types';
+import type {
+  VehicleQueryOptions,
+  VehicleQueryResult,
+  Vehicle,
+} from '@/lib/types';
 import { mockListings } from '@/lib/mock-data';
 import { FilterService } from '@/lib/services/filter-service';
 import { SortService } from '@/lib/services/sort-service';
@@ -796,6 +836,7 @@ function processVehicles(
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - `npm run dev` (starts without errors)
 
@@ -810,6 +851,7 @@ function processVehicles(
 #### 2.1 Data Fetching Hook
 
 Create `lib/hooks/useVehicles.ts`:
+
 ```typescript
 'use client';
 
@@ -876,6 +918,7 @@ export function useVehicles(options: VehicleQueryOptions) {
 #### 2.2 Filter Hook
 
 Create `lib/hooks/useVehicleFilters.ts`:
+
 ```typescript
 'use client';
 
@@ -883,18 +926,20 @@ import { useState, useCallback } from 'react';
 import type { VehicleFilters } from '@/lib/types';
 import { DEFAULT_FILTERS } from '@/lib/types';
 
-export function useVehicleFilters(initialFilters: VehicleFilters = DEFAULT_FILTERS) {
+export function useVehicleFilters(
+  initialFilters: VehicleFilters = DEFAULT_FILTERS
+) {
   const [filters, setFilters] = useState<VehicleFilters>(initialFilters);
 
   const updateFilter = useCallback(
     <K extends keyof VehicleFilters>(key: K, value: VehicleFilters[K]) => {
-      setFilters(prev => ({ ...prev, [key]: value }));
+      setFilters((prev) => ({ ...prev, [key]: value }));
     },
     []
   );
 
   const updateFilters = useCallback((updates: Partial<VehicleFilters>) => {
-    setFilters(prev => ({ ...prev, ...updates }));
+    setFilters((prev) => ({ ...prev, ...updates }));
   }, []);
 
   const clearFilters = useCallback(() => {
@@ -914,6 +959,7 @@ export function useVehicleFilters(initialFilters: VehicleFilters = DEFAULT_FILTE
 #### 2.3 Sort Hook
 
 Create `lib/hooks/useVehicleSort.ts`:
+
 ```typescript
 'use client';
 
@@ -925,7 +971,7 @@ export function useVehicleSort(initialSort: SortConfig = DEFAULT_SORT) {
   const [sort, setSort] = useState<SortConfig>(initialSort);
 
   const toggleSort = useCallback((field: SortConfig['field']) => {
-    setSort(prev => {
+    setSort((prev) => {
       if (prev.field === field) {
         return {
           field,
@@ -944,6 +990,7 @@ export function useVehicleSort(initialSort: SortConfig = DEFAULT_SORT) {
 #### 2.4 Pagination Hook
 
 Create `lib/hooks/usePagination.ts`:
+
 ```typescript
 'use client';
 
@@ -962,11 +1009,11 @@ export function usePagination(
   }, []);
 
   const nextPage = useCallback(() => {
-    setPage(p => p + 1);
+    setPage((p) => p + 1);
   }, []);
 
   const prevPage = useCallback(() => {
-    setPage(p => Math.max(1, p - 1));
+    setPage((p) => Math.max(1, p - 1));
   }, []);
 
   const setPageSize = useCallback((size: number) => {
@@ -988,6 +1035,7 @@ export function usePagination(
 #### 2.5 URL Sync Hook
 
 Create `lib/hooks/useUrlSync.ts`:
+
 ```typescript
 'use client';
 
@@ -1036,6 +1084,7 @@ export function useUrlSync(
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - `npm run dev` (starts without errors)
 
@@ -1050,6 +1099,7 @@ export function useUrlSync(
 #### 3.1 RangeInput Component
 
 Create `components/dashboard/shared/RangeInput.tsx`:
+
 ```typescript
 'use client';
 
@@ -1122,6 +1172,7 @@ export function RangeInput({
 #### 3.2 SearchBar Component
 
 Create `components/dashboard/shared/SearchBar.tsx`:
+
 ```typescript
 'use client';
 
@@ -1161,6 +1212,7 @@ export function SearchBar({
 #### 3.3 CheckboxGroup Component
 
 Create `components/dashboard/shared/CheckboxGroup.tsx`:
+
 ```typescript
 'use client';
 
@@ -1215,6 +1267,7 @@ export function CheckboxGroup({
 #### 3.4 EmptyState Component
 
 Create `components/dashboard/shared/EmptyState.tsx`:
+
 ```typescript
 import { Car, FilterX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -1263,6 +1316,7 @@ export function EmptyState({
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - `npm run dev` (starts without errors)
 - Visit existing dashboard to ensure no breakage
@@ -1288,6 +1342,7 @@ export function EmptyState({
 7. `components/dashboard/table-view/TableSkeleton.tsx` - Loading state
 
 **Implementation Strategy:**
+
 - Start with simple table rendering (no virtualization yet)
 - Use native HTML `<table>` elements with Tailwind styling
 - Add sortable headers with visual indicators (arrows)
@@ -1295,6 +1350,7 @@ export function EmptyState({
 - Sticky header with `position: sticky`
 
 ✅ **Verify after each component**:
+
 - TypeScript compiles
 - Component renders without errors
 
@@ -1309,6 +1365,7 @@ export function EmptyState({
 #### 4.5.1 StatCards Component
 
 Create `components/dashboard/table-view/StatCards.tsx`:
+
 ```typescript
 'use client';
 
@@ -1447,6 +1504,7 @@ export function StatCards({
 #### 4.5.2 ProductImage Component
 
 Create `components/dashboard/table-view/ProductImage.tsx`:
+
 ```typescript
 'use client';
 
@@ -1522,6 +1580,7 @@ export function ProductImage({ vehicle, size = 'md', className }: ProductImagePr
 #### 4.5.3 StarRating Component
 
 Create `components/dashboard/table-view/StarRating.tsx`:
+
 ```typescript
 'use client';
 
@@ -1596,6 +1655,7 @@ export function StarRating({
 #### 4.5.4 StatusBadge Component
 
 Create `components/dashboard/table-view/StatusBadge.tsx`:
+
 ```typescript
 import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -1653,6 +1713,7 @@ export function StatusBadge({ status, showIcon = true, className }: StatusBadgeP
 #### 4.5.5 ActionMenu Component
 
 Create `components/dashboard/table-view/ActionMenu.tsx`:
+
 ```typescript
 'use client';
 
@@ -1757,6 +1818,7 @@ export function ActionMenu({
 #### 4.5.6 BulkActionBar Component
 
 Create `components/dashboard/table-view/BulkActionBar.tsx`:
+
 ```typescript
 'use client';
 
@@ -1873,6 +1935,7 @@ export function BulkActionBar({
 #### 4.5.7 Add Multi-Select Hook
 
 Create `lib/hooks/useMultiSelect.ts`:
+
 ```typescript
 'use client';
 
@@ -1930,6 +1993,7 @@ export function useMultiSelect<T>(items: T[], getKey: (item: T) => string) {
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - Install framer-motion: `npm install framer-motion`
 - All components render without errors
@@ -1944,6 +2008,7 @@ export function useMultiSelect<T>(items: T[], getKey: (item: T) => string) {
 **Goal**: Wire everything together in `app/dashboard/table/page.tsx`.
 
 Create `app/dashboard/table/page.tsx`:
+
 ```typescript
 'use client';
 
@@ -2157,6 +2222,7 @@ export default function TableViewPage() {
 ```
 
 ✅ **Verify**:
+
 - Visit http://localhost:3000/dashboard/table
 - Table renders with mock data
 - Filters work
@@ -2174,6 +2240,7 @@ export default function TableViewPage() {
 #### 6.1 Enhanced Loading States
 
 Create `components/dashboard/table-view/TableSkeleton.tsx`:
+
 ```typescript
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -2218,6 +2285,7 @@ className={cn(
 ```
 
 Add button hover effects:
+
 ```typescript
 // For all buttons
 className={cn(
@@ -2229,6 +2297,7 @@ className={cn(
 #### 6.3 Add Error Boundaries
 
 Create `components/ErrorBoundary.tsx`:
+
 ```typescript
 'use client';
 
@@ -2288,6 +2357,7 @@ export class ErrorBoundary extends Component<Props, State> {
 Add keyboard shortcuts handler:
 
 Create `lib/hooks/useKeyboardShortcuts.ts`:
+
 ```typescript
 'use client';
 
@@ -2327,6 +2397,7 @@ export function useKeyboardShortcuts(shortcuts: ShortcutConfig[]) {
 ```
 
 Add to page implementation:
+
 ```typescript
 // In app/dashboard/table/page.tsx
 useKeyboardShortcuts([
@@ -2360,6 +2431,7 @@ useKeyboardShortcuts([
 ```
 
 Add ARIA labels throughout:
+
 - Table: `aria-label="Vehicle inventory table"`
 - Sortable headers: `aria-sort="ascending"` or `aria-sort="descending"`
 - Checkboxes: `aria-label="Select vehicle {VIN}"`
@@ -2375,6 +2447,7 @@ npx shadcn-ui@latest add toast
 ```
 
 Add Toaster to layout if not present:
+
 ```typescript
 // In app/layout.tsx
 import { Toaster } from '@/components/ui/toaster';
@@ -2396,6 +2469,7 @@ export default function RootLayout({ children }: { children: React.Node }) {
 **Note**: Existing E2E tests use Puppeteer with a specific pattern. Follow the same structure as `tests/e2e/flows/01-landing-to-dashboard.test.ts`.
 
 Create `tests/e2e/flows/04-table-view.test.ts`:
+
 ```typescript
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { resolve } from 'path';
@@ -2506,6 +2580,7 @@ describe('Dashboard V2 - Table View', () => {
 ```
 
 ✅ **Verify**:
+
 - Run: `npm run test:e2e:04` (add script to package.json)
 - All tests pass
 - Zero console errors
@@ -2520,6 +2595,7 @@ describe('Dashboard V2 - Table View', () => {
 #### 7.1 Add View Switcher
 
 Update `app/dashboard/page.tsx` to add a banner:
+
 ```typescript
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -2549,6 +2625,7 @@ export default function DashboardPage() {
 #### 7.2 Add Back Navigation
 
 Update `app/dashboard/table/page.tsx` to add back link:
+
 ```typescript
 <div className="p-4 border-b flex items-center gap-4">
   <Link href="/dashboard">
@@ -2561,6 +2638,7 @@ Update `app/dashboard/table/page.tsx` to add back link:
 ```
 
 ✅ **Verify**:
+
 - Can navigate between card and table views
 - Both views work independently
 
@@ -2573,6 +2651,7 @@ Update `app/dashboard/table/page.tsx` to add back link:
 Before marking complete:
 
 **Functionality:**
+
 - [ ] All TypeScript compiles (`npm run type-check`)
 - [ ] Dev server runs without errors (`npm run dev`)
 - [ ] Table view loads at `/dashboard/table`
@@ -2584,6 +2663,7 @@ Before marking complete:
 - [ ] Bulk actions work (copy VINs, mark reviewed, delete)
 
 **Visual Design:**
+
 - [ ] Stat cards display with trend indicators
 - [ ] Product images load (circular, with fallbacks)
 - [ ] Star ratings display correctly
@@ -2596,6 +2676,7 @@ Before marking complete:
 - [ ] Color scheme matches design system
 
 **Interactions:**
+
 - [ ] Hover effects work on rows and buttons
 - [ ] Smooth transitions (200ms) applied
 - [ ] Button scale effects (hover: 105%, active: 95%)
@@ -2604,6 +2685,7 @@ Before marking complete:
 - [ ] Toast notifications work
 
 **Accessibility:**
+
 - [ ] Keyboard navigation works (Tab, Enter, Escape)
 - [ ] Keyboard shortcuts work (Ctrl+K, Ctrl+A, Esc)
 - [ ] ARIA labels present on all interactive elements
@@ -2612,12 +2694,14 @@ Before marking complete:
 - [ ] Color contrast meets WCAG 2.1 AA
 
 **Performance:**
+
 - [ ] Handles 100+ vehicles smoothly
 - [ ] No layout shifts during load
 - [ ] Images lazy load
 - [ ] Smooth scrolling (60fps)
 
 **Testing:**
+
 - [ ] E2E tests pass (`npm run test:e2e:04`)
 - [ ] Zero console errors
 - [ ] Screenshots captured
@@ -2625,6 +2709,7 @@ Before marking complete:
 - [ ] Dark mode works
 
 **Code Quality:**
+
 - [ ] No TypeScript errors or warnings
 - [ ] No ESLint errors
 - [ ] Consistent formatting
@@ -2661,21 +2746,25 @@ git push origin feature/dashboard-v2
 ## Troubleshooting
 
 ### TypeScript Errors
+
 - Check import paths use `@/` alias
 - Verify all types are exported
 - Check tsconfig.json for path mappings
 
 ### Runtime Errors
+
 - Check browser console for errors
 - Verify Supabase client works or mock data loads
 - Check React component rendering
 
 ### Hook Errors
+
 - Ensure hooks are only called in client components (`'use client'`)
 - Check hook dependencies in useEffect/useCallback
 - Verify state updates are immutable
 
 ### Test Failures
+
 - Check if dev server is running (`npm run dev`)
 - Verify test selectors match actual DOM
 - Check for timing issues (add waitForTimeout)
@@ -2685,6 +2774,7 @@ git push origin feature/dashboard-v2
 ## Success Criteria
 
 **Minimum Viable Product (MVP)**:
+
 - ✅ Table view renders at `/dashboard/table`
 - ✅ Shows all vehicles from mock data
 - ✅ At least 3 filters work (price, make, search)
@@ -2694,6 +2784,7 @@ git push origin feature/dashboard-v2
 - ✅ Accessible (can tab through UI)
 
 **Full Feature Complete**:
+
 - ✅ All filters work
 - ✅ All columns sortable
 - ✅ URL sync (shareable links)
@@ -2740,6 +2831,7 @@ git push origin feature/dashboard-v2
 ### Codebase Analysis Completed
 
 **Files Reviewed:**
+
 - `lib/types.ts` - Comprehensive type system with 345 lines
 - `lib/utils.ts` - Minimal file with only `cn()` helper
 - `app/dashboard/page.tsx` - Current card view implementation
@@ -2781,6 +2873,7 @@ git push origin feature/dashboard-v2
 ### Ready for Implementation
 
 All issues identified in review have been addressed:
+
 - ✅ Import paths corrected
 - ✅ Type compatibility ensured
 - ✅ Data fetching pattern aligned
@@ -2868,11 +2961,13 @@ The plan is now fully aligned with the existing codebase and ready for sequentia
     - WCAG 2.1 Level AA compliant
 
 **New Dependencies:**
+
 - `framer-motion` - For smooth animations and page transitions
 - `lucide-react` - Already installed (icons)
 - shadcn/ui toast component
 
 **Design Quality Improvement:**
+
 - **Before**: 6/10 (functional but basic)
 - **After**: 9/10 (professional, polished, Pinterest-like feel)
 

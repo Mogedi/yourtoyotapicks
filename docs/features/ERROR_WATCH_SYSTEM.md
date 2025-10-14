@@ -23,6 +23,7 @@ npm run watch:errors
 ### 2. Make Code Changes
 
 Watch mode automatically:
+
 - ✅ Detects file changes in `app/`, `components/`, `lib/`
 - ✅ Runs E2E tests after 1-second debounce
 - ✅ Logs errors to `.claude/errors.json`
@@ -55,9 +56,11 @@ Watch mode automatically:
 ## Commands
 
 ### `npm run watch:errors`
+
 Starts file watcher that runs tests on changes
 
 **What it does:**
+
 - Watches `app/`, `components/`, `lib/` for changes
 - Debounces changes (1 second delay)
 - Runs all E2E tests (`npm run test:e2e`)
@@ -65,6 +68,7 @@ Starts file watcher that runs tests on changes
 - On fail: Writes errors to `.claude/errors.json`
 
 **Terminal output:**
+
 ```bash
 🚗 YourToyotaPicks - Watch & Test Mode
 
@@ -89,14 +93,17 @@ Starts file watcher that runs tests on changes
 ```
 
 ### `npm run show:errors`
+
 Display current errors in terminal (optional)
 
 **Usage:**
+
 ```bash
 npm run show:errors
 ```
 
 **Output:**
+
 ```
 # 🔍 Test Errors Detected
 
@@ -114,9 +121,11 @@ npm run show:errors
 ```
 
 ### `/fix-errors` (Claude Slash Command)
+
 Let Claude read and fix errors automatically
 
 **What it does:**
+
 1. Reads `.claude/errors.json`
 2. Shows formatted error report
 3. Analyzes root cause for each error
@@ -126,6 +135,7 @@ Let Claude read and fix errors automatically
 7. Suggests re-running tests
 
 **Example session:**
+
 ```
 You: /fix-errors
 
@@ -198,6 +208,7 @@ scripts/
 ## Configuration
 
 ### Watch Paths
+
 Edit `scripts/watch-and-test.ts`:
 
 ```typescript
@@ -210,6 +221,7 @@ const WATCH_PATHS = [
 ```
 
 ### Debounce Delay
+
 Adjust delay before running tests:
 
 ```typescript
@@ -217,6 +229,7 @@ const DEBOUNCE_DELAY = 1000; // milliseconds
 ```
 
 ### Test Timeout
+
 Max time for test run:
 
 ```typescript
@@ -268,6 +281,7 @@ Tests re-run (via watch mode)
 ## Tips
 
 ### Best Practices
+
 1. **Keep watch mode running** - Leave it in a terminal tab
 2. **Wait for debounce** - Save once, wait 1 second
 3. **Review Claude's fixes** - Always check proposed changes
@@ -276,20 +290,24 @@ Tests re-run (via watch mode)
 ### Troubleshooting
 
 **Watch mode not starting?**
+
 - Check dev server is running: `npm run dev`
 - Verify port 3001 is accessible
 
 **No errors logged?**
+
 - Check `.claude/errors.json` exists
 - Verify file permissions
 - Look for parsing errors in terminal
 
 **Claude can't read errors?**
+
 - Ensure `.claude/errors.json` is created
 - Run `npm run show:errors` to verify format
 - Check file path in slash command
 
 **Tests timing out?**
+
 - Increase `TEST_TIMEOUT` in `scripts/watch-and-test.ts`
 - Check if dev server is slow
 - Run individual tests: `npm run test:e2e:01`
@@ -299,6 +317,7 @@ Tests re-run (via watch mode)
 ## Advanced Usage
 
 ### Manual Error Check
+
 ```bash
 # View errors without Claude
 npm run show:errors
@@ -308,6 +327,7 @@ cat .claude/errors.json | jq .
 ```
 
 ### Run Specific Tests
+
 ```bash
 # Watch mode runs all tests, but you can run specific ones:
 npm run test:e2e:01  # Landing page
@@ -316,6 +336,7 @@ npm run test:e2e:03  # Vehicle details
 ```
 
 ### Clear Error Log
+
 ```typescript
 // In Node.js or TypeScript file:
 import { clearErrorLog } from './lib/claude-error-formatter';

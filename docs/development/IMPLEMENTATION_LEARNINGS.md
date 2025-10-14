@@ -17,6 +17,7 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 ### Phase 1: Development Tools (Completed - 2 hours)
 
 **Tools Installed:**
+
 - Jest + React Testing Library (unit/component testing)
 - ESLint + Prettier (code quality + formatting)
 - Husky + lint-staged (pre-commit hooks)
@@ -24,6 +25,7 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 - Dependabot (automated dependency updates)
 
 **Configuration Files Created:**
+
 - `.eslintrc.json` - TypeScript + Next.js rules
 - `.prettierrc` + `.prettierignore` - Code formatting
 - `.editorconfig` - Cross-editor consistency
@@ -42,6 +44,7 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 ### Phase 2: Service Layer Tests (Completed - 4 hours)
 
 **Tests Written:**
+
 - `FilterService`: 62 tests, 98.66% coverage
 - `SortService`: 29 tests, 97.43% coverage
 - `PaginationService`: 21 tests, 100% coverage
@@ -49,6 +52,7 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 **Total: 112 tests, all passing in <1 second**
 
 **Test Categories Covered:**
+
 1. **Filtering Logic**:
    - Make, model, year, price, mileage filters
    - Quality tier filtering (Top Pick 80+, Good Buy 65-79, Caution <65)
@@ -75,6 +79,7 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 ### Phase 3: Code Refactoring (Completed - 1 hour)
 
 **Created `lib/constants.ts`:**
+
 - Centralized all magic numbers
 - Quality tier thresholds (80, 65, etc.)
 - Pagination defaults
@@ -83,6 +88,7 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 - Helper functions (`getQualityTier()`, `isValidVIN()`)
 
 **Benefits:**
+
 - Single source of truth
 - Easier to maintain
 - Better documentation
@@ -102,11 +108,13 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 ### 1. Test Coverage is Non-Negotiable
 
 **Before This Project:**
+
 - Jump straight into refactoring
 - Hope nothing breaks
 - Spend hours debugging regressions
 
 **After This Setup:**
+
 - Write tests first
 - Refactor confidently
 - Tests catch regressions immediately
@@ -119,10 +127,12 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 ### 2. Service Layer > Component Tests (Priority)
 
 **Time Investment:**
+
 - Service tests: 4 hours for 98% coverage
 - Component tests: Would be 10-15 hours for similar coverage
 
 **Business Logic Location:**
+
 - Services: 100% of filtering, sorting, pagination logic
 - Components: 0% business logic (just rendering)
 
@@ -141,11 +151,13 @@ Successfully set up a comprehensive testing infrastructure with **98%+ service l
 ### 3. Real Test Examples > Documentation
 
 **What Doesn't Work:**
+
 ```markdown
 "Test the filtering logic to ensure it works correctly"
 ```
 
 **What Works:**
+
 ```typescript
 // Actual working test from FilterService
 describe('Quality tier filter', () => {
@@ -166,12 +178,14 @@ describe('Quality tier filter', () => {
 ### 4. Git Workflow Matters
 
 **Bad Approach:**
+
 - Make all changes
 - One giant commit
 - Push everything at once
 - Hope CI passes
 
 **Good Approach (What We Did):**
+
 ```bash
 # 8 logical commits
 1. chore: add ESLint, Prettier, EditorConfig
@@ -185,6 +199,7 @@ describe('Quality tier filter', () => {
 ```
 
 **Benefits:**
+
 - Easy to review
 - Easy to revert if needed
 - Clear history
@@ -212,6 +227,7 @@ describe('Quality tier filter', () => {
    - Quick reference commands
 
 **Key Difference from Gameplan:**
+
 - ✅ Exact commands to run
 - ✅ Expected output shown
 - ✅ Troubleshooting steps included
@@ -226,6 +242,7 @@ describe('Quality tier filter', () => {
 ### What We Tested (Order of Value)
 
 **1. Service Layer** (Highest Value) ✅ DONE
+
 - Pure functions
 - No React dependencies
 - Fast tests (<1s for 112 tests)
@@ -234,6 +251,7 @@ describe('Quality tier filter', () => {
 - High confidence
 
 **2. Custom Hooks** (High Value) ⏭️ NEXT
+
 - React hooks with useState, useEffect
 - Medium complexity
 - Can be tested with @testing-library/react-hooks
@@ -241,6 +259,7 @@ describe('Quality tier filter', () => {
 - Medium confidence
 
 **3. API/Queries** (Medium Value) ⏭️ AFTER HOOKS
+
 - Integration with Supabase
 - Fallback to mock data
 - Can mock Supabase responses
@@ -248,6 +267,7 @@ describe('Quality tier filter', () => {
 - Medium confidence
 
 **4. Components** (Medium Value) ⏭️ AFTER API
+
 - React components
 - Mostly rendering logic
 - Test user interactions
@@ -255,6 +275,7 @@ describe('Quality tier filter', () => {
 - Medium confidence
 
 **5. E2E Tests** (Existing) ✅ ALREADY HAVE
+
 - Full user flows
 - Playwright tests
 - Slow but comprehensive
@@ -266,16 +287,19 @@ describe('Quality tier filter', () => {
 ### What We Skipped (And Why)
 
 **Skipped: Component Tests (For Now)**
+
 - **Reason**: Services have all the logic
 - **Impact**: Low risk (components just call services)
 - **Plan**: Add after refactoring if needed
 
 **Skipped: Hook Tests (For Now)**
+
 - **Reason**: Focused on business logic first
 - **Impact**: Medium risk (hooks manage state)
 - **Plan**: Add these next (priority)
 
 **Skipped: Integration Tests**
+
 - **Reason**: E2E tests already cover user flows
 - **Impact**: Low risk (E2E catches integration issues)
 - **Plan**: Add selectively for critical paths
@@ -287,6 +311,7 @@ describe('Quality tier filter', () => {
 ### 1. Test Structure
 
 **Good Test Structure (What We Used):**
+
 ```typescript
 describe('ServiceName', () => {
   describe('methodName', () => {
@@ -307,6 +332,7 @@ describe('ServiceName', () => {
 ```
 
 **Benefits:**
+
 - Clear hierarchy
 - Easy to find specific test
 - Organized by feature
@@ -317,6 +343,7 @@ describe('ServiceName', () => {
 ### 2. Mock Data Strategy
 
 **Created Reusable Mocks:**
+
 ```typescript
 const mockVehicles: Vehicle[] = [
   {
@@ -339,6 +366,7 @@ const mockVehicles: Vehicle[] = [
 ```
 
 **Benefits:**
+
 - Realistic test data
 - Covers all scenarios
 - Reusable across tests
@@ -349,12 +377,14 @@ const mockVehicles: Vehicle[] = [
 ### 3. Test Coverage Goals
 
 **Realistic Targets:**
+
 - Service layer: 90%+ (achieved 98%+)
 - Hooks: 70%+
 - Components: 60%+
 - Overall project: 70%+
 
 **Why Not 100%?**
+
 - Diminishing returns after 90%
 - Some code is just rendering
 - Integration tests cover remaining gaps
@@ -376,6 +406,7 @@ Target:         70.00% overall
 ```
 
 **Why Low Overall?**
+
 - Only tested service layer so far
 - Hooks and components not tested yet
 - E2E tests don't count toward coverage
@@ -386,18 +417,21 @@ Target:         70.00% overall
 ### What's Safe to Refactor Now
 
 **✅ Safe (High Test Coverage):**
+
 - FilterService (98.66% coverage)
 - SortService (97.43% coverage)
 - PaginationService (100% coverage)
 - Constants extraction (tested indirectly)
 
 **⚠️ Risky (No Test Coverage):**
+
 - Custom hooks (useVehicleFilters, useVehicleSort, usePagination)
 - API queries (lib/api/vehicles/queries.ts)
 - Components (VehicleCard, FilterBar, FilterSidebar, etc.)
 - Dashboard page logic
 
 **🔴 Don't Touch Without Tests:**
+
 - Hook refactoring
 - Component splitting
 - API query changes
@@ -456,12 +490,14 @@ Before proceeding with major refactoring:
 ### Phase A: Hooks (Priority 1) - Est. 3-4 hours
 
 **Why First:**
+
 - Second most important after services
 - Used by all components
 - State management logic
 - Medium complexity
 
 **Tests to Write:**
+
 1. `useVehicleFilters.test.ts` (10-12 tests)
 2. `useVehicleSort.test.ts` (8-10 tests)
 3. `usePagination.test.ts` (8-10 tests)
@@ -476,12 +512,14 @@ Before proceeding with major refactoring:
 ### Phase B: API/Queries (Priority 2) - Est. 2-3 hours
 
 **Why Second:**
+
 - Critical data flow
 - Integration point
 - Can mock Supabase
 - Relatively simple
 
 **Tests to Write:**
+
 1. `queries.test.ts` (15-20 tests)
    - Test with Supabase mock
    - Test fallback to mock data
@@ -495,12 +533,14 @@ Before proceeding with major refactoring:
 ### Phase C: Key Components (Priority 3) - Est. 4-6 hours
 
 **Why Third:**
+
 - User-facing
 - Complex interactions
 - Time-consuming to test
 - But important for UX
 
 **Tests to Write:**
+
 1. `VehicleCard.test.tsx` (8-10 tests)
 2. `QualityTierBadge.test.tsx` (6-8 tests)
 3. `FilterBar.test.tsx` (10-12 tests)
@@ -513,6 +553,7 @@ Before proceeding with major refactoring:
 ### Phase D: Integration Tests (Priority 4) - Est. 2-3 hours
 
 **Critical Paths:**
+
 1. **Filter Flow**: Apply filter → State updates → URL updates → Results filtered
 2. **Sort Flow**: Change sort → State updates → Results re-sorted
 3. **Pagination Flow**: Change page → State updates → New results loaded
@@ -527,6 +568,7 @@ Before proceeding with major refactoring:
 ### High Risk
 
 **1. Hook Refactoring (No Tests)**
+
 ```typescript
 // Current: useVehicleFilters.ts
 // Risk: Change filter state management
@@ -535,6 +577,7 @@ Before proceeding with major refactoring:
 ```
 
 **2. Component Splitting (No Tests)**
+
 ```typescript
 // Current: VehicleTableView.tsx (large component)
 // Risk: Extract sub-components
@@ -543,6 +586,7 @@ Before proceeding with major refactoring:
 ```
 
 **3. API Query Changes (No Tests)**
+
 ```typescript
 // Current: lib/api/vehicles/queries.ts
 // Risk: Refactor query logic
@@ -553,6 +597,7 @@ Before proceeding with major refactoring:
 ### Medium Risk
 
 **4. Dashboard Page Refactoring (No Tests)**
+
 ```typescript
 // Current: app/dashboard/page.tsx (server component)
 // Risk: Extract components, change layout
@@ -561,6 +606,7 @@ Before proceeding with major refactoring:
 ```
 
 **5. Filter Sidebar Splitting (No Tests)**
+
 ```typescript
 // Current: FilterSidebar.tsx (complex component)
 // Risk: Extract filter controls
@@ -696,19 +742,23 @@ Coverage:          70%+   ⏭️
 ## 📚 Resources Created
 
 ### Documentation
+
 - ✅ `DEVELOPMENT_TOOLS_SETUP.md` (26,000 words)
 - ✅ `TOOLS_SETUP_SUMMARY.md` (Quick reference)
 - ✅ `IMPLEMENTATION_LEARNINGS.md` (This document)
 
 ### Tests
+
 - ✅ `lib/services/__tests__/filter-service.test.ts` (62 tests)
 - ✅ `lib/services/__tests__/sort-service.test.ts` (29 tests)
 - ✅ `lib/services/__tests__/pagination-service.test.ts` (21 tests)
 
 ### Code
+
 - ✅ `lib/constants.ts` (Centralized configuration)
 
 ### Configuration
+
 - ✅ All linting, formatting, testing configs
 
 ---
@@ -718,18 +768,21 @@ Coverage:          70%+   ⏭️
 **STOP HERE** before any major refactoring.
 
 **Why:**
+
 - Service layer is well-tested (98%+) ✅
 - Hooks are not tested (0%) ⚠️
 - Components are not tested (0%) ⚠️
 - API queries are not tested (0%) ⚠️
 
 **Risk Assessment:**
+
 - Refactoring services now: LOW RISK ✅
 - Refactoring hooks now: HIGH RISK ❌
 - Refactoring components now: HIGH RISK ❌
 - Refactoring API now: MEDIUM RISK ⚠️
 
 **Action Plan:**
+
 1. Write hook tests (Priority 1)
 2. Write API tests (Priority 2)
 3. Write key component tests (Priority 3)

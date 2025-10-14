@@ -15,17 +15,20 @@ The application now displays real car images matching the make, model, and year 
 ## Features
 
 ### 1. Real Car Images
+
 - **Source**: IMAGIN.studio API (free, no authentication required)
 - **Quality**: High-resolution 3D renders
 - **Angles**: Side, Front, Rear, 3/4, Interior views
 - **Coverage**: All major Toyota and Honda models
 
 ### 2. Automatic Fallback
+
 - **Loading State**: Animated car icon while image loads
 - **Error Handling**: Shows placeholder if image fails to load
 - **Graceful Degradation**: App works perfectly without images
 
 ### 3. Multiple Views
+
 - **Vehicle Cards**: Side view (primary angle)
 - **Detail Page Gallery**: 5 angles (side, 3/4, front, rear, interior)
 - **Thumbnail Navigation**: Click any angle to view full-size
@@ -78,13 +81,13 @@ https://cdn.imagin.studio/getImage
 
 ### Angle Codes
 
-| Angle | Code | Description |
-|-------|------|-------------|
-| Side | `01` | Side profile (default) |
+| Angle     | Code | Description              |
+| --------- | ---- | ------------------------ |
+| Side      | `01` | Side profile (default)   |
 | 3/4 Front | `01` | Three-quarter front view |
-| Front | `05` | Front view |
-| Rear | `08` | Rear view |
-| Interior | `13` | Interior dashboard view |
+| Front     | `05` | Front view               |
+| Rear      | `08` | Rear view                |
+| Interior  | `13` | Interior dashboard view  |
 
 ---
 
@@ -99,9 +102,9 @@ const imageUrl = getCarImageUrl({
   make: 'Toyota',
   model: 'RAV4',
   year: 2021,
-  angle: 'side',  // Optional: 'side' | 'front' | 'rear' | '34' | 'interior'
-  width: 1920,    // Optional: default 1920
-  height: 1080,   // Optional: default 1080
+  angle: 'side', // Optional: 'side' | 'front' | 'rear' | '34' | 'interior'
+  width: 1920, // Optional: default 1920
+  height: 1080, // Optional: default 1080
 });
 
 // Result: https://cdn.imagin.studio/getImage?customer=...&make=toyota&...
@@ -135,6 +138,7 @@ import { CarImage } from '@/components/CarImage';
 ```
 
 **Features**:
+
 - Automatic loading state (animated icon)
 - Automatic error fallback (placeholder icon)
 - Smooth fade-in transition
@@ -148,10 +152,10 @@ All 32 mock vehicles now have real images:
 
 ```typescript
 // Before
-images_url: ['https://example.com/images/rav4-1.jpg']
+images_url: ['https://example.com/images/rav4-1.jpg'];
 
 // After
-images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2021 })
+images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2021 });
 ```
 
 **Result**: Each vehicle has 5 high-quality images from different angles
@@ -163,6 +167,7 @@ images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2021 })
 ### 1. VehicleCard Component
 
 **Changes**:
+
 - Replaced `<img>` with `<CarImage>`
 - Shows first image (side view) as thumbnail
 - Fallback placeholder if no images
@@ -173,6 +178,7 @@ images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2021 })
 ### 2. VehicleDetail Component
 
 **Changes**:
+
 - Replaced `<img>` with `<CarImage>` in main view
 - Updated gallery to show 5 thumbnails (was 4)
 - Added ring effect for selected thumbnail
@@ -186,6 +192,7 @@ images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2021 })
 **Purpose**: Reusable smart image component
 
 **Features**:
+
 - Loading state with animated car icon
 - Error handling with placeholder fallback
 - Smooth fade-in transition
@@ -254,6 +261,7 @@ npm run test:e2e
 **Problem**: Image shows placeholder instead of car photo
 
 **Solutions**:
+
 1. Check browser console for errors
 2. Verify make/model spelling is correct
 3. Try different angle (some models missing certain views)
@@ -270,7 +278,7 @@ npm run test:e2e
 
 ```typescript
 const CAR_MODEL_OVERRIDES: Record<string, { angle?: string }> = {
-  'rav4': { angle: '01' },
+  rav4: { angle: '01' },
   'cr-v': { angle: '01' },
   // Add your model here
 };
@@ -281,6 +289,7 @@ const CAR_MODEL_OVERRIDES: Record<string, { angle?: string }> = {
 **Problem**: Images take too long to load
 
 **Solutions**:
+
 1. Check internet connection
 2. Reduce image dimensions in URL
 3. Enable priority loading for above-the-fold images
@@ -329,21 +338,25 @@ const CAR_MODEL_OVERRIDES: Record<string, { angle?: string }> = {
 If IMAGIN.studio becomes unavailable:
 
 ### 1. CarsXE
+
 - **URL**: https://api.carsxe.com/vehicle-images
 - **Cost**: 7-day free trial, then paid
 - **Coverage**: Comprehensive
 
 ### 2. VehicleDatabases.com
+
 - **URL**: https://vehicledatabases.com
 - **Cost**: 15 free credits trial
 - **Quality**: HD images, 1999-2025 models
 
 ### 3. VinAudit
+
 - **URL**: https://www.vinaudit.com/vehicle-images-api
 - **Cost**: Paid, per-request pricing
 - **Feature**: VIN-specific images
 
 ### 4. Unsplash (Generic Fallback)
+
 - **URL**: https://unsplash.com/s/photos/[make]-[model]
 - **Cost**: Free
 - **Quality**: Real photos, but less consistent

@@ -25,6 +25,7 @@
 ### Review of CODE_REVIEW_REFACTORING_SUGGESTIONS.md
 
 **Strengths** ✅:
+
 - Comprehensive coverage of codebase (10,405 lines analyzed)
 - Well-structured with clear sections
 - Includes actual code examples for testing patterns
@@ -33,6 +34,7 @@
 - 5-phase implementation roadmap
 
 **Areas for Improvement** 📝:
+
 1. **Missing Interactive Checklists**: No checkboxes for tracking progress
 2. **No Tool Configurations**: Recommendations without actual config files
 3. **Priority Not Clear**: All items seem equally important
@@ -41,6 +43,7 @@
 6. **No Dependency Instructions**: Doesn't list exact npm install commands
 
 **Recommended Enhancements**:
+
 - Add GitHub-flavored markdown checkboxes (`- [ ]`) for each task
 - Include priority labels: `[P0]` (critical), `[P1]` (high), `[P2]` (medium), `[P3]` (low)
 - Add effort estimates: `[1h]`, `[2-4h]`, `[1d]`, `[1w]`
@@ -323,10 +326,7 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
-  testMatch: [
-    '**/__tests__/**/*.[jt]s?(x)',
-    '**/?(*.)+(spec|test).[jt]s?(x)',
-  ],
+  testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
     'components/**/*.{js,jsx,ts,tsx}',
@@ -581,9 +581,7 @@ Add to `package.json`:
       "prettier --write",
       "jest --bail --findRelatedTests"
     ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
+    "*.{json,md,yml,yaml}": ["prettier --write"]
   }
 }
 ```
@@ -600,16 +598,16 @@ module.exports = {
       2,
       'always',
       [
-        'feat',     // New feature
-        'fix',      // Bug fix
-        'docs',     // Documentation only
-        'style',    // Code style (formatting, missing semi colons, etc)
+        'feat', // New feature
+        'fix', // Bug fix
+        'docs', // Documentation only
+        'style', // Code style (formatting, missing semi colons, etc)
         'refactor', // Code refactoring
-        'perf',     // Performance improvements
-        'test',     // Adding or updating tests
-        'chore',    // Maintenance tasks
-        'revert',   // Revert a previous commit
-        'ci',       // CI/CD changes
+        'perf', // Performance improvements
+        'test', // Adding or updating tests
+        'chore', // Maintenance tasks
+        'revert', // Revert a previous commit
+        'ci', // CI/CD changes
       ],
     ],
     'subject-case': [0],
@@ -744,17 +742,17 @@ jobs:
 3. Add to `.github/workflows/ci.yml`:
 
 ```yaml
-  sonarcloud:
-    name: SonarCloud Analysis
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled
-      - uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+sonarcloud:
+  name: SonarCloud Analysis
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Shallow clones should be disabled
+    - uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 ```
 
 4. Create `sonar-project.properties`:
@@ -837,30 +835,31 @@ npm install -D lighthouse
 ```yaml
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "automated"
+      - 'dependencies'
+      - 'automated'
     reviewers:
-      - "mogedi"
+      - 'mogedi'
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
     ignore:
       # Ignore major version updates for specific packages
-      - dependency-name: "react"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "next"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'next'
+        update-types: ['version-update:semver-major']
 ```
 
 **Benefits**:
+
 - Automatic PR creation for dependency updates
 - Security vulnerability alerts
 - Grouped updates by severity
@@ -889,6 +888,7 @@ npm install
 ### Phase 1: Core Development Tools [P0] [4-6h]
 
 #### Linting & Formatting
+
 - [ ] Create `.eslintrc.json` with Next.js + TypeScript rules
 - [ ] Install ESLint plugins: `@typescript-eslint`, `eslint-plugin-import`, `eslint-plugin-jsx-a11y`
 - [ ] Create `.prettierrc` with team-agreed formatting rules
@@ -900,6 +900,7 @@ npm install
 - [ ] Commit: "chore: add ESLint and Prettier configuration"
 
 #### Git Hooks
+
 - [ ] Install husky: `npm install -D husky && npx husky init`
 - [ ] Install lint-staged: `npm install -D lint-staged`
 - [ ] Create `.husky/pre-commit` hook for lint-staged
@@ -913,6 +914,7 @@ npm install
 ### Phase 2: Testing Infrastructure [P0] [6-8h]
 
 #### Jest Setup
+
 - [ ] Install Jest dependencies: `@testing-library/react`, `@testing-library/jest-dom`, `jest`, `jest-environment-jsdom`
 - [ ] Create `jest.config.js` with Next.js integration
 - [ ] Create `jest.setup.js` with global mocks and setup
@@ -925,6 +927,7 @@ npm install
 - [ ] Commit: "test: add Jest configuration and service layer tests"
 
 #### Component Testing
+
 - [ ] Create `components/__tests__/` directory
 - [ ] Write tests for `VehicleCard` component (5+ test cases)
 - [ ] Write tests for `QualityTierBadge` component (4+ test cases)
@@ -934,6 +937,7 @@ npm install
 - [ ] Commit: "test: add component tests with React Testing Library"
 
 #### Hook Testing
+
 - [ ] Create `hooks/__tests__/` directory
 - [ ] Write tests for `useVehicleFilters` (state management)
 - [ ] Write tests for `useVehicleSort` (sorting logic)
@@ -944,6 +948,7 @@ npm install
 ### Phase 3: CI/CD Pipeline [P1] [2-3h]
 
 #### GitHub Actions
+
 - [ ] Create `.github/workflows/` directory
 - [ ] Create `ci.yml` workflow with lint, type-check, test, e2e, build jobs
 - [ ] Add branch protection rules in GitHub (require CI to pass)
@@ -952,6 +957,7 @@ npm install
 - [ ] Commit: "ci: add GitHub Actions workflow for automated checks"
 
 #### Code Coverage
+
 - [ ] Sign up for Codecov (https://codecov.io/)
 - [ ] Add Codecov token to GitHub secrets
 - [ ] Add coverage upload step to CI workflow
@@ -962,6 +968,7 @@ npm install
 ### Phase 4: Code Quality Tools [P1] [2-4h]
 
 #### SonarCloud (Optional)
+
 - [ ] Sign up for SonarCloud (https://sonarcloud.io/)
 - [ ] Connect GitHub repository
 - [ ] Create `sonar-project.properties`
@@ -971,6 +978,7 @@ npm install
 - [ ] Commit: "ci: integrate SonarCloud for code quality analysis"
 
 #### Bundle Analysis
+
 - [ ] Install `@next/bundle-analyzer`
 - [ ] Update `next.config.js` with analyzer config
 - [ ] Add `analyze` script to package.json
@@ -981,6 +989,7 @@ npm install
 ### Phase 5: Dependency Management [P2] [1h]
 
 #### Dependabot
+
 - [ ] Create `.github/dependabot.yml`
 - [ ] Configure npm updates with weekly schedule
 - [ ] Set up automated PR creation
@@ -991,6 +1000,7 @@ npm install
 ### Phase 6: Documentation Updates [P2] [2-3h]
 
 #### Update Existing Docs
+
 - [ ] Update `CODE_REVIEW_REFACTORING_SUGGESTIONS.md` with checkboxes
 - [ ] Add priority labels to all recommendations
 - [ ] Add effort estimates to each task
@@ -1007,6 +1017,7 @@ npm install
 ### Current State Analysis
 
 **What You Have** ✅:
+
 - Next.js 15.5.4 with TypeScript (strict mode)
 - ESLint configured via `eslint-config-next`
 - Playwright for E2E testing (working well)
@@ -1014,6 +1025,7 @@ npm install
 - Clean git workflow with co-authorship
 
 **What's Missing** ❌:
+
 - No unit testing framework (Jest)
 - No component testing (React Testing Library)
 - No pre-commit hooks (linting/formatting automated)
@@ -1026,6 +1038,7 @@ npm install
 ### Recommended Priority Order
 
 #### Immediate (This Week) [P0]
+
 1. **ESLint + Prettier Setup** [2h]
    - Immediate code quality improvements
    - Prevents formatting debates
@@ -1042,6 +1055,7 @@ npm install
    - Prevents broken commits
 
 #### Short-Term (Next 2 Weeks) [P1]
+
 4. **GitHub Actions CI/CD** [3h]
    - Automated checks on every PR
    - Prevents broken code from merging
@@ -1058,6 +1072,7 @@ npm install
    - Easy to set up
 
 #### Medium-Term (Next Month) [P2]
+
 7. **Component Tests** [8-10h]
    - Tests for VehicleCard, FilterBar, etc.
    - Ensures UI works correctly
@@ -1076,6 +1091,7 @@ npm install
 ### Tool Recommendations (Simple & Standard)
 
 #### Must-Have (No Alternatives)
+
 1. **Jest + React Testing Library**
    - Industry standard for React testing
    - Excellent documentation and community support
@@ -1097,6 +1113,7 @@ npm install
    - Simple YAML configuration
 
 #### Nice-to-Have (Consider Based on Needs)
+
 5. **Codecov / Coveralls**
    - Visual coverage reports
    - PR comments with coverage changes
@@ -1118,6 +1135,7 @@ npm install
    - **Recommendation**: `@next/bundle-analyzer` (Next.js native)
 
 ### Tools to Avoid (Overkill for This Project)
+
 - ❌ **Jenkins**: Too complex, GitHub Actions is sufficient
 - ❌ **CircleCI/TravisCI**: GitHub Actions is free and native
 - ❌ **Storybook**: Great for design systems, but adds complexity
@@ -1127,19 +1145,19 @@ npm install
 
 ### Estimated Total Effort
 
-| Phase | Priority | Time | Value |
-|-------|----------|------|-------|
-| Linting & Formatting | P0 | 2h | High |
-| Git Hooks | P0 | 2h | High |
-| Jest Setup | P0 | 6-8h | Critical |
-| CI/CD Pipeline | P1 | 3h | High |
-| Service Tests | P1 | 4-6h | High |
-| Component Tests | P2 | 8-10h | Medium |
-| Code Quality Tools | P2 | 2-4h | Medium |
-| Bundle Analysis | P2 | 1h | Medium |
-| Dependency Management | P2 | 1h | Low |
-| Documentation | P2 | 2-3h | Medium |
-| **TOTAL** | | **31-40h** | |
+| Phase                 | Priority | Time       | Value    |
+| --------------------- | -------- | ---------- | -------- |
+| Linting & Formatting  | P0       | 2h         | High     |
+| Git Hooks             | P0       | 2h         | High     |
+| Jest Setup            | P0       | 6-8h       | Critical |
+| CI/CD Pipeline        | P1       | 3h         | High     |
+| Service Tests         | P1       | 4-6h       | High     |
+| Component Tests       | P2       | 8-10h      | Medium   |
+| Code Quality Tools    | P2       | 2-4h       | Medium   |
+| Bundle Analysis       | P2       | 1h         | Medium   |
+| Dependency Management | P2       | 1h         | Low      |
+| Documentation         | P2       | 2-3h       | Medium   |
+| **TOTAL**             |          | **31-40h** |          |
 
 ### Quick Wins (High Value, Low Effort) ⚡
 
@@ -1158,7 +1176,9 @@ These tasks take <2 hours but provide immediate benefits:
 ### Next Steps
 
 #### Option 1: Automated Setup (Recommended)
+
 I can run all the quick setup commands and create all config files in ~15 minutes:
+
 - Install all dependencies
 - Create all configuration files
 - Update package.json scripts
@@ -1168,9 +1188,11 @@ I can run all the quick setup commands and create all config files in ~15 minute
 **Command**: "Set up all development tools automatically"
 
 #### Option 2: Manual Step-by-Step
+
 You can follow this guide manually, implementing tools one at a time. Start with Phase 1 (Linting & Formatting) and work through the checklists.
 
 #### Option 3: Quick Wins First
+
 I can set up just the high-value, low-effort items first (Prettier, EditorConfig, ESLint config, Dependabot), then you decide which remaining tools to add.
 
 **Command**: "Set up quick wins only"
@@ -1202,6 +1224,7 @@ I can set up just the high-value, low-effort items first (Prettier, EditorConfig
 ---
 
 **Questions or Issues?**
+
 - Review this guide section by section
 - Test each tool in isolation before combining
 - Refer to the implementation checklists for step-by-step instructions

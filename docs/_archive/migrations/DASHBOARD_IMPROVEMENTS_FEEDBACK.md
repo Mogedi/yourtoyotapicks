@@ -15,6 +15,7 @@ The new table view dashboard successfully displays vehicle listings with compreh
 ## ✅ What's Working Well
 
 ### 1. **Core Functionality**
+
 - ✅ **Table displays all vehicle data** - 25 vehicles shown per page
 - ✅ **Real car images** - IMAGIN.studio integration working perfectly
 - ✅ **Statistics cards** - Total Vehicles (25), Total Value ($562,093), Avg. Price ($22,484)
@@ -26,6 +27,7 @@ The new table view dashboard successfully displays vehicle listings with compreh
 - ✅ **Responsive layout** - Sidebar + main content layout works well
 
 ### 2. **Data Presentation**
+
 - ✅ **Key information visible** - VIN, make/model, year, price, mileage, location all shown
 - ✅ **Mileage quality indicators** - Color-coded badges (80, 65, 70)
 - ✅ **Location data** - City, state, and distance shown
@@ -37,15 +39,18 @@ The new table view dashboard successfully displays vehicle listings with compreh
 ## 🚀 High Priority Improvements
 
 ### 1. **Multi-Select & Bulk Actions** (Critical - Already Implemented, Needs Visibility)
+
 **Issue**: Checkboxes visible but no visual feedback when selected, bulk action bar not appearing
 
 **Current State**:
+
 - ✅ Checkbox column present in table
 - ✅ BulkActionBar component created
 - ❌ Not visually indicating selection
 - ❌ Bulk action bar not appearing
 
 **Recommendation**:
+
 ```typescript
 // Fix: Ensure checkbox state is properly bound
 <Checkbox
@@ -64,6 +69,7 @@ The new table view dashboard successfully displays vehicle listings with compreh
 ```
 
 **Expected Behavior**:
+
 - Click checkbox → Row highlights
 - Select multiple → Floating action bar appears at bottom
 - Actions: Mark as Reviewed, Export, Delete
@@ -71,9 +77,11 @@ The new table view dashboard successfully displays vehicle listings with compreh
 ---
 
 ### 2. **Stat Cards Missing Icons** (High Priority)
+
 **Issue**: Stat cards show placeholder car/dollar icons instead of meaningful icons
 
 **Recommendation**:
+
 ```typescript
 // Total Vehicles - Use Car icon ✅ (already correct)
 <Car className="h-5 w-5 text-blue-600" />
@@ -88,6 +96,7 @@ The new table view dashboard successfully displays vehicle listings with compreh
 ---
 
 ### 3. **Priority Score Visualization** (High Priority)
+
 **Issue**: Priority rating shown as blue badges (80, 65, 70) without context
 
 **Current**: Generic blue numbers
@@ -96,13 +105,14 @@ The new table view dashboard successfully displays vehicle listings with compreh
 ```typescript
 function getPriorityColor(score: number) {
   if (score >= 80) return 'bg-green-100 text-green-800'; // Excellent
-  if (score >= 70) return 'bg-blue-100 text-blue-800';   // Good
+  if (score >= 70) return 'bg-blue-100 text-blue-800'; // Good
   if (score >= 60) return 'bg-yellow-100 text-yellow-800'; // Fair
   return 'bg-red-100 text-red-800'; // Poor
 }
 ```
 
 **Add tooltip**:
+
 ```tsx
 <TooltipProvider>
   <Tooltip>
@@ -124,6 +134,7 @@ function getPriorityColor(score: number) {
 ---
 
 ### 4. **Mileage Rating Labels** (Medium-High Priority)
+
 **Issue**: Mileage shown as numbers (94,130 Acceptable) without clear meaning
 
 **Current**: "94,130 Acceptable"
@@ -149,6 +160,7 @@ const mileageRatingConfig = {
 ---
 
 ### 5. **Action Menu for Each Row** (Medium Priority)
+
 **Issue**: No quick actions available per vehicle
 
 **Recommendation**: Add action menu (already created as ActionMenu.tsx)
@@ -167,6 +179,7 @@ const mileageRatingConfig = {
 ```
 
 Actions should include:
+
 - 👁️ View Details
 - ✅ Mark as Reviewed
 - ➕ Add to Comparison (future feature)
@@ -177,9 +190,11 @@ Actions should include:
 ## 🎨 Medium Priority Improvements
 
 ### 6. **Table Header Styling**
+
 **Issue**: Header could be more prominent
 
 **Recommendation**:
+
 ```css
 /* Make headers stand out more */
 thead {
@@ -199,6 +214,7 @@ th {
 ---
 
 ### 7. **Row Hover State Enhancement**
+
 **Current**: Basic hover
 **Recommended**: More interactive feel
 
@@ -214,15 +230,15 @@ tbody tr:hover {
 ---
 
 ### 8. **Sticky Table Header**
+
 **Issue**: Header scrolls away with content
 
 **Recommendation**:
+
 ```tsx
 <div className="relative overflow-auto max-h-[calc(100vh-300px)]">
   <table className="relative">
-    <thead className="sticky top-0 z-10 bg-white shadow-sm">
-      {/* ... */}
-    </thead>
+    <thead className="sticky top-0 z-10 bg-white shadow-sm">{/* ... */}</thead>
   </table>
 </div>
 ```
@@ -232,12 +248,14 @@ tbody tr:hover {
 ### 9. **Filter Sidebar Improvements**
 
 **Current Issues**:
+
 - Takes up space when not needed
 - Could be more compact
 
 **Recommendations**:
 
 **A. Add collapse/expand animation**:
+
 ```tsx
 <motion.aside
   initial={{ width: 256 }}
@@ -256,6 +274,7 @@ tbody tr:hover {
 ```
 
 **B. Add active filter count badge**:
+
 ```tsx
 <div className="flex items-center justify-between mb-6">
   <h2 className="text-lg font-semibold">Filters</h2>
@@ -336,6 +355,7 @@ tbody tr:hover {
 ## 💡 Low Priority / Nice-to-Have
 
 ### 12. **Quick Filters Bar**
+
 Add commonly used filters as pills above the table:
 
 ```tsx
@@ -367,6 +387,7 @@ Add commonly used filters as pills above the table:
 ---
 
 ### 13. **Saved Filters / Presets**
+
 Allow users to save filter combinations:
 
 ```tsx
@@ -398,6 +419,7 @@ Allow users to save filter combinations:
 ---
 
 ### 14. **Column Customization**
+
 Let users show/hide columns:
 
 ```tsx
@@ -429,6 +451,7 @@ Let users show/hide columns:
 ---
 
 ### 15. **Export Functionality**
+
 Add export options in the header:
 
 ```tsx
@@ -459,68 +482,71 @@ Add export options in the header:
 ---
 
 ### 16. **Comparison Mode**
+
 Allow users to select vehicles for comparison:
 
 ```tsx
-{comparisonMode && selectedForComparison.length > 0 && (
-  <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
-    <div className="container flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <span className="font-medium">
-          {selectedForComparison.length} vehicles selected for comparison
-        </span>
+{
+  comparisonMode && selectedForComparison.length > 0 && (
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
+      <div className="container flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <span className="font-medium">
+            {selectedForComparison.length} vehicles selected for comparison
+          </span>
+          <div className="flex gap-2">
+            {selectedForComparison.map((vehicle) => (
+              <Badge key={vehicle.id} variant="secondary">
+                {vehicle.make} {vehicle.model}
+                <X
+                  className="h-3 w-3 ml-1 cursor-pointer"
+                  onClick={() => removeFromComparison(vehicle.id)}
+                />
+              </Badge>
+            ))}
+          </div>
+        </div>
         <div className="flex gap-2">
-          {selectedForComparison.map(vehicle => (
-            <Badge key={vehicle.id} variant="secondary">
-              {vehicle.make} {vehicle.model}
-              <X
-                className="h-3 w-3 ml-1 cursor-pointer"
-                onClick={() => removeFromComparison(vehicle.id)}
-              />
-            </Badge>
-          ))}
+          <Button variant="outline" onClick={() => setComparisonMode(false)}>
+            Cancel
+          </Button>
+          <Button onClick={() => router.push('/comparison')}>
+            Compare {selectedForComparison.length} Vehicles
+          </Button>
         </div>
       </div>
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          onClick={() => setComparisonMode(false)}
-        >
-          Cancel
-        </Button>
-        <Button onClick={() => router.push('/comparison')}>
-          Compare {selectedForComparison.length} Vehicles
-        </Button>
-      </div>
     </div>
-  </div>
-)}
+  );
+}
 ```
 
 ---
 
 ### 17. **Keyboard Shortcuts**
+
 Add keyboard navigation:
 
 ```tsx
 useKeyboardShortcuts({
   'Ctrl+F': () => searchInputRef.current?.focus(),
-  'Ctrl+K': () => setShowFilterSidebar(prev => !prev),
-  'Escape': () => clearFilters(),
-  'ArrowDown': () => selectNextVehicle(),
-  'ArrowUp': () => selectPreviousVehicle(),
-  'Enter': () => viewSelectedVehicle(),
+  'Ctrl+K': () => setShowFilterSidebar((prev) => !prev),
+  Escape: () => clearFilters(),
+  ArrowDown: () => selectNextVehicle(),
+  ArrowUp: () => selectPreviousVehicle(),
+  Enter: () => viewSelectedVehicle(),
 });
 
 // Show shortcuts help
 <div className="text-xs text-gray-500 mt-4">
-  Keyboard shortcuts: <kbd>Ctrl+F</kbd> Search, <kbd>Ctrl+K</kbd> Filters, <kbd>Esc</kbd> Clear
-</div>
+  Keyboard shortcuts: <kbd>Ctrl+F</kbd> Search, <kbd>Ctrl+K</kbd> Filters,{' '}
+  <kbd>Esc</kbd> Clear
+</div>;
 ```
 
 ---
 
 ### 18. **Advanced Search**
+
 Add advanced search modal:
 
 ```tsx
@@ -559,9 +585,7 @@ Add advanced search modal:
       <Button variant="outline" onClick={resetAdvancedSearch}>
         Reset
       </Button>
-      <Button onClick={applyAdvancedSearch}>
-        Apply Filters
-      </Button>
+      <Button onClick={applyAdvancedSearch}>Apply Filters</Button>
     </DialogFooter>
   </DialogContent>
 </Dialog>
@@ -602,50 +626,56 @@ const rowVirtualizer = useVirtualizer({
       </tr>
     );
   })}
-</tbody>
+</tbody>;
 ```
 
 ---
 
 ### 20. **Loading States**
+
 Add skeleton loaders instead of spinner:
 
 ```tsx
-{isLoading && (
-  <div className="space-y-4">
-    {[...Array(10)].map((_, i) => (
-      <div key={i} className="flex items-center gap-4 p-4 border rounded">
-        <Skeleton className="h-16 w-16 rounded" />
-        <div className="flex-1 space-y-2">
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
+{
+  isLoading && (
+    <div className="space-y-4">
+      {[...Array(10)].map((_, i) => (
+        <div key={i} className="flex items-center gap-4 p-4 border rounded">
+          <Skeleton className="h-16 w-16 rounded" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+          <Skeleton className="h-8 w-20" />
         </div>
-        <Skeleton className="h-8 w-20" />
-      </div>
-    ))}
-  </div>
-)}
+      ))}
+    </div>
+  );
+}
 ```
 
 ---
 
 ### 21. **Error Handling**
+
 Better error states:
 
 ```tsx
-{error && (
-  <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
-    <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
-    <h3 className="text-lg font-semibold text-red-900 mb-2">
-      Failed to Load Vehicles
-    </h3>
-    <p className="text-red-700 mb-4">{error}</p>
-    <Button onClick={refetch} variant="outline">
-      <RefreshCw className="h-4 w-4 mr-2" />
-      Try Again
-    </Button>
-  </div>
-)}
+{
+  error && (
+    <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
+      <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
+      <h3 className="text-lg font-semibold text-red-900 mb-2">
+        Failed to Load Vehicles
+      </h3>
+      <p className="text-red-700 mb-4">{error}</p>
+      <Button onClick={refetch} variant="outline">
+        <RefreshCw className="h-4 w-4 mr-2" />
+        Try Again
+      </Button>
+    </div>
+  );
+}
 ```
 
 ---
@@ -696,6 +726,7 @@ Or use horizontal scroll with sticky first column:
 ## 🎯 Implementation Priority
 
 ### Phase 1 (Quick Wins - 1-2 days)
+
 1. ✅ Fix multi-select checkboxes visual feedback
 2. ✅ Add bulk action bar visibility
 3. ✅ Improve priority score colors
@@ -703,6 +734,7 @@ Or use horizontal scroll with sticky first column:
 5. ✅ Sticky table header
 
 ### Phase 2 (High Value - 3-5 days)
+
 6. ✅ Action menu per row
 7. ✅ Filter sidebar collapse/expand
 8. ✅ Search bar enhancements
@@ -710,6 +742,7 @@ Or use horizontal scroll with sticky first column:
 10. ✅ Row hover improvements
 
 ### Phase 3 (Enhanced Features - 1 week)
+
 11. ✅ Quick filters bar
 12. ✅ Saved filter presets
 13. ✅ Column customization
@@ -717,6 +750,7 @@ Or use horizontal scroll with sticky first column:
 15. ✅ Keyboard shortcuts
 
 ### Phase 4 (Advanced - 2 weeks)
+
 16. ✅ Comparison mode
 17. ✅ Advanced search
 18. ✅ Virtual scrolling
@@ -752,12 +786,25 @@ Track these metrics to measure improvements:
 ## 🎨 Design System Recommendations
 
 ### Color Palette Enhancement
+
 ```typescript
 export const dashboardColors = {
   priority: {
-    excellent: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
-    good: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
-    fair: { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200' },
+    excellent: {
+      bg: 'bg-green-50',
+      text: 'text-green-700',
+      border: 'border-green-200',
+    },
+    good: {
+      bg: 'bg-blue-50',
+      text: 'text-blue-700',
+      border: 'border-blue-200',
+    },
+    fair: {
+      bg: 'bg-yellow-50',
+      text: 'text-yellow-700',
+      border: 'border-yellow-200',
+    },
     poor: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
   },
   mileage: {
@@ -779,6 +826,7 @@ export const dashboardColors = {
 ## 🔍 Accessibility Improvements
 
 ### ARIA Labels & Screen Reader Support
+
 ```tsx
 <table role="grid" aria-label="Vehicle listings table">
   <thead>
@@ -809,18 +857,21 @@ export const dashboardColors = {
 The current dashboard implementation is **solid and functional** with excellent core features. The main areas for improvement are:
 
 ### Critical (Do First):
+
 1. **Multi-select visual feedback** - Make selection state obvious
 2. **Bulk action bar** - Ensure it appears when items selected
 3. **Priority score colors** - Use color coding for quick assessment
 4. **Mileage indicators** - Better visual representation
 
 ### High Value (Do Next):
+
 5. **Action menus** - Quick actions per vehicle
 6. **Filter improvements** - Collapsible sidebar, active count
 7. **Search enhancements** - Clear button, loading state
 8. **Better pagination** - Page size selector, item count
 
 ### Nice to Have (When Time Permits):
+
 9. **Quick filters** - Common filter pills
 10. **Saved presets** - User-defined filter sets
 11. **Export options** - CSV, Excel, PDF

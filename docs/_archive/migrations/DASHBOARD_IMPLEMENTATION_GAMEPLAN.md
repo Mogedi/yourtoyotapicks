@@ -9,6 +9,7 @@
 ## 🎯 Goals
 
 Transform the current functional dashboard into a polished, production-ready interface with:
+
 1. Clear visual feedback for user interactions
 2. Efficient data management with bulk actions
 3. Enhanced filtering and search capabilities
@@ -19,10 +20,12 @@ Transform the current functional dashboard into a polished, production-ready int
 ## 📋 Implementation Phases
 
 ### Phase 1: Critical Visual Feedback (Day 1)
+
 **Estimated Time**: 4-6 hours
 **Goal**: Make user interactions immediately visible
 
 #### Task 1.1: Multi-Select Visual Feedback ⭐ CRITICAL
+
 **File**: `components/VehicleTableView.tsx`
 
 ```typescript
@@ -55,6 +58,7 @@ Transform the current functional dashboard into a polished, production-ready int
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Selected rows have blue background
 - ✅ Selected rows have left blue border
 - ✅ Checkboxes show clear checked state
@@ -64,6 +68,7 @@ Transform the current functional dashboard into a polished, production-ready int
 ---
 
 #### Task 1.2: Bulk Action Bar Visibility ⭐ CRITICAL
+
 **File**: `app/dashboard/page.tsx`
 
 ```typescript
@@ -104,6 +109,7 @@ console.log('Selected items:', selectedItems); // Debug
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Bar appears immediately when any vehicle selected
 - ✅ Shows count of selected items
 - ✅ Actions work (Mark Reviewed, Export, Delete)
@@ -113,6 +119,7 @@ console.log('Selected items:', selectedItems); // Debug
 ---
 
 #### Task 1.3: Priority Score Color Coding ⭐ HIGH
+
 **File**: `components/VehicleTableView.tsx`
 
 ```typescript
@@ -159,6 +166,7 @@ function PriorityBadge({ score }: { score: number }) {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Green badges for scores ≥80
 - ✅ Blue badges for scores 70-79
 - ✅ Yellow badges for scores 60-69
@@ -168,6 +176,7 @@ function PriorityBadge({ score }: { score: number }) {
 ---
 
 #### Task 1.4: Mileage Rating Visual Indicators ⭐ HIGH
+
 **File**: `components/VehicleTableView.tsx`
 
 ```typescript
@@ -224,6 +233,7 @@ function MileageIndicator({ mileage, rating }: { mileage: number; rating: Mileag
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Icons show for each rating (CheckCircle, ThumbsUp, Minus, AlertTriangle)
 - ✅ Colors match rating (green, blue, yellow, red)
 - ✅ Labels are clear (Excellent, Good, Fair, High)
@@ -232,10 +242,12 @@ function MileageIndicator({ mileage, rating }: { mileage: number; rating: Mileag
 ---
 
 ### Phase 2: Enhanced Interactions (Day 2)
+
 **Estimated Time**: 4-6 hours
 **Goal**: Add quick actions and better UX
 
 #### Task 2.1: Action Menu Per Row ⭐ HIGH
+
 **File**: `components/VehicleTableView.tsx`
 
 ```typescript
@@ -296,6 +308,7 @@ function RowActionMenu({ vehicle }: { vehicle: Vehicle }) {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Menu button visible on each row
 - ✅ Menu opens on click (doesn't trigger row click)
 - ✅ View Details navigates to detail page
@@ -306,6 +319,7 @@ function RowActionMenu({ vehicle }: { vehicle: Vehicle }) {
 ---
 
 #### Task 2.2: Sticky Table Header ⭐ MEDIUM
+
 **File**: `components/VehicleTableView.tsx`
 
 ```typescript
@@ -327,6 +341,7 @@ function RowActionMenu({ vehicle }: { vehicle: Vehicle }) {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Header stays visible when scrolling
 - ✅ Header has slight shadow for depth
 - ✅ Scrollbar appears when content overflows
@@ -335,6 +350,7 @@ function RowActionMenu({ vehicle }: { vehicle: Vehicle }) {
 ---
 
 #### Task 2.3: Row Hover Enhancement ⭐ MEDIUM
+
 **File**: `components/VehicleTableView.tsx` + `globals.css`
 
 ```css
@@ -345,7 +361,9 @@ function RowActionMenu({ vehicle }: { vehicle: Vehicle }) {
 
 .vehicle-table-row:hover {
   @apply bg-gray-50 transform translate-x-1;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.1),
+    0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 .vehicle-table-row:hover .row-actions {
@@ -373,6 +391,7 @@ function RowActionMenu({ vehicle }: { vehicle: Vehicle }) {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Row lifts slightly on hover
 - ✅ Background color changes
 - ✅ Subtle shadow appears
@@ -382,10 +401,12 @@ function RowActionMenu({ vehicle }: { vehicle: Vehicle }) {
 ---
 
 ### Phase 3: Filter & Search Improvements (Day 3)
+
 **Estimated Time**: 5-7 hours
 **Goal**: Make filtering and searching more intuitive
 
 #### Task 3.1: Collapsible Filter Sidebar ⭐ MEDIUM
+
 **File**: `components/FilterSidebar.tsx`
 
 ```typescript
@@ -461,6 +482,7 @@ export function FilterSidebar({ /* props */ }) {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Sidebar collapses to 60px width
 - ✅ Smooth animation when toggling
 - ✅ Active filter count badge visible
@@ -470,6 +492,7 @@ export function FilterSidebar({ /* props */ }) {
 ---
 
 #### Task 3.2: Search Bar Enhancements ⭐ MEDIUM
+
 **File**: `components/SearchBar.tsx`
 
 ```typescript
@@ -554,6 +577,7 @@ function debounce<T extends (...args: any[]) => any>(
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Search icon on left
 - ✅ Clear button appears when text entered
 - ✅ Loading spinner shows while searching
@@ -563,6 +587,7 @@ function debounce<T extends (...args: any[]) => any>(
 ---
 
 #### Task 3.3: Filter Active State Indicators ⭐ MEDIUM
+
 **File**: `components/FilterSidebar.tsx`
 
 ```typescript
@@ -618,6 +643,7 @@ function FilterSection({
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Blue dot shows when filter section has active filters
 - ✅ Sections can collapse/expand
 - ✅ Active state persists when collapsed
@@ -626,10 +652,12 @@ function FilterSection({
 ---
 
 ### Phase 4: Pagination & UI Polish (Day 4)
+
 **Estimated Time**: 4-5 hours
 **Goal**: Professional finishing touches
 
 #### Task 4.1: Enhanced Pagination ⭐ MEDIUM
+
 **File**: `components/Pagination.tsx`
 
 ```typescript
@@ -745,6 +773,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Page size selector (10, 25, 50, 100)
 - ✅ Shows item range (1-25 of 88)
 - ✅ Previous/Next buttons with disabled state
@@ -754,6 +783,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 ---
 
 #### Task 4.2: Table Header Styling ⭐ MEDIUM
+
 **File**: `components/VehicleTableView.tsx` + `globals.css`
 
 ```css
@@ -798,6 +828,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Gradient background (light to slightly darker gray)
 - ✅ 2px bottom border for separation
 - ✅ Uppercase text with letter spacing
@@ -807,6 +838,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 ---
 
 #### Task 4.3: Loading & Error States ⭐ MEDIUM
+
 **File**: `app/dashboard/page.tsx`
 
 ```typescript
@@ -851,6 +883,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Skeleton loaders match table layout
 - ✅ Error state shows icon and message
 - ✅ Retry button available
@@ -864,6 +897,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 ### Test Each Phase Before Moving to Next
 
 **Phase 1 Tests**:
+
 - [ ] Click checkbox → row highlights
 - [ ] Select multiple → bulk bar appears
 - [ ] Priority badges show correct colors
@@ -871,6 +905,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 - [ ] All visual feedback is immediate
 
 **Phase 2 Tests**:
+
 - [ ] Action menu opens without navigating
 - [ ] Each menu action works correctly
 - [ ] Table header stays visible on scroll
@@ -878,6 +913,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 - [ ] Action menu fades in on hover
 
 **Phase 3 Tests**:
+
 - [ ] Sidebar collapses/expands smoothly
 - [ ] Active filter count updates
 - [ ] Search shows loading spinner
@@ -885,6 +921,7 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 - [ ] Filter sections show active state
 
 **Phase 4 Tests**:
+
 - [ ] Page size changes update table
 - [ ] Page navigation works correctly
 - [ ] Item range displays accurately

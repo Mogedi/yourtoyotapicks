@@ -48,7 +48,7 @@ Every UX decision must answer three questions at a glance:
 ❌ **NEVER**: Show raw data without context (always add "vs median" comparisons)
 ❌ **NEVER**: Hide the priority score - it's the core value proposition
 
-See [docs/UX_PRINCIPLES.md](docs/UX_PRINCIPLES.md) for detailed UX specifications.
+See [docs/ux/UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md) for detailed UX specifications.
 
 ### Current State
 
@@ -112,8 +112,12 @@ See [docs/UX_PRINCIPLES.md](docs/UX_PRINCIPLES.md) for detailed UX specification
 ├── docs/                  # Documentation (organized)
 │   ├── setup/            # Setup guides
 │   ├── features/         # Feature documentation
+│   ├── architecture/     # Architectural decisions
+│   ├── ux/               # UX principles and guidelines
+│   ├── development/      # Development guides
 │   ├── guides/           # How-to guides
-│   └── testing/          # Test documentation
+│   ├── testing/          # Test documentation
+│   └── _archive/         # Historical documentation
 └── scripts/               # Build and test scripts
 ```
 
@@ -299,7 +303,7 @@ Tests automatically:
 - Automatic loading states and fallbacks
 - Works offline (shows placeholder)
 
-See [docs/CAR_IMAGES_IMPLEMENTATION.md](docs/CAR_IMAGES_IMPLEMENTATION.md) for details.
+See [docs/features/CAR_IMAGES_IMPLEMENTATION.md](docs/features/CAR_IMAGES_IMPLEMENTATION.md) for details.
 
 ### Error Detection System
 
@@ -309,20 +313,19 @@ See [docs/CAR_IMAGES_IMPLEMENTATION.md](docs/CAR_IMAGES_IMPLEMENTATION.md) for d
 - `/fix-errors` - Claude analyzes and fixes errors automatically
 - All errors logged to `.claude/errors.json`
 
-See [docs/ERROR_WATCH_SYSTEM.md](docs/ERROR_WATCH_SYSTEM.md) and [docs/ERROR_CAPTURE_GUIDE.md](docs/ERROR_CAPTURE_GUIDE.md).
+See [docs/features/ERROR_WATCH_SYSTEM.md](docs/features/ERROR_WATCH_SYSTEM.md) and [docs/features/ERROR_CAPTURE_GUIDE.md](docs/features/ERROR_CAPTURE_GUIDE.md).
 
 ## Documentation Index
 
 Detailed documentation in `/docs`:
 
 - **Setup Guides**: Database, deployment, email config
-- **Features**: Implementation details for each feature
+- **Architecture**: [Technical Specification](docs/architecture/TECHNICAL_SPECIFICATION.md), [Data Sources](docs/architecture/DATA_SOURCES.md)
+- **UX Principles**: [UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md) - Core design philosophy
+- **Features**: [Dashboard V2](docs/features/DASHBOARD_V2.md), [Car Images](docs/features/CAR_IMAGES_IMPLEMENTATION.md), [Error Detection](docs/features/ERROR_WATCH_SYSTEM.md)
+- **Development**: [Tools Setup](docs/development/DEVELOPMENT_TOOLS_SETUP.md), [Implementation Learnings](docs/development/IMPLEMENTATION_LEARNINGS.md)
 - **Testing**: E2E test plans and results
 - **Guides**: Mock data guide, implementation plan
-- **Car Images**: [CAR_IMAGES_IMPLEMENTATION.md](docs/CAR_IMAGES_IMPLEMENTATION.md) - Complete image system docs
-- **Error Handling**:
-  - [ERROR_WATCH_SYSTEM.md](docs/ERROR_WATCH_SYSTEM.md) - Automated error detection
-  - [ERROR_CAPTURE_GUIDE.md](docs/ERROR_CAPTURE_GUIDE.md) - How to capture all error types
 
 See [docs/README.md](docs/README.md) for full index.
 
@@ -373,4 +376,5 @@ vercel                   # Deploy to Vercel
 - **Setup Issues**: See [docs/setup/QUICK_START.md](docs/setup/QUICK_START.md)
 - **Testing Issues**: See [docs/testing/UI_TESTING_README.md](docs/testing/UI_TESTING_README.md)
 - **Feature Questions**: See [docs/features/](docs/features/)
-- **Technical Spec**: See [docs/TECHNICAL_SPEC.md](docs/TECHNICAL_SPEC.md)
+- **Technical Spec**: See [docs/architecture/TECHNICAL_SPECIFICATION.md](docs/architecture/TECHNICAL_SPECIFICATION.md)
+- **UX Questions**: See [docs/ux/UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md)

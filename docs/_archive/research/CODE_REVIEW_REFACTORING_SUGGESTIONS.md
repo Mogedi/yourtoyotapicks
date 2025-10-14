@@ -1,4 +1,5 @@
 # Code Review & Refactoring Suggestions
+
 ## YourToyotaPicks - Comprehensive Analysis
 
 **Date**: 2025-10-13
@@ -13,6 +14,7 @@
 ### Overall Code Quality: **B+ (Good)**
 
 **Strengths**:
+
 - ✅ Well-structured service layer (FilterService, SortService, PaginationService)
 - ✅ Clean separation of concerns with hooks
 - ✅ Consistent TypeScript usage
@@ -20,6 +22,7 @@
 - ✅ Comprehensive type definitions
 
 **Areas for Improvement**:
+
 - ⚠️ Limited unit test coverage (0% currently)
 - ⚠️ Some components have too many responsibilities
 - ⚠️ Inconsistent error handling patterns
@@ -64,6 +67,7 @@
 ```
 
 **Benefits**:
+
 - Pure functions → easy to unit test
 - Single source of truth for business rules
 - Reusable across components and API routes
@@ -76,6 +80,7 @@
 **Problem**: `mock-data.ts` (1,181 lines) contains helper functions mixed with data.
 
 **Solution**: Split into:
+
 ```
 /lib
   /test-utils
@@ -85,6 +90,7 @@
 ```
 
 **Benefits**:
+
 - Cleaner production bundle
 - Easier to maintain test data
 - Helper functions become reusable test utilities
@@ -99,6 +105,7 @@
 ### 2.1 VehicleTableView Component
 
 **Current Issues**:
+
 - 196 lines - too large
 - Mixes presentation with routing logic
 - Hard to test
@@ -141,6 +148,7 @@ export function VehicleTableRow({ vehicle, isSelected, onSelect, onClick }) {
 ```
 
 **Benefits**:
+
 - Each component < 50 lines
 - Easy to test individual pieces
 - Better reusability
@@ -151,6 +159,7 @@ export function VehicleTableRow({ vehicle, isSelected, onSelect, onClick }) {
 ### 2.2 Dashboard Page Simplification
 
 **Current Issues**:
+
 - `app/dashboard/page.tsx` - 211 lines
 - Too many responsibilities
 - Complex inline logic in JSX
@@ -189,6 +198,7 @@ export default function DashboardPage() {
 ```
 
 **Benefits**:
+
 - Page component < 50 lines
 - Testable business logic
 - Reusable hooks
@@ -230,11 +240,14 @@ import { isInQualityTier } from '@/lib/domain/quality-tier/calculator';
 
 // In applyFilters:
 if (filters.qualityTier && filters.qualityTier !== 'all') {
-  filtered = filtered.filter(v => isInQualityTier(v.priority_score, filters.qualityTier));
+  filtered = filtered.filter((v) =>
+    isInQualityTier(v.priority_score, filters.qualityTier)
+  );
 }
 ```
 
 **Benefits**:
+
 - Testable pure functions
 - Constants can be configured
 - Single source of truth for tier logic
@@ -373,25 +386,37 @@ describe('PaginationService', () => {
 
   describe('paginate', () => {
     it('should return correct page of items', () => {
-      const result = PaginationService.paginate(mockData, { page: 2, pageSize: 25 });
+      const result = PaginationService.paginate(mockData, {
+        page: 2,
+        pageSize: 25,
+      });
       expect(result.data).toHaveLength(25);
       expect(result.data[0].id).toBe(25); // Second page starts at index 25
     });
 
     it('should calculate pagination metadata correctly', () => {
-      const result = PaginationService.paginate(mockData, { page: 2, pageSize: 25 });
+      const result = PaginationService.paginate(mockData, {
+        page: 2,
+        pageSize: 25,
+      });
       expect(result.pagination.totalPages).toBe(4);
       expect(result.pagination.hasNextPage).toBe(true);
       expect(result.pagination.hasPreviousPage).toBe(true);
     });
 
     it('should handle last page correctly', () => {
-      const result = PaginationService.paginate(mockData, { page: 4, pageSize: 25 });
+      const result = PaginationService.paginate(mockData, {
+        page: 4,
+        pageSize: 25,
+      });
       expect(result.pagination.hasNextPage).toBe(false);
     });
 
     it('should handle out-of-bounds page numbers', () => {
-      const result = PaginationService.paginate(mockData, { page: 999, pageSize: 25 });
+      const result = PaginationService.paginate(mockData, {
+        page: 999,
+        pageSize: 25,
+      });
       expect(result.pagination.currentPage).toBe(4); // Clamped to max page
     });
   });
@@ -589,8 +614,8 @@ describe('Vehicle Query Pipeline Integration', () => {
     const result = await queryVehicles(queryOptions);
 
     // Verify filtering
-    expect(result.data.every(v => v.make === 'Toyota')).toBe(true);
-    expect(result.data.every(v => v.priority_score >= 80)).toBe(true);
+    expect(result.data.every((v) => v.make === 'Toyota')).toBe(true);
+    expect(result.data.every((v) => v.priority_score >= 80)).toBe(true);
 
     // Verify sorting
     for (let i = 0; i < result.data.length - 1; i++) {
@@ -608,7 +633,9 @@ describe('Vehicle Query Pipeline Integration', () => {
   it('should return allFilteredVehicles for stats calculation', async () => {
     const result = await queryVehicles({ page: 1, pageSize: 10 });
     expect(result.allFilteredVehicles).toBeDefined();
-    expect(result.allFilteredVehicles.length).toBeGreaterThan(result.data.length);
+    expect(result.allFilteredVehicles.length).toBeGreaterThan(
+      result.data.length
+    );
   });
 });
 ```
@@ -691,6 +718,7 @@ const fetchVehicles = useCallback(async () => {
 ```
 
 **Issues**:
+
 - Creates new string every render
 - May cause unnecessary re-fetches
 - Hard to debug
@@ -794,6 +822,7 @@ static applyFilters(vehicles, filters) {
 **Problem**: Inconsistent error handling across the app.
 
 **Current patterns**:
+
 - Some places: `try/catch` with console.error
 - Some places: No error handling
 - Hook: Returns `error: string | null`
@@ -872,6 +901,7 @@ export function useVehicles(options: UseVehiclesOptions = {}) {
 ```
 
 **Benefits**:
+
 - Consistent error objects
 - Easy to test error scenarios
 - Better user feedback
@@ -1059,6 +1089,7 @@ static applyFilters(
 ### 9.1 Remove Unused/Obsolete Code
 
 **Files to Review/Remove**:
+
 - ✅ `components/FilterBar.tsx` - superseded by FilterSidebar
 - ✅ `components/ReviewSection.tsx` - review system removed
 - ✅ `components/StarRating.tsx` - unused?
@@ -1067,6 +1098,7 @@ static applyFilters(
 - ✅ `scripts/_archive/*` - 22 archived scripts
 
 **Action Items**:
+
 1. Search for imports of each component
 2. If unused, delete or move to `_archive/`
 3. Update CLAUDE.md to reflect removals
@@ -1077,6 +1109,7 @@ static applyFilters(
 ### 9.2 Consolidate Archive Directories
 
 **Current State**: Archives scattered in multiple places
+
 - `/components/_archive`
 - `/docs/features/_archive`
 - `/docs/guides/_archive`
@@ -1103,6 +1136,7 @@ static applyFilters(
 ## 10. Implementation Roadmap
 
 ### Phase 1: Critical Testability (Week 1)
+
 **Priority**: CRITICAL
 **Effort**: 12-15 hours
 
@@ -1118,6 +1152,7 @@ static applyFilters(
 10. ✅ Achieve 60%+ coverage target (1.5 hours)
 
 ### Phase 2: Component Refactoring (Week 2)
+
 **Priority**: HIGH
 **Effort**: 8-10 hours
 
@@ -1128,6 +1163,7 @@ static applyFilters(
 5. ✅ Update E2E tests for new structure (1 hour)
 
 ### Phase 3: Error Handling & Validation (Week 3)
+
 **Priority**: MEDIUM
 **Effort**: 4-5 hours
 
@@ -1138,6 +1174,7 @@ static applyFilters(
 5. ✅ Test error scenarios (1 hour)
 
 ### Phase 4: Performance & Code Quality (Week 4)
+
 **Priority**: LOW-MEDIUM
 **Effort**: 4-6 hours
 
@@ -1148,6 +1185,7 @@ static applyFilters(
 5. ✅ Remove unused code (1 hour)
 
 ### Phase 5: Documentation & Best Practices (Week 5)
+
 **Priority**: LOW
 **Effort**: 3-4 hours
 
@@ -1163,6 +1201,7 @@ static applyFilters(
 ### Unit Tests (Target: 80% coverage)
 
 **Services**:
+
 - [ ] FilterService.applyFilters - all filter types
 - [ ] FilterService.getUniqueValues
 - [ ] FilterService.getActiveFilterCount
@@ -1172,6 +1211,7 @@ static applyFilters(
 - [ ] PaginationService.getPageNumbers
 
 **Domain Logic** (after refactoring):
+
 - [ ] getQualityTier
 - [ ] getTierRank
 - [ ] isInQualityTier
@@ -1179,6 +1219,7 @@ static applyFilters(
 - [ ] enrichVehicle
 
 **Hooks**:
+
 - [ ] useVehicleFilters
 - [ ] useVehicleSort
 - [ ] usePagination
@@ -1186,6 +1227,7 @@ static applyFilters(
 - [ ] useVehicles
 
 **Components**:
+
 - [ ] QualityTierBadge
 - [ ] StatCards
 - [ ] FilterSidebar
@@ -1217,6 +1259,7 @@ static applyFilters(
 ### Code Quality Metrics
 
 **Current State**:
+
 - Unit Test Coverage: 0%
 - E2E Test Coverage: ~60%
 - Average Component Size: ~80 lines
@@ -1224,6 +1267,7 @@ static applyFilters(
 - Type Coverage: ~95%
 
 **Target State** (After refactoring):
+
 - Unit Test Coverage: 80%+
 - E2E Test Coverage: 80%+
 - Average Component Size: <50 lines
@@ -1236,6 +1280,7 @@ static applyFilters(
 ### Performance Metrics
 
 **Target**:
+
 - Filter application: <10ms
 - Sort operation: <20ms
 - Page render: <100ms
@@ -1271,11 +1316,13 @@ static applyFilters(
 ## 14. TODO Audit
 
 **Found TODOs in Code**:
+
 1. `app/dashboard/page.tsx:200` - Implement export
 2. `app/dashboard/page.tsx:204` - Implement delete
 3. `lib/data-pipeline.ts:107` - Auto.dev API integration
 
 **Recommendation**: Create GitHub issues for each TODO with:
+
 - Description
 - Acceptance criteria
 - Priority level

@@ -49,6 +49,7 @@ This document describes the new simplified UI architecture that enables rapid fe
 **Purpose**: Centralize ALL dashboard data and state management
 
 **What it consolidates**:
+
 - Vehicle data fetching (`useVehicles`)
 - Filter state (`useVehicleFilters`)
 - Sort state (`useVehicleSort`)
@@ -58,17 +59,19 @@ This document describes the new simplified UI architecture that enables rapid fe
 - Filter options
 
 **Benefits**:
+
 - Single source of truth for dashboard data
 - No need to import 5+ hooks in every page
 - Easy to add new dashboard features
 - Consistent data across all dashboard views
 
 **Example Usage**:
+
 ```typescript
 const {
-  vehicles,              // Current page of vehicles
-  allFilteredVehicles,   // All filtered vehicles (for stats)
-  stats,                 // Quality tier counts, total vehicles, etc.
+  vehicles, // Current page of vehicles
+  allFilteredVehicles, // All filtered vehicles (for stats)
+  stats, // Quality tier counts, total vehicles, etc.
   isLoading,
   error,
   filters,
@@ -95,11 +98,13 @@ const {
 **Pattern**: Render Props (children as function)
 
 **Benefits**:
+
 - Eliminates props drilling through multiple levels
 - Single place to fetch all dashboard data
 - Pages become pure composition
 
 **Example Usage**:
+
 ```typescript
 <DashboardLayout>
   {({ vehicles, stats, isLoading, filters, sort }) => (
@@ -117,17 +122,20 @@ const {
 **Purpose**: Self-contained header with quality tier statistics
 
 **Props**:
+
 - `stats`: Pre-calculated statistics from `useVehicleDashboard`
 - `showActiveFilters`: Whether to show filter count (default: true)
 - `className`: Optional styling
 
 **Features**:
+
 - Uses `QUALITY_TIER` constants for all labels
 - Shows total vehicles, quality tier breakdown
 - Shows active filter count
 - Zero magic numbers
 
 **Example**:
+
 ```typescript
 <DashboardHeader
   stats={stats}
@@ -142,6 +150,7 @@ const {
 **Purpose**: Smart table component with built-in sorting and selection
 
 **What it consolidates**:
+
 - VehicleTableView
 - TableHeader/TableRow components
 - Sorting UI and logic
@@ -149,6 +158,7 @@ const {
 - Row click navigation
 
 **Props**:
+
 ```typescript
 interface VehicleDataGridProps {
   // Data
@@ -175,6 +185,7 @@ interface VehicleDataGridProps {
 ```
 
 **Benefits**:
+
 - Single component instead of 3+ separate components
 - No props drilling
 - Easy to swap with grid/list/kanban views
@@ -182,6 +193,7 @@ interface VehicleDataGridProps {
 - Default behavior (navigate on row click) built-in
 
 **Example**:
+
 ```typescript
 <VehicleDataGrid
   vehicles={vehicles}
@@ -203,6 +215,7 @@ interface VehicleDataGridProps {
 **File**: `app/dashboard/page.tsx`
 **Lines**: 226 lines
 **Complexity**:
+
 - 30+ lines of setup (imports, hooks, state)
 - 5+ hooks imported
 - Props drilling through multiple components
@@ -210,6 +223,7 @@ interface VehicleDataGridProps {
 - Magic numbers scattered throughout
 
 **Code Structure**:
+
 ```typescript
 export default function DashboardPage() {
   // 30+ lines of setup
@@ -249,6 +263,7 @@ export default function DashboardPage() {
 **File**: `app/dashboard-v3/page.tsx`
 **Lines**: ~140 lines (38% reduction)
 **Complexity**:
+
 - Zero setup code in page
 - Single `DashboardLayout` wrapper
 - No props drilling
@@ -256,6 +271,7 @@ export default function DashboardPage() {
 - No magic numbers
 
 **Code Structure**:
+
 ```typescript
 export default function DashboardV3Page() {
   return (
@@ -330,6 +346,7 @@ export default function DashboardV3Page() {
 ```
 
 **Key Improvements**:
+
 1. **Zero setup code** - No hook imports, no state management
 2. **Render props pattern** - All data from `DashboardLayout`
 3. **Self-contained components** - `VehicleDataGrid` handles sorting/selection
@@ -341,6 +358,7 @@ export default function DashboardV3Page() {
 ### Example: Switch from Table to Grid View
 
 **Before** (would require):
+
 1. Import new component
 2. Update state management
 3. Rewire all props
@@ -349,6 +367,7 @@ export default function DashboardV3Page() {
 6. Test everything
 
 **After** (with new architecture):
+
 ```typescript
 // Just swap the component - all props are the same!
 <VehicleDataGrid vehicles={vehicles} {...props} />
@@ -412,12 +431,14 @@ That's it! No data fetching logic needed.
 ### For Existing Pages
 
 **Option 1: Gradual Migration** (Recommended)
+
 1. Keep existing dashboard at `/dashboard`
 2. Create new implementations at `/dashboard-v3`, `/dashboard-v4`, etc.
 3. Test thoroughly
 4. Switch over when ready
 
 **Option 2: Direct Migration**
+
 1. Read the page to understand current features
 2. Wrap in `<DashboardLayout>` render props
 3. Replace manual hook calls with render prop data
@@ -427,6 +448,7 @@ That's it! No data fetching logic needed.
 ### Creating New Feature Components
 
 **Template**:
+
 ```typescript
 export interface MyFeatureProps {
   // Only the data you need from useVehicleDashboard
@@ -449,6 +471,7 @@ export function MyFeature({ vehicles, onAction, className }: MyFeatureProps) {
 ```
 
 **Best Practices**:
+
 1. Accept only the data you need (not entire `useVehicleDashboard` return)
 2. Use `QUALITY_TIER` and `SEARCH_CRITERIA` constants
 3. Handle interactions internally when possible
@@ -492,6 +515,7 @@ npm run test:e2e   # ✅ 10 E2E tests passed
 ```
 
 **Test Coverage**:
+
 - Service layer: 98%+ (FilterService, SortService, PaginationService)
 - Hooks: 100% (useVehicles, useVehicleFilters, useVehicleSort, usePagination, useMultiSelect)
 - New hook: `useVehicleDashboard` (tested via integration with existing hooks)

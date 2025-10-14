@@ -3,9 +3,11 @@
 ## Quick Links
 
 ### 📘 Main Implementation Plan
+
 **[DASHBOARD_V2_SIMPLIFIED.md](./DASHBOARD_V2_SIMPLIFIED.md)** - Single Claude execution, step-by-step guide (19-26 hours)
 
 This is the **primary document** for implementing Dashboard V2. It includes:
+
 - Pre-flight checks
 - 7 sequential phases with code examples
 - Verification steps after each phase
@@ -18,13 +20,15 @@ This is the **primary document** for implementing Dashboard V2. It includes:
 
 ### 📦 Archived Documents
 
-**[_archive/DASHBOARD_V2_IMPLEMENTATION_PLAN_SUBAGENT.md](./_archive/DASHBOARD_V2_IMPLEMENTATION_PLAN_SUBAGENT.md)**
+**[\_archive/DASHBOARD_V2_IMPLEMENTATION_PLAN_SUBAGENT.md](./_archive/DASHBOARD_V2_IMPLEMENTATION_PLAN_SUBAGENT.md)**
+
 - Original plan designed for parallel sub-agent execution
 - More complex coordination required
 - 40-45% faster but harder to manage
 - **Archived**: Too complex for single-session implementation
 
-**[_archive/DASHBOARD_V2_FEEDBACK.md](./_archive/DASHBOARD_V2_FEEDBACK.md)**
+**[\_archive/DASHBOARD_V2_FEEDBACK.md](./_archive/DASHBOARD_V2_FEEDBACK.md)**
+
 - Detailed feedback on sub-agent plan
 - Analysis for unrestricted Claude execution
 - Identified 6 critical issues
@@ -38,6 +42,7 @@ This is the **primary document** for implementing Dashboard V2. It includes:
 ### ✅ Recommended: Single Claude (Simplified Plan)
 
 **Why:**
+
 - Full context throughout implementation
 - Can adapt on the fly
 - Easier debugging
@@ -47,6 +52,7 @@ This is the **primary document** for implementing Dashboard V2. It includes:
 **Timeline:** 19-26 hours
 
 **Best for:**
+
 - First-time implementation
 - Want to review code as it's built
 - Prefer steady, reliable progress
@@ -54,11 +60,13 @@ This is the **primary document** for implementing Dashboard V2. It includes:
 ### ⚠️ Alternative: Sub-Agent Approach (Archived)
 
 **Why:**
+
 - 40-45% faster (12-18 hours)
 - Parallel execution
 - Specialized agents
 
 **Challenges:**
+
 - Complex coordination
 - Potential integration conflicts
 - Each agent has limited context
@@ -73,11 +81,13 @@ This is the **primary document** for implementing Dashboard V2. It includes:
 ### To Begin Implementation:
 
 1. **Read the plan:**
+
    ```bash
    open docs/features/DASHBOARD_V2_SIMPLIFIED.md
    ```
 
 2. **Run pre-flight checks:**
+
    ```bash
    npm run dev    # Should start without errors
    npm run test   # Should run
@@ -85,6 +95,7 @@ This is the **primary document** for implementing Dashboard V2. It includes:
    ```
 
 3. **Create feature branch:**
+
    ```bash
    git checkout -b feature/dashboard-v2
    ```
@@ -99,16 +110,16 @@ This is the **primary document** for implementing Dashboard V2. It includes:
 
 ## Phase Overview
 
-| Phase | Description | Time | Verification |
-|-------|-------------|------|--------------|
-| 0 | Pre-flight checks | 30 min | Dev server runs |
-| 1 | Backend foundation | 3-4 hrs | Types, services, queries |
-| 2 | Custom hooks | 2-3 hrs | State management |
-| 3 | Shared components | 2-3 hrs | Reusable UI |
-| 4 | Table components | 5-6 hrs | Table UI |
-| 5 | Page implementation | 2-3 hrs | Wire everything |
-| 6 | Polish & testing | 3-4 hrs | E2E tests |
-| 7 | Navigation | 1 hr | View switcher |
+| Phase | Description         | Time    | Verification             |
+| ----- | ------------------- | ------- | ------------------------ |
+| 0     | Pre-flight checks   | 30 min  | Dev server runs          |
+| 1     | Backend foundation  | 3-4 hrs | Types, services, queries |
+| 2     | Custom hooks        | 2-3 hrs | State management         |
+| 3     | Shared components   | 2-3 hrs | Reusable UI              |
+| 4     | Table components    | 5-6 hrs | Table UI                 |
+| 5     | Page implementation | 2-3 hrs | Wire everything          |
+| 6     | Polish & testing    | 3-4 hrs | E2E tests                |
+| 7     | Navigation          | 1 hr    | View switcher            |
 
 **Total:** 19-26 hours
 
@@ -117,6 +128,7 @@ This is the **primary document** for implementing Dashboard V2. It includes:
 ## Success Criteria
 
 ### MVP (Minimum Viable Product):
+
 - ✅ Table renders at `/dashboard/table`
 - ✅ Shows vehicles from mock data
 - ✅ Basic filters work (price, make, search)
@@ -125,6 +137,7 @@ This is the **primary document** for implementing Dashboard V2. It includes:
 - ✅ Zero console errors
 
 ### Full Feature Complete:
+
 - ✅ All filters functional
 - ✅ All columns sortable
 - ✅ Loading states
@@ -199,6 +212,7 @@ npm run test:e2e:04  # Table view tests
 ```
 
 **Test Coverage:**
+
 - Table rendering
 - Filter functionality
 - Sort functionality
@@ -214,21 +228,25 @@ npm run test:e2e:04  # Table view tests
 ### Common Issues
 
 **TypeScript Errors:**
+
 - Check import paths use `@/` alias
 - Verify tsconfig.json path mappings
 - Ensure all types are exported
 
 **Runtime Errors:**
+
 - Check browser console
 - Verify mock data loads
 - Check React DevTools
 
 **Hook Errors:**
+
 - Ensure `'use client'` directive
 - Check hook dependencies
 - Verify immutable state updates
 
 **Test Failures:**
+
 - Ensure dev server running
 - Check test selectors
 - Add waitForTimeout if needed

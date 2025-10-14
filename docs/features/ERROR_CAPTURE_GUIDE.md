@@ -13,6 +13,7 @@ Complete guide for capturing all types of errors in YourToyotaPicks.
 **How to capture**:
 
 #### Option A: Check During Development
+
 1. Open browser DevTools (F12 or Cmd+Option+I)
 2. Go to Console tab
 3. Look for red error messages
@@ -20,6 +21,7 @@ Complete guide for capturing all types of errors in YourToyotaPicks.
 5. Share with Claude: "Fix this console error: [paste error]"
 
 #### Option B: Add Error Boundary (Automatic Capture)
+
 ```typescript
 // app/error.tsx - Next.js Error Boundary
 'use client';
@@ -56,6 +58,7 @@ export default function Error({
 ```
 
 #### Option C: Global Error Handler
+
 ```typescript
 // app/layout.tsx - Add global error handler
 'use client';
@@ -106,6 +109,7 @@ export default function RootLayout({
 ```
 
 Then Claude can read these errors:
+
 ```bash
 # In browser console, run:
 JSON.parse(localStorage.getItem('app-errors'))
@@ -182,7 +186,9 @@ npm run lint
 **How to capture**:
 
 #### Check Terminal Output
+
 Look in the terminal where `npm run dev` is running:
+
 ```bash
 npm run dev
 
@@ -192,6 +198,7 @@ npm run dev
 ```
 
 #### Add Server Error Logging
+
 ```typescript
 // app/dashboard/page.tsx
 export default async function DashboardPage() {
@@ -215,6 +222,7 @@ export default async function DashboardPage() {
 **How to capture**:
 
 #### Browser DevTools Network Tab
+
 1. Open DevTools (F12)
 2. Go to **Network** tab
 3. Reload page
@@ -223,6 +231,7 @@ export default async function DashboardPage() {
 6. Share with Claude: "Fix this API error: [details]"
 
 #### Add Network Interceptor
+
 ```typescript
 // lib/api-client.ts
 export async function fetchWithLogging(url: string, options?: RequestInit) {
@@ -230,7 +239,9 @@ export async function fetchWithLogging(url: string, options?: RequestInit) {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const error = new Error(`API Error: ${response.status} ${response.statusText}`);
+      const error = new Error(
+        `API Error: ${response.status} ${response.statusText}`
+      );
       console.error('Network error:', {
         url,
         status: response.status,
@@ -256,6 +267,7 @@ export async function fetchWithLogging(url: string, options?: RequestInit) {
 **How to capture**: Use error monitoring service
 
 #### Option A: Sentry (Recommended)
+
 ```bash
 npm install @sentry/nextjs
 
@@ -264,6 +276,7 @@ npx @sentry/wizard@latest -i nextjs
 ```
 
 Benefits:
+
 - Captures all errors automatically
 - Stack traces + user context
 - Source maps for minified code
@@ -271,11 +284,13 @@ Benefits:
 - Error trends
 
 #### Option B: LogRocket
+
 ```bash
 npm install logrocket
 ```
 
 Benefits:
+
 - Session replay (video of what user did)
 - Network logs
 - Console logs
@@ -308,21 +323,25 @@ Benefits:
 ### Complete Setup (5 minutes)
 
 1. **E2E Tests** (Already done ✅)
+
    ```bash
    npm run test:e2e
    ```
 
 2. **Watch Mode** (Already done ✅)
+
    ```bash
    npm run watch:errors
    ```
 
 3. **Error Boundary** (Add to app/error.tsx)
+
    ```typescript
    // See "Option B" above
    ```
 
 4. **Global Handler** (Add to app/layout.tsx)
+
    ```typescript
    // See "Option C" above
    ```
@@ -344,10 +363,13 @@ Benefits:
 
 Fix this error:
 ```
+
 Error fetching listings: TypeError: fetch failed
-  at getListings (lib/supabase.ts:156:17)
-  at fetchVehicles (app/dashboard/page.tsx:38:28)
+at getListings (lib/supabase.ts:156:17)
+at fetchVehicles (app/dashboard/page.tsx:38:28)
+
 ```
+
 ```
 
 ### Automated Error Reporting
@@ -366,18 +388,21 @@ Error fetching listings: TypeError: fetch failed
 ## Best Practices
 
 ### During Development
+
 ✅ Keep browser DevTools Console open
 ✅ Watch terminal output for server errors
 ✅ Run `npm run watch:errors` in background
 ✅ Check Network tab for API issues
 
 ### Before Committing
+
 ✅ Run `npm run test:e2e` - fix all test failures
 ✅ Run `npm run build` - fix all build errors
 ✅ Run `npx tsc --noEmit` - fix TypeScript errors
 ✅ Check browser console - no red errors
 
 ### In Production
+
 ✅ Use Sentry or similar service
 ✅ Monitor error rates
 ✅ Set up alerts for critical errors
@@ -388,21 +413,25 @@ Error fetching listings: TypeError: fetch failed
 ## Common Errors & Fixes
 
 ### "Error fetching listings"
+
 **Cause**: Supabase not configured (expected)
 **Fix**: Already handled - app falls back to mock data
 **Action**: No fix needed (unless you want to configure Supabase)
 
 ### "Failed to load resource: 404"
+
 **Cause**: Asset not found, API route missing
 **Fix**: Check URL, verify file exists
 **Action**: Use DevTools Network tab to see which resource
 
 ### "Cannot read property 'X' of undefined"
+
 **Cause**: Accessing property on null/undefined object
 **Fix**: Add optional chaining (`?.`) or null check
 **Action**: Check stack trace for line number
 
 ### "Maximum update depth exceeded"
+
 **Cause**: setState called in render without dependency
 **Fix**: Move to useEffect or add dependency array
 **Action**: Check React component mentioned in error
@@ -411,14 +440,14 @@ Error fetching listings: TypeError: fetch failed
 
 ## Tools Summary
 
-| Tool | Captures | When | Auto? |
-|------|----------|------|-------|
-| Browser DevTools | Console errors | Manual | No |
-| E2E Tests | Test failures | On test run | Yes |
-| Watch Mode | File change errors | On save | Yes |
-| Error Boundary | React errors | On render | Yes |
-| Sentry | All production | Always | Yes |
-| Terminal | Server errors | Always | No |
+| Tool             | Captures           | When        | Auto? |
+| ---------------- | ------------------ | ----------- | ----- |
+| Browser DevTools | Console errors     | Manual      | No    |
+| E2E Tests        | Test failures      | On test run | Yes   |
+| Watch Mode       | File change errors | On save     | Yes   |
+| Error Boundary   | React errors       | On render   | Yes   |
+| Sentry           | All production     | Always      | Yes   |
+| Terminal         | Server errors      | Always      | No    |
 
 ---
 

@@ -1,4 +1,5 @@
 # Dashboard V2: Table View Implementation Plan (IMPROVED)
+
 **Single Claude Execution - With Feedback Integrated**
 
 ## Overview
@@ -6,6 +7,7 @@
 This is a streamlined implementation plan for Dashboard V2, optimized for a single Claude session executing sequentially. This modular, maintainable table-based view will eventually replace the current card-based dashboard.
 
 **Key Features:**
+
 - 🧪 **Test-Driven**: Write tests alongside implementation
 - 🎯 **Incremental**: Build and verify piece by piece
 - 📦 **Modular**: Small, focused components
@@ -15,6 +17,7 @@ This is a streamlined implementation plan for Dashboard V2, optimized for a sing
 **Estimated Timeline**: 25-35 hours (realistic with debugging)
 
 **Improvements in this version:**
+
 - ✅ Fixed type conflicts with existing `lib/types.ts`
 - ✅ Added data normalization for mock data
 - ✅ Added URL sync debouncing for performance
@@ -31,10 +34,12 @@ This is a streamlined implementation plan for Dashboard V2, optimized for a sing
 ### Wireframe Features
 
 **Top Section:**
+
 - Brand/Model search input (left)
 - Zip Code input with radius selector (right)
 
 **Left Sidebar:**
+
 - Price Range filter [min] - [max]
 - Mileage Range filter [min] - [max]
 - Year Range filter [min] - [max]
@@ -45,6 +50,7 @@ This is a streamlined implementation plan for Dashboard V2, optimized for a sing
 - Active filter count badge
 
 **Main Content:**
+
 - Data table with columns:
   - Thumbnail image
   - Name (Year Make Model)
@@ -142,16 +148,19 @@ lib/
 **Before starting, verify:**
 
 1. **Dev environment works:**
+
    ```bash
    npm run dev  # Should start without errors
    ```
 
 2. **Test infrastructure exists:**
+
    ```bash
    npm run test:ui  # Should run E2E tests
    ```
 
 3. **Current state:**
+
    ```bash
    git status
    git branch  # Consider: git checkout -b feature/dashboard-v2
@@ -170,6 +179,7 @@ lib/
    ```
 
 **Key Findings from Existing Code:**
+
 - ✅ `Vehicle` type has all fields we need: `priority_score`, `current_location`, `source_url`, etc.
 - ✅ Mock data has `images_url` array with real IMAGIN.studio API URLs
 - ⚠️ Location fields: use `current_location` (formatted string) NOT separate `city`/`state`
@@ -187,6 +197,7 @@ lib/
 #### 1.0 Create Directory Structure
 
 Before implementing, create necessary directories:
+
 ```bash
 mkdir -p lib/utils
 mkdir -p lib/services
@@ -273,6 +284,7 @@ export const DEFAULT_PAGINATION: PaginationConfig = {
 #### 1.2 Data Normalization Utility (NEW)
 
 Create `lib/utils/data-normalizer.ts`:
+
 ```typescript
 import type { Vehicle } from '@/lib/types';
 
@@ -285,7 +297,8 @@ export function normalizeVehicle(v: any): Vehicle {
     ...v,
     // Ensure required fields have defaults
     priority_score: v.priority_score ?? calculateDefaultScore(v),
-    current_location: v.current_location ?? `${v.city || 'Unknown'}, ${v.state || 'Unknown'}`,
+    current_location:
+      v.current_location ?? `${v.city || 'Unknown'}, ${v.state || 'Unknown'}`,
     source_url: v.source_url ?? '#',
     images_url: v.images_url ?? [],
     reviewed_by_user: v.reviewed_by_user ?? false,
@@ -336,6 +349,7 @@ export function normalizeVehicles(vehicles: any[]): Vehicle[] {
 #### 1.3 Utility Functions
 
 Create `lib/utils/format.ts`:
+
 ```typescript
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -364,6 +378,7 @@ export function formatDate(dateString: string): string {
 ```
 
 Create `lib/utils/vehicle-helpers.ts`:
+
 ```typescript
 import type { Vehicle } from '@/lib/types';
 
@@ -407,6 +422,7 @@ export function getThumbnailUrl(vehicle: Vehicle): string | null {
 ```
 
 Create `lib/utils/url-helpers.ts`:
+
 ```typescript
 import type { VehicleFilters, SortConfig, PaginationConfig } from '@/lib/types';
 
@@ -453,7 +469,9 @@ export function filtersToQueryParams(filters: VehicleFilters): URLSearchParams {
   return params;
 }
 
-export function queryParamsToFilters(params: URLSearchParams): Partial<VehicleFilters> {
+export function queryParamsToFilters(
+  params: URLSearchParams
+): Partial<VehicleFilters> {
   const filters: Partial<VehicleFilters> = {};
 
   const minPrice = params.get('minPrice');
@@ -513,6 +531,7 @@ export function queryParamsToFilters(params: URLSearchParams): Partial<VehicleFi
 #### 1.4 Service Layer
 
 Create `lib/services/filter-service.ts`:
+
 ```typescript
 import type { Vehicle, VehicleFilters } from '@/lib/types';
 
@@ -522,40 +541,47 @@ export class FilterService {
 
     if (filters.priceRange) {
       filtered = filtered.filter(
-        v => v.price >= filters.priceRange!.min && v.price <= filters.priceRange!.max
+        (v) =>
+          v.price >= filters.priceRange!.min &&
+          v.price <= filters.priceRange!.max
       );
     }
 
     if (filters.mileageRange) {
       filtered = filtered.filter(
-        v => v.mileage >= filters.mileageRange!.min && v.mileage <= filters.mileageRange!.max
+        (v) =>
+          v.mileage >= filters.mileageRange!.min &&
+          v.mileage <= filters.mileageRange!.max
       );
     }
 
     if (filters.yearRange) {
       filtered = filtered.filter(
-        v => v.year >= filters.yearRange!.min && v.year <= filters.yearRange!.max
+        (v) =>
+          v.year >= filters.yearRange!.min && v.year <= filters.yearRange!.max
       );
     }
 
     if (filters.scoreRange) {
       filtered = filtered.filter(
-        v => v.priority_score >= filters.scoreRange!.min && v.priority_score <= filters.scoreRange!.max
+        (v) =>
+          v.priority_score >= filters.scoreRange!.min &&
+          v.priority_score <= filters.scoreRange!.max
       );
     }
 
     if (filters.makes.length > 0) {
-      filtered = filtered.filter(v => filters.makes.includes(v.make));
+      filtered = filtered.filter((v) => filters.makes.includes(v.make));
     }
 
     if (filters.models.length > 0) {
-      filtered = filtered.filter(v => filters.models.includes(v.model));
+      filtered = filtered.filter((v) => filters.models.includes(v.model));
     }
 
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
       filtered = filtered.filter(
-        v =>
+        (v) =>
           v.make.toLowerCase().includes(query) ||
           v.model.toLowerCase().includes(query) ||
           v.vin.toLowerCase().includes(query)
@@ -584,6 +610,7 @@ export class FilterService {
 ```
 
 Create `lib/services/sort-service.ts`:
+
 ```typescript
 import type { Vehicle, SortConfig } from '@/lib/types';
 
@@ -613,6 +640,7 @@ export class SortService {
 ```
 
 Create `lib/services/review-service.ts` (NEW):
+
 ```typescript
 import type { Vehicle } from '@/lib/types';
 
@@ -643,9 +671,14 @@ export class ReviewService {
 #### 1.5 Query Builder with Normalization
 
 Create `lib/api/vehicles/queries.ts`:
+
 ```typescript
 import { getMarketcheckListings } from '@/lib/supabase';
-import type { VehicleQueryOptions, VehicleQueryResult, Vehicle } from '@/lib/types';
+import type {
+  VehicleQueryOptions,
+  VehicleQueryResult,
+  Vehicle,
+} from '@/lib/types';
 import { mockListings } from '@/lib/mock-data';
 import { normalizeVehicles } from '@/lib/utils/data-normalizer';
 import { FilterService } from '@/lib/services/filter-service';
@@ -702,6 +735,7 @@ function processVehicles(
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - `npm run dev` (starts without errors)
 
@@ -716,6 +750,7 @@ function processVehicles(
 #### 2.1 Data Fetching Hook
 
 Create `lib/hooks/useVehicles.ts`:
+
 ```typescript
 'use client';
 
@@ -782,6 +817,7 @@ export function useVehicles(options: VehicleQueryOptions) {
 #### 2.2 Filter Hook
 
 Create `lib/hooks/useVehicleFilters.ts`:
+
 ```typescript
 'use client';
 
@@ -789,18 +825,20 @@ import { useState, useCallback } from 'react';
 import type { VehicleFilters } from '@/lib/types';
 import { DEFAULT_FILTERS } from '@/lib/types';
 
-export function useVehicleFilters(initialFilters: VehicleFilters = DEFAULT_FILTERS) {
+export function useVehicleFilters(
+  initialFilters: VehicleFilters = DEFAULT_FILTERS
+) {
   const [filters, setFilters] = useState<VehicleFilters>(initialFilters);
 
   const updateFilter = useCallback(
     <K extends keyof VehicleFilters>(key: K, value: VehicleFilters[K]) => {
-      setFilters(prev => ({ ...prev, [key]: value }));
+      setFilters((prev) => ({ ...prev, [key]: value }));
     },
     []
   );
 
   const updateFilters = useCallback((updates: Partial<VehicleFilters>) => {
-    setFilters(prev => ({ ...prev, ...updates }));
+    setFilters((prev) => ({ ...prev, ...updates }));
   }, []);
 
   const clearFilters = useCallback(() => {
@@ -820,6 +858,7 @@ export function useVehicleFilters(initialFilters: VehicleFilters = DEFAULT_FILTE
 #### 2.3 Sort Hook
 
 Create `lib/hooks/useVehicleSort.ts`:
+
 ```typescript
 'use client';
 
@@ -831,7 +870,7 @@ export function useVehicleSort(initialSort: SortConfig = DEFAULT_SORT) {
   const [sort, setSort] = useState<SortConfig>(initialSort);
 
   const toggleSort = useCallback((field: SortConfig['field']) => {
-    setSort(prev => {
+    setSort((prev) => {
       if (prev.field === field) {
         return {
           field,
@@ -850,6 +889,7 @@ export function useVehicleSort(initialSort: SortConfig = DEFAULT_SORT) {
 #### 2.4 Pagination Hook
 
 Create `lib/hooks/usePagination.ts`:
+
 ```typescript
 'use client';
 
@@ -868,11 +908,11 @@ export function usePagination(
   }, []);
 
   const nextPage = useCallback(() => {
-    setPage(p => p + 1);
+    setPage((p) => p + 1);
   }, []);
 
   const prevPage = useCallback(() => {
-    setPage(p => Math.max(1, p - 1));
+    setPage((p) => Math.max(1, p - 1));
   }, []);
 
   const setPageSize = useCallback((size: number) => {
@@ -894,6 +934,7 @@ export function usePagination(
 #### 2.5 URL Sync Hook (WITH DEBOUNCING - IMPORTANT)
 
 Create `lib/hooks/useUrlSync.ts`:
+
 ```typescript
 'use client';
 
@@ -959,6 +1000,7 @@ export function useUrlSync(
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - `npm run dev` (starts without errors)
 
@@ -973,6 +1015,7 @@ export function useUrlSync(
 #### 3.1 RangeInput Component
 
 Create `components/dashboard/shared/RangeInput.tsx`:
+
 ```typescript
 'use client';
 
@@ -1045,6 +1088,7 @@ export function RangeInput({
 #### 3.2 SearchBar Component
 
 Create `components/dashboard/shared/SearchBar.tsx`:
+
 ```typescript
 'use client';
 
@@ -1084,6 +1128,7 @@ export function SearchBar({
 #### 3.3 CheckboxGroup Component
 
 Create `components/dashboard/shared/CheckboxGroup.tsx`:
+
 ```typescript
 'use client';
 
@@ -1138,6 +1183,7 @@ export function CheckboxGroup({
 #### 3.4 EmptyState Component
 
 Create `components/dashboard/shared/EmptyState.tsx`:
+
 ```typescript
 import { Car } from 'lucide-react';
 
@@ -1161,6 +1207,7 @@ export function EmptyState({
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - `npm run dev` (starts without errors)
 - Visit existing dashboard to ensure no breakage
@@ -1176,6 +1223,7 @@ export function EmptyState({
 #### 4.1 ImageCell Component
 
 Create `components/dashboard/table-view/cells/ImageCell.tsx`:
+
 ```typescript
 'use client';
 
@@ -1218,6 +1266,7 @@ export function ImageCell({ vehicle }: ImageCellProps) {
 #### 4.2 PriceCell Component
 
 Create `components/dashboard/table-view/cells/PriceCell.tsx`:
+
 ```typescript
 import { formatCurrency } from '@/lib/utils/format';
 
@@ -1237,6 +1286,7 @@ export function PriceCell({ price }: PriceCellProps) {
 #### 4.3 MileageCell Component
 
 Create `components/dashboard/table-view/cells/MileageCell.tsx`:
+
 ```typescript
 import { formatMileage } from '@/lib/utils/format';
 import { Badge } from '@/components/ui/badge';
@@ -1266,6 +1316,7 @@ export function MileageCell({ mileage, rating }: MileageCellProps) {
 #### 4.4 ScoreCell Component
 
 Create `components/dashboard/table-view/cells/ScoreCell.tsx`:
+
 ```typescript
 import { Badge } from '@/components/ui/badge';
 import { getScoreBadgeVariant } from '@/lib/utils/vehicle-helpers';
@@ -1288,6 +1339,7 @@ export function ScoreCell({ score }: ScoreCellProps) {
 #### 4.5 VinCell Component
 
 Create `components/dashboard/table-view/cells/VinCell.tsx`:
+
 ```typescript
 'use client';
 
@@ -1332,6 +1384,7 @@ export function VinCell({ vin }: VinCellProps) {
 #### 4.6 ActionsCell Component (NEW)
 
 Create `components/dashboard/table-view/cells/ActionsCell.tsx`:
+
 ```typescript
 'use client';
 
@@ -1391,6 +1444,7 @@ export function ActionsCell({ vehicle, onReviewToggle }: ActionsCellProps) {
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - All cell components render correctly in isolation
 
@@ -1405,6 +1459,7 @@ export function ActionsCell({ vehicle, onReviewToggle }: ActionsCellProps) {
 #### 5.1 TableHeader Component (with sticky + sort indicators)
 
 Create `components/dashboard/table-view/TableHeader.tsx`:
+
 ```typescript
 'use client';
 
@@ -1470,6 +1525,7 @@ export function TableHeader({ sort, onSortChange }: TableHeaderProps) {
 #### 5.2 TableRow Component
 
 Create `components/dashboard/table-view/TableRow.tsx`:
+
 ```typescript
 'use client';
 
@@ -1523,6 +1579,7 @@ export function TableRow({ vehicle, onReviewToggle }: TableRowProps) {
 #### 5.3 TableBody Component
 
 Create `components/dashboard/table-view/TableBody.tsx`:
+
 ```typescript
 import type { Vehicle } from '@/lib/types';
 import { TableRow } from './TableRow';
@@ -1550,6 +1607,7 @@ export function TableBody({ vehicles, onReviewToggle }: TableBodyProps) {
 #### 5.4 TableSkeleton Component
 
 Create `components/dashboard/table-view/TableSkeleton.tsx`:
+
 ```typescript
 export function TableSkeleton() {
   return (
@@ -1571,6 +1629,7 @@ export function TableSkeleton() {
 #### 5.5 VehicleTable Component (Main Container)
 
 Create `components/dashboard/table-view/VehicleTable.tsx`:
+
 ```typescript
 import type { Vehicle, SortConfig } from '@/lib/types';
 import { TableHeader } from './TableHeader';
@@ -1622,6 +1681,7 @@ export function VehicleTable({
 #### 5.6 TablePagination Component
 
 Create `components/dashboard/table-view/TablePagination.tsx`:
+
 ```typescript
 'use client';
 
@@ -1711,6 +1771,7 @@ export function TablePagination({
 #### 5.7 TableFilters Component (Left Sidebar)
 
 Create `components/dashboard/table-view/TableFilters.tsx`:
+
 ```typescript
 'use client';
 
@@ -1847,6 +1908,7 @@ export function TableFilters({ filters, onFilterChange, onClearFilters }: TableF
 ```
 
 ✅ **Verify**:
+
 - `npm run type-check` (no errors)
 - All table components render correctly
 
@@ -1859,6 +1921,7 @@ export function TableFilters({ filters, onFilterChange, onClearFilters }: TableF
 **Goal**: Wire everything together in the table view page.
 
 Create `app/dashboard/table/page.tsx`:
+
 ```typescript
 'use client';
 
@@ -1984,6 +2047,7 @@ export default function TableViewPage() {
 ```
 
 ✅ **Verify**:
+
 - Visit http://localhost:3000/dashboard/table (or http://localhost:3001/dashboard/table)
 - Table renders with mock data
 - Filters work
@@ -2003,6 +2067,7 @@ export default function TableViewPage() {
 #### 7.1 Add Banner to Card View
 
 Edit `app/dashboard/page.tsx` (add banner at top):
+
 ```typescript
 // Add at the top of the component return
 <div className="bg-blue-50 dark:bg-blue-950 p-4 text-center border-b">
@@ -2020,6 +2085,7 @@ Edit `app/dashboard/page.tsx` (add banner at top):
 #### 7.2 Accessibility Improvements
 
 **Checklist:**
+
 - ✅ All interactive elements have aria-labels
 - ✅ Table headers have proper scope attributes
 - ✅ Keyboard navigation works (Tab through UI)
@@ -2030,6 +2096,7 @@ Edit `app/dashboard/page.tsx` (add banner at top):
 #### 7.3 E2E Tests
 
 Create `tests/e2e/flows/04-table-view.test.ts`:
+
 ```typescript
 import puppeteer from 'puppeteer';
 import { join } from 'path';
@@ -2055,7 +2122,9 @@ describe('Dashboard V2 - Table View', () => {
   });
 
   it('should load table view page', async () => {
-    await page.goto(`${BASE_URL}/dashboard/table`, { waitUntil: 'networkidle0' });
+    await page.goto(`${BASE_URL}/dashboard/table`, {
+      waitUntil: 'networkidle0',
+    });
     await page.waitForSelector('table', { timeout: 5000 });
 
     await page.screenshot({
@@ -2068,7 +2137,10 @@ describe('Dashboard V2 - Table View', () => {
   });
 
   it('should display vehicle data in table rows', async () => {
-    const firstRowText = await page.$eval('tbody tr:first-child', el => el.textContent);
+    const firstRowText = await page.$eval(
+      'tbody tr:first-child',
+      (el) => el.textContent
+    );
     expect(firstRowText).toContain('Toyota');
   });
 
@@ -2090,7 +2162,9 @@ describe('Dashboard V2 - Table View', () => {
   });
 
   it('should sort by price', async () => {
-    await page.goto(`${BASE_URL}/dashboard/table`, { waitUntil: 'networkidle0' });
+    await page.goto(`${BASE_URL}/dashboard/table`, {
+      waitUntil: 'networkidle0',
+    });
 
     // Click price column header
     const priceHeader = await page.$('button:has-text("Price")');
@@ -2110,7 +2184,9 @@ describe('Dashboard V2 - Table View', () => {
   });
 
   it('should search vehicles', async () => {
-    await page.goto(`${BASE_URL}/dashboard/table`, { waitUntil: 'networkidle0' });
+    await page.goto(`${BASE_URL}/dashboard/table`, {
+      waitUntil: 'networkidle0',
+    });
 
     const searchInput = await page.$('input[placeholder*="Search"]');
     if (searchInput) {
@@ -2122,17 +2198,21 @@ describe('Dashboard V2 - Table View', () => {
         fullPage: true,
       });
 
-      const tableText = await page.$eval('table', el => el.textContent);
+      const tableText = await page.$eval('table', (el) => el.textContent);
       expect(tableText?.toLowerCase()).toContain('rav4');
     }
   });
 
   it('should paginate results', async () => {
-    await page.goto(`${BASE_URL}/dashboard/table`, { waitUntil: 'networkidle0' });
+    await page.goto(`${BASE_URL}/dashboard/table`, {
+      waitUntil: 'networkidle0',
+    });
 
     const nextButton = await page.$('button:has-text("Next")');
     if (nextButton) {
-      const isDisabled = await page.$eval('button:has-text("Next")', el => el.hasAttribute('disabled'));
+      const isDisabled = await page.$eval('button:has-text("Next")', (el) =>
+        el.hasAttribute('disabled')
+      );
 
       if (!isDisabled) {
         await nextButton.click();
@@ -2143,14 +2223,19 @@ describe('Dashboard V2 - Table View', () => {
           fullPage: true,
         });
 
-        const pageText = await page.$eval('.flex.items-center.gap-2', el => el.textContent);
+        const pageText = await page.$eval(
+          '.flex.items-center.gap-2',
+          (el) => el.textContent
+        );
         expect(pageText).toContain('Page 2');
       }
     }
   });
 
   it('should clear filters', async () => {
-    await page.goto(`${BASE_URL}/dashboard/table`, { waitUntil: 'networkidle0' });
+    await page.goto(`${BASE_URL}/dashboard/table`, {
+      waitUntil: 'networkidle0',
+    });
 
     // Apply filter first
     const toyotaCheckbox = await page.$('input[id*="Make-Toyota"]');
@@ -2177,13 +2262,15 @@ describe('Dashboard V2 - Table View', () => {
 
   it('should have zero console errors', async () => {
     const errors: string[] = [];
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg.type() === 'error') {
         errors.push(msg.text());
       }
     });
 
-    await page.goto(`${BASE_URL}/dashboard/table`, { waitUntil: 'networkidle0' });
+    await page.goto(`${BASE_URL}/dashboard/table`, {
+      waitUntil: 'networkidle0',
+    });
     await page.waitForTimeout(2000);
 
     expect(errors.length).toBe(0);
@@ -2192,11 +2279,13 @@ describe('Dashboard V2 - Table View', () => {
 ```
 
 Run tests:
+
 ```bash
 npm run test:ui
 ```
 
 ✅ **Verify**:
+
 - All tests pass
 - Screenshots generated
 - Zero console errors
@@ -2263,6 +2352,7 @@ gh pr create --title "feat: Add Dashboard V2 table view" --body "Implements new 
 ## Success Criteria
 
 **Minimum Viable Product (MVP):**
+
 - ✅ Table view renders at `/dashboard/table`
 - ✅ Shows all vehicles from mock data
 - ✅ At least 4 filters work (price, make, model, search)
@@ -2272,6 +2362,7 @@ gh pr create --title "feat: Add Dashboard V2 table view" --body "Implements new 
 - ✅ Accessible (can tab through UI)
 
 **Full Feature Complete:**
+
 - ✅ All filters work (7 total)
 - ✅ All columns sortable (5 columns)
 - ✅ URL sync (shareable links)
