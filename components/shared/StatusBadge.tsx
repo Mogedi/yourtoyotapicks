@@ -3,7 +3,7 @@
 // StatusBadge - Enhanced status badge with icons
 import { CheckCircle, AlertCircle, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { getMileageRatingColor } from '@/lib/design-tokens';
+import { getMileageRatingColor } from '@/lib/config/design-tokens';
 import { cn } from '@/lib/utils';
 
 type StatusType =

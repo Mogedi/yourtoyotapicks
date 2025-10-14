@@ -1,14 +1,14 @@
-import * as React from "react";
-import Link from "next/link";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import * as React from 'react';
+import Link from 'next/link';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 import {
   Car,
   MapPin,
@@ -19,12 +19,12 @@ import {
   Gauge,
   Star,
   CheckCircle,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { Vehicle, ListingSummary, MileageRating } from "@/lib/types";
-import { CarImage } from "@/components/CarImage";
-import { QualityTierBadge } from "@/components/QualityTierBadge";
-import { QUALITY_TIER } from "@/lib/constants";
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { Vehicle, ListingSummary, MileageRating } from '@/lib/types';
+import { CarImage } from '@/components/vehicle/CarImage';
+import { QualityTierBadge } from '@/components/vehicle/QualityTierBadge';
+import { QUALITY_TIER } from '@/lib/config/constants';
 
 // Props interface for the VehicleCard component
 export interface VehicleCardProps {
@@ -34,9 +34,9 @@ export interface VehicleCardProps {
 
 // Helper function to format price
 const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
@@ -55,29 +55,29 @@ const getMileageBadgeStyle = (
   rating?: MileageRating
 ): { variant: string; className: string; label: string } => {
   switch (rating) {
-    case "excellent":
+    case 'excellent':
       return {
-        variant: "default",
-        className: "bg-green-500 hover:bg-green-600 text-white border-0",
-        label: "Excellent Mileage",
+        variant: 'default',
+        className: 'bg-green-500 hover:bg-green-600 text-white border-0',
+        label: 'Excellent Mileage',
       };
-    case "good":
+    case 'good':
       return {
-        variant: "default",
-        className: "bg-blue-500 hover:bg-blue-600 text-white border-0",
-        label: "Good Mileage",
+        variant: 'default',
+        className: 'bg-blue-500 hover:bg-blue-600 text-white border-0',
+        label: 'Good Mileage',
       };
-    case "acceptable":
+    case 'acceptable':
       return {
-        variant: "secondary",
-        className: "bg-gray-500 hover:bg-gray-600 text-white border-0",
-        label: "Acceptable Mileage",
+        variant: 'secondary',
+        className: 'bg-gray-500 hover:bg-gray-600 text-white border-0',
+        label: 'Acceptable Mileage',
       };
     default:
       return {
-        variant: "outline",
-        className: "",
-        label: "Unknown",
+        variant: 'outline',
+        className: '',
+        label: 'Unknown',
       };
   }
 };
@@ -110,7 +110,7 @@ export function VehicleCard({ vehicle, className }: VehicleCardProps) {
       <Card
         data-testid="vehicle-card"
         className={cn(
-          "overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group",
+          'overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group',
           className
         )}
       >
@@ -228,7 +228,11 @@ export function VehicleCard({ vehicle, className }: VehicleCardProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
-                  <QualityTierBadge score={vehicle.priority_score} showLabel={true} size="sm" />
+                  <QualityTierBadge
+                    score={vehicle.priority_score}
+                    showLabel={true}
+                    size="sm"
+                  />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -256,7 +260,8 @@ export function VehicleCard({ vehicle, className }: VehicleCardProps) {
                 <TooltipTrigger asChild>
                   <Badge variant="outline" className="gap-1">
                     <User className="w-3 h-3" />
-                    {vehicle.owner_count} Owner{vehicle.owner_count > 1 ? "s" : ""}
+                    {vehicle.owner_count} Owner
+                    {vehicle.owner_count > 1 ? 's' : ''}
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent>

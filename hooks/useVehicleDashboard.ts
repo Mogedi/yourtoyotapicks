@@ -21,7 +21,7 @@ import { useVehicleSort } from '@/hooks/useVehicleSort';
 import { usePagination } from '@/hooks/usePagination';
 import { useMultiSelect } from '@/hooks/useMultiSelect';
 import { FilterService } from '@/lib/services/filter-service';
-import { getQualityTier } from '@/lib/constants';
+import { getQualityTier } from '@/lib/config/constants';
 import type { Vehicle } from '@/lib/types';
 
 export interface DashboardStats {

@@ -18,7 +18,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { runPipeline } from '@/lib/data-pipeline';
+import { runPipeline } from '@/lib/data/data-pipeline';
 
 // ============================================================================
 // SECURITY

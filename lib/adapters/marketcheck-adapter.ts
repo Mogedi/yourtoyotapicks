@@ -5,7 +5,7 @@
  * Handles field mapping, null values, and derived calculations.
  */
 
-import type { ListingSummary, Vehicle, MileageRating } from './types';
+import type { ListingSummary, Vehicle, MileageRating } from '../types';
 
 /**
  * Marketcheck raw data type (from database - flattened columns)
@@ -58,7 +58,10 @@ export interface MarketcheckRawListing {
 /**
  * Calculate mileage rating based on miles per year
  */
-export function calculateMileageRating(miles: number, year: number): MileageRating {
+export function calculateMileageRating(
+  miles: number,
+  year: number
+): MileageRating {
   const currentYear = new Date().getFullYear();
   const age = Math.max(currentYear - year, 1); // Avoid division by zero
   const milesPerYear = miles / age;
@@ -118,11 +121,14 @@ function calculatePreliminaryScore(raw: MarketcheckRawListing): number {
 /**
  * Transform Marketcheck listing to ListingSummary
  */
-export function transformMarketcheckToListingSummary(raw: MarketcheckRawListing): ListingSummary {
+export function transformMarketcheckToListingSummary(
+  raw: MarketcheckRawListing
+): ListingSummary {
   // Calculate location string from dealer info (flattened columns)
-  const location = raw.dealer_city && raw.dealer_state
-    ? `${raw.dealer_city}, ${raw.dealer_state}`
-    : 'Location not available';
+  const location =
+    raw.dealer_city && raw.dealer_state
+      ? `${raw.dealer_city}, ${raw.dealer_state}`
+      : 'Location not available';
 
   // Get photo links (JSONB column)
   let images: string[] = [];
@@ -175,7 +181,9 @@ export function transformMarketcheckToListingSummary(raw: MarketcheckRawListing)
  * Transform Marketcheck listing to full Vehicle type
  * Used for detail pages with all 77 fields
  */
-export function transformMarketcheckToVehicle(raw: MarketcheckRawListing): Vehicle {
+export function transformMarketcheckToVehicle(
+  raw: MarketcheckRawListing
+): Vehicle {
   // Start with summary fields
   const summary = transformMarketcheckToListingSummary(raw);
 
@@ -253,14 +261,18 @@ export function transformMarketcheckToVehicle(raw: MarketcheckRawListing): Vehic
 /**
  * Batch transform multiple listings
  */
-export function transformMarketcheckListings(rawListings: MarketcheckRawListing[]): ListingSummary[] {
+export function transformMarketcheckListings(
+  rawListings: MarketcheckRawListing[]
+): ListingSummary[] {
   return rawListings.map(transformMarketcheckToListingSummary);
 }
 
 /**
  * Type guard to check if raw data is valid Marketcheck listing
  */
-export function isValidMarketcheckListing(raw: any): raw is MarketcheckRawListing {
+export function isValidMarketcheckListing(
+  raw: any
+): raw is MarketcheckRawListing {
   return (
     raw &&
     typeof raw.vin === 'string' &&

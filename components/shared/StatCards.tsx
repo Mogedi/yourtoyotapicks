@@ -4,7 +4,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import type { Vehicle } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { getQualityTier, QUALITY_TIER } from '@/lib/constants';
+import { getQualityTier, QUALITY_TIER } from '@/lib/config/constants';
 
 interface StatCardsProps {
   vehicles: Vehicle[];

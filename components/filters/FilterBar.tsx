@@ -12,7 +12,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { MileageRating } from '@/lib/types';
-import { FilterService, type FilterOptions } from '@/lib/services/filter-service';
+import {
+  FilterService,
+  type FilterOptions,
+} from '@/lib/services/filter-service';
 
 export interface FilterState {
   make: string;
@@ -46,7 +49,10 @@ export function FilterBar({
     model: filters.model !== 'all' ? filters.model : undefined,
     priceMin: filters.priceMin !== '' ? Number(filters.priceMin) : undefined,
     priceMax: filters.priceMax !== '' ? Number(filters.priceMax) : undefined,
-    mileageRating: filters.mileageRating !== 'all' ? (filters.mileageRating as MileageRating) : undefined,
+    mileageRating:
+      filters.mileageRating !== 'all'
+        ? (filters.mileageRating as MileageRating)
+        : undefined,
     search: filters.search !== '' ? filters.search : undefined,
   };
 

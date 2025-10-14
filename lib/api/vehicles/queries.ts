@@ -1,11 +1,11 @@
 // Vehicle Query API - Unified interface for fetching and filtering vehicles
-import { getMarketcheckListings } from '@/lib/supabase';
+import { getMarketcheckListings } from '@/lib/database/supabase';
 import type {
   VehicleQueryOptions,
   VehicleQueryResult,
   Vehicle,
 } from '@/lib/types';
-import { mockListings } from '@/lib/mock-data';
+import { mockListings } from '@/lib/data/mock-data';
 import { FilterService } from '@/lib/services/filter-service';
 import { SortService } from '@/lib/services/sort-service';
 import { PaginationService } from '@/lib/services/pagination-service';

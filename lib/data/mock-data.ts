@@ -1,8 +1,8 @@
 // Mock data generator for YourToyotaPicks testing
 // Contains realistic Toyota/Honda vehicle listings with a mix of passing and failing criteria
 
-import type { VehicleInsert, QualityTier } from './types';
-import { getCarImageGallery } from './car-images';
+import type { VehicleInsert, QualityTier } from '../types';
+import { getCarImageGallery } from '../utils/car-images';
 
 // Helper to calculate quality tier from priority score
 function getQualityTier(score: number): QualityTier {

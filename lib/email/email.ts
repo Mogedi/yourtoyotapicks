@@ -2,9 +2,9 @@
 // Provides functions to send daily/weekly digests of vehicle matches
 
 import { Resend } from 'resend';
-import type { Vehicle } from './types';
-import { DailyDigestEmail } from './email-templates/daily-digest';
-import { WeeklyDigestEmail } from './email-templates/weekly-digest';
+import type { Vehicle } from '../types';
+import { DailyDigestEmail } from './templates/daily-digest';
+import { WeeklyDigestEmail } from './templates/weekly-digest';
 
 // ============================================================================
 // CLIENT INITIALIZATION
@@ -13,7 +13,9 @@ import { WeeklyDigestEmail } from './email-templates/weekly-digest';
 const resendApiKey = process.env.RESEND_API_KEY;
 
 if (!resendApiKey) {
-  console.warn('RESEND_API_KEY not found in environment variables. Email notifications will be disabled.');
+  console.warn(
+    'RESEND_API_KEY not found in environment variables. Email notifications will be disabled.'
+  );
 }
 
 export const resend = resendApiKey ? new Resend(resendApiKey) : null;
@@ -42,7 +44,8 @@ export async function sendDailyDigest(
     if (!resend) {
       return {
         success: false,
-        error: 'Resend client not initialized. Please set RESEND_API_KEY environment variable.',
+        error:
+          'Resend client not initialized. Please set RESEND_API_KEY environment variable.',
       };
     }
 
@@ -63,7 +66,10 @@ export async function sendDailyDigest(
       from: 'YourToyotaPicks <notifications@yourtoyotapicks.com>',
       to: recipientEmail,
       subject: `Daily Vehicle Digest: ${vehicles.length} New Match${vehicles.length !== 1 ? 'es' : ''} Found`,
-      react: DailyDigestEmail({ vehicles: topVehicles, totalCount: vehicles.length }),
+      react: DailyDigestEmail({
+        vehicles: topVehicles,
+        totalCount: vehicles.length,
+      }),
     });
 
     if (error) {
@@ -74,7 +80,9 @@ export async function sendDailyDigest(
       };
     }
 
-    console.log(`Daily digest email sent successfully. Message ID: ${data?.id}`);
+    console.log(
+      `Daily digest email sent successfully. Message ID: ${data?.id}`
+    );
     return {
       success: true,
       messageId: data?.id,
@@ -102,7 +110,8 @@ export async function sendWeeklyDigest(
     if (!resend) {
       return {
         success: false,
-        error: 'Resend client not initialized. Please set RESEND_API_KEY environment variable.',
+        error:
+          'Resend client not initialized. Please set RESEND_API_KEY environment variable.',
       };
     }
 
@@ -123,7 +132,10 @@ export async function sendWeeklyDigest(
       from: 'YourToyotaPicks <notifications@yourtoyotapicks.com>',
       to: recipientEmail,
       subject: `Weekly Vehicle Digest: ${vehicles.length} New Match${vehicles.length !== 1 ? 'es' : ''} This Week`,
-      react: WeeklyDigestEmail({ vehicles: topVehicles, totalCount: vehicles.length }),
+      react: WeeklyDigestEmail({
+        vehicles: topVehicles,
+        totalCount: vehicles.length,
+      }),
     });
 
     if (error) {
@@ -134,7 +146,9 @@ export async function sendWeeklyDigest(
       };
     }
 
-    console.log(`Weekly digest email sent successfully. Message ID: ${data?.id}`);
+    console.log(
+      `Weekly digest email sent successfully. Message ID: ${data?.id}`
+    );
     return {
       success: true,
       messageId: data?.id,
@@ -153,12 +167,15 @@ export async function sendWeeklyDigest(
  * @param recipientEmail Email address to send test to
  * @returns Result object with success status
  */
-export async function sendTestEmail(recipientEmail: string): Promise<EmailResult> {
+export async function sendTestEmail(
+  recipientEmail: string
+): Promise<EmailResult> {
   try {
     if (!resend) {
       return {
         success: false,
-        error: 'Resend client not initialized. Please set RESEND_API_KEY environment variable.',
+        error:
+          'Resend client not initialized. Please set RESEND_API_KEY environment variable.',
       };
     }
 

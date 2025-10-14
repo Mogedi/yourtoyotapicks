@@ -78,7 +78,7 @@ export async function decodeVIN(vin: string): Promise<VINDecodeResult> {
     const url = `${NHTSA_API_BASE}/DecodeVin/${cleanVIN}?format=json`;
     const response = await fetch(url, {
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
       // Cache for 24 hours (VIN data doesn't change)
       next: { revalidate: 86400 },
@@ -156,7 +156,8 @@ export async function decodeVIN(vin: string): Promise<VINDecodeResult> {
     return {
       vin: cleanVIN,
       valid: false,
-      errorMessage: error instanceof Error ? error.message : 'Unknown error decoding VIN',
+      errorMessage:
+        error instanceof Error ? error.message : 'Unknown error decoding VIN',
     };
   }
 }
@@ -194,7 +195,10 @@ export async function verifyVIN(
   const decodedModel = decoded.model?.toLowerCase() || '';
   const listingModel = expectedModel.toLowerCase();
 
-  if (!decodedModel.includes(listingModel) && !listingModel.includes(decodedModel)) {
+  if (
+    !decodedModel.includes(listingModel) &&
+    !listingModel.includes(decodedModel)
+  ) {
     issues.push(
       `Model mismatch: VIN shows "${decoded.model}", listing shows "${expectedModel}"`
     );
@@ -219,7 +223,9 @@ export async function verifyVIN(
  * @param vins - Array of VINs to decode
  * @returns Array of decoded results
  */
-export async function batchDecodeVINs(vins: string[]): Promise<VINDecodeResult[]> {
+export async function batchDecodeVINs(
+  vins: string[]
+): Promise<VINDecodeResult[]> {
   // Decode sequentially with a small delay to be nice to NHTSA API
   const results: VINDecodeResult[] = [];
 

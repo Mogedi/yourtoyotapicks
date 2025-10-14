@@ -6,7 +6,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { mockListings } from '../lib/mock-data';
+import { mockListings } from '../lib/data/mock-data';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -24,10 +24,12 @@ async function seedDatabase() {
 
   // Calculate age and mileage per year for each vehicle
   const currentYear = new Date().getFullYear();
-  const vehiclesWithCalculations = mockListings.map(vehicle => ({
+  const vehiclesWithCalculations = mockListings.map((vehicle) => ({
     ...vehicle,
     age_in_years: currentYear - vehicle.year,
-    mileage_per_year: Math.round(vehicle.mileage / (currentYear - vehicle.year)),
+    mileage_per_year: Math.round(
+      vehicle.mileage / (currentYear - vehicle.year)
+    ),
   }));
 
   // Insert all vehicles

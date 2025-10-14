@@ -1,6 +1,11 @@
 // FilterService - Handles all vehicle filtering logic
-import type { Vehicle, ListingSummary, MileageRating, QualityTier } from '@/lib/types';
-import { getQualityTier } from '@/lib/constants';
+import type {
+  Vehicle,
+  ListingSummary,
+  MileageRating,
+  QualityTier,
+} from '@/lib/types';
+import { getQualityTier } from '@/lib/config/constants';
 
 export interface FilterOptions {
   make?: string;
@@ -32,8 +37,16 @@ export class FilterService {
     // Apply each filter if specified
     filtered = this.filterByMake(filtered, filters.make);
     filtered = this.filterByModel(filtered, filters.model);
-    filtered = this.filterByYearRange(filtered, filters.yearMin, filters.yearMax);
-    filtered = this.filterByPriceRange(filtered, filters.priceMin, filters.priceMax);
+    filtered = this.filterByYearRange(
+      filtered,
+      filters.yearMin,
+      filters.yearMax
+    );
+    filtered = this.filterByPriceRange(
+      filtered,
+      filters.priceMin,
+      filters.priceMax
+    );
     filtered = this.filterByMileage(filtered, filters.mileageMax);
     filtered = this.filterByMileageRating(filtered, filters.mileageRating);
     filtered = this.filterByQualityTier(filtered, filters.qualityTier);

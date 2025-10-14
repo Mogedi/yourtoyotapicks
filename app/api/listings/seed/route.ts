@@ -3,8 +3,8 @@
 // Only allowed in development mode for testing purposes
 
 import { NextRequest, NextResponse } from 'next/server';
-import { mockListings, mockDataStats } from '@/lib/mock-data';
-import { getServiceRoleClient } from '@/lib/supabase';
+import { mockListings, mockDataStats } from '@/lib/data/mock-data';
+import { getServiceRoleClient } from '@/lib/database/supabase';
 
 // Force dynamic route (don't pre-render at build time)
 export const dynamic = 'force-dynamic';

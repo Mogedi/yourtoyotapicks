@@ -1,8 +1,8 @@
 'use client';
 
 import { Car } from 'lucide-react';
-import { VehicleCard } from '@/components/VehicleCard';
-import { EmptyState } from '@/components/EmptyState';
+import { VehicleCard } from '@/components/vehicle/VehicleCard';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import type { ListingSummary } from '@/lib/types';
@@ -73,7 +73,8 @@ export function VehicleList({ vehicles, loading = false }: VehicleListProps) {
     <div>
       {/* Result count */}
       <div className="mb-4 text-sm text-muted-foreground">
-        Showing {vehicles.length} {vehicles.length === 1 ? 'vehicle' : 'vehicles'}
+        Showing {vehicles.length}{' '}
+        {vehicles.length === 1 ? 'vehicle' : 'vehicles'}
       </div>
 
       {/* Vehicle grid */}

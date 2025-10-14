@@ -11,8 +11,11 @@ import type {
   SearchLogInsert,
   FilterCriteria,
   PaginatedResponse,
-} from './types';
-import { transformMarketcheckToListingSummary, transformMarketcheckToVehicle } from './marketcheck-adapter';
+} from '../types';
+import {
+  transformMarketcheckToListingSummary,
+  transformMarketcheckToVehicle,
+} from '../adapters/marketcheck-adapter';
 
 // ============================================================================
 // CLIENT INITIALIZATION
@@ -22,9 +25,10 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 // Client for browser/client-side operations
-export const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : createClient('https://placeholder.supabase.co', 'placeholder-key');
+export const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : createClient('https://placeholder.supabase.co', 'placeholder-key');
 
 // Service role client for server-side operations (bypasses RLS)
 // Use this in API routes, cron jobs, and server actions
@@ -125,7 +129,9 @@ export async function getListings(
 
     switch (sortBy) {
       case 'priority':
-        query = query.order('priority_score', { ascending: sortOrder === 'asc' });
+        query = query.order('priority_score', {
+          ascending: sortOrder === 'asc',
+        });
         query = query.order('mileage', { ascending: true }); // Secondary sort
         break;
       case 'price':
@@ -428,7 +434,9 @@ export async function getListingStats(): Promise<{
 /**
  * Insert a new search log entry
  */
-export async function insertSearchLog(log: SearchLogInsert): Promise<SearchLog> {
+export async function insertSearchLog(
+  log: SearchLogInsert
+): Promise<SearchLog> {
   try {
     const client = getServiceRoleClient();
 
@@ -522,9 +530,11 @@ export async function getSearchStats(days: number = 30): Promise<{
       totalListingsFetched,
       totalCuratedListings,
       totalApiCost,
-      avgListingsPerDay: totalSearches > 0 ? totalCuratedListings / totalSearches : 0,
+      avgListingsPerDay:
+        totalSearches > 0 ? totalCuratedListings / totalSearches : 0,
       avgCostPerDay: totalSearches > 0 ? totalApiCost / totalSearches : 0,
-      avgExecutionTime: totalSearches > 0 ? totalExecutionTime / totalSearches : 0,
+      avgExecutionTime:
+        totalSearches > 0 ? totalExecutionTime / totalSearches : 0,
     };
   } catch (error) {
     console.error('Error in getSearchStats:', error);
@@ -642,9 +652,11 @@ export async function getMarketcheckListings(
 /**
  * Get a single Marketcheck listing by VIN (case-insensitive)
  */
-export async function getMarketcheckListingByVin(vin: string): Promise<Vehicle | null> {
+export async function getMarketcheckListingByVin(
+  vin: string
+): Promise<Vehicle | null> {
   try {
-    const { data, error} = await supabase
+    const { data, error } = await supabase
       .from('marketcheck_listings')
       .select('*')
       .ilike('vin', vin) // Case-insensitive match
@@ -689,7 +701,7 @@ export async function getMarketcheckStats(): Promise<{
 
     return {
       total: data.length,
-      singleOwner: data.filter(d => d.carfax_1_owner).length,
+      singleOwner: data.filter((d) => d.carfax_1_owner).length,
       avgPrice: data.reduce((sum, d) => sum + d.price, 0) / data.length,
       avgMileage: data.reduce((sum, d) => sum + d.miles, 0) / data.length,
     };

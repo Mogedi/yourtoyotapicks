@@ -24,14 +24,14 @@
 
 import { useRouter } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ProductImage } from '@/components/ProductImage';
-import { QualityTierBadge } from '@/components/QualityTierBadge';
-import { TableHeader, TableHeaderCell } from '@/components/TableHeader';
-import { TableRow, TableCell } from '@/components/TableRow';
-import { SortableColumnHeader } from '@/components/SortableColumnHeader';
+import { ProductImage } from '@/components/vehicle/ProductImage';
+import { QualityTierBadge } from '@/components/vehicle/QualityTierBadge';
+import { TableHeader, TableHeaderCell } from '@/components/table/TableHeader';
+import { TableRow, TableCell } from '@/components/table/TableRow';
+import { SortableColumnHeader } from '@/components/table/SortableColumnHeader';
 import type { Vehicle } from '@/lib/types';
 import type { SortField, SortOrder } from '@/lib/services/sort-service';
-import { formatPrice, formatMileage } from '@/lib/design-tokens';
+import { formatPrice, formatMileage } from '@/lib/config/design-tokens';
 import { cn } from '@/lib/utils';
 
 export interface VehicleDataGridProps {
@@ -82,7 +82,9 @@ export function VehicleDataGrid({
   };
 
   return (
-    <div className={cn('overflow-x-auto bg-white rounded-lg shadow', className)}>
+    <div
+      className={cn('overflow-x-auto bg-white rounded-lg shadow', className)}
+    >
       <table className="min-w-full divide-y divide-gray-200">
         <TableHeader>
           <tr>
@@ -155,7 +157,8 @@ export function VehicleDataGrid({
 
         <tbody className="divide-y divide-gray-200">
           {vehicles.map((vehicle) => {
-            const isSelected = selectable && selectedKeys && selectedKeys.has(vehicle.id);
+            const isSelected =
+              selectable && selectedKeys && selectedKeys.has(vehicle.id);
 
             return (
               <TableRow
@@ -222,7 +225,11 @@ export function VehicleDataGrid({
 
                 {/* Quality Tier */}
                 <TableCell align="center">
-                  <QualityTierBadge score={vehicle.priority_score} showLabel={true} size="md" />
+                  <QualityTierBadge
+                    score={vehicle.priority_score}
+                    showLabel={true}
+                    size="md"
+                  />
                 </TableCell>
               </TableRow>
             );

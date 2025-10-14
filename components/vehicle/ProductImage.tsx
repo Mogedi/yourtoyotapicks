@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Car } from 'lucide-react';
-import { getCarImageUrl } from '@/lib/car-images';
+import { getCarImageUrl } from '@/lib/utils/car-images';
 import type { Vehicle, ListingSummary } from '@/lib/types';
 import { cn } from '@/lib/utils';
 

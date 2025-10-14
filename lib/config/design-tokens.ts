@@ -99,26 +99,24 @@ export function getMileageRatingColor(rating: string): {
   text: string;
   border: string;
 } {
-  const colorMap: Record<
-    string,
-    { bg: string; text: string; border: string }
-  > = {
-    excellent: {
-      bg: 'bg-green-50',
-      text: 'text-green-700',
-      border: 'border-green-200',
-    },
-    good: {
-      bg: 'bg-blue-50',
-      text: 'text-blue-700',
-      border: 'border-blue-200',
-    },
-    acceptable: {
-      bg: 'bg-yellow-50',
-      text: 'text-yellow-700',
-      border: 'border-yellow-200',
-    },
-  };
+  const colorMap: Record<string, { bg: string; text: string; border: string }> =
+    {
+      excellent: {
+        bg: 'bg-green-50',
+        text: 'text-green-700',
+        border: 'border-green-200',
+      },
+      good: {
+        bg: 'bg-blue-50',
+        text: 'text-blue-700',
+        border: 'border-blue-200',
+      },
+      acceptable: {
+        bg: 'bg-yellow-50',
+        text: 'text-yellow-700',
+        border: 'border-yellow-200',
+      },
+    };
   return (
     colorMap[rating.toLowerCase()] || {
       bg: 'bg-gray-50',

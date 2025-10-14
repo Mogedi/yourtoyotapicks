@@ -1,6 +1,6 @@
 // SortService - Handles all vehicle sorting logic
 import type { Vehicle, ListingSummary } from '@/lib/types';
-import { getQualityTier } from '@/lib/constants';
+import { getQualityTier } from '@/lib/config/constants';
 
 export type SortField =
   | 'priority'
@@ -81,8 +81,7 @@ export class SortService {
 
         case 'date':
           compareResult =
-            new Date(b.created_at).getTime() -
-            new Date(a.created_at).getTime();
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
           break;
 
         default:

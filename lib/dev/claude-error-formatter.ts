@@ -114,7 +114,10 @@ export function getErrorSummary(errorLog: ErrorLog): string {
 
   const errorsByTest = new Map<string, number>();
   for (const error of errorLog.errors) {
-    errorsByTest.set(error.testName, (errorsByTest.get(error.testName) || 0) + 1);
+    errorsByTest.set(
+      error.testName,
+      (errorsByTest.get(error.testName) || 0) + 1
+    );
   }
 
   let summary = `❌ ${errorLog.totalErrors} error${errorLog.totalErrors > 1 ? 's' : ''} detected:\n`;

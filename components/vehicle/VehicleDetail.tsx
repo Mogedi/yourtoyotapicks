@@ -39,7 +39,7 @@ import {
 import type { Vehicle, MileageRating, OverallRating } from '@/lib/types';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { CarImage } from '@/components/CarImage';
+import { CarImage } from '@/components/vehicle/CarImage';
 
 export interface VehicleDetailProps {
   vehicle: Vehicle;

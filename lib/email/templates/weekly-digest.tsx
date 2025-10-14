@@ -2,7 +2,7 @@
 // React Email component for weekly vehicle match notifications
 
 import * as React from 'react';
-import type { Vehicle } from '../types';
+import type { Vehicle } from '../../types';
 
 interface WeeklyDigestEmailProps {
   vehicles: Vehicle[];

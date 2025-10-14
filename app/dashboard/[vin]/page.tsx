@@ -1,8 +1,11 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getListingByVin, getMarketcheckListingByVin } from '@/lib/supabase';
-import { mockListings } from '@/lib/mock-data';
-import { VehicleDetail } from '@/components/VehicleDetail';
+import {
+  getListingByVin,
+  getMarketcheckListingByVin,
+} from '@/lib/database/supabase';
+import { mockListings } from '@/lib/data/mock-data';
+import { VehicleDetail } from '@/components/vehicle/VehicleDetail';
 import type { Vehicle } from '@/lib/types';
 
 // Dynamic params type

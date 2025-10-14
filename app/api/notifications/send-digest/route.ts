@@ -2,8 +2,8 @@
 // POST /api/notifications/send-digest
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceRoleClient } from '@/lib/supabase';
-import { sendDailyDigest, sendWeeklyDigest } from '@/lib/email';
+import { getServiceRoleClient } from '@/lib/database/supabase';
+import { sendDailyDigest, sendWeeklyDigest } from '@/lib/email/email';
 import type { Vehicle } from '@/lib/types';
 import notificationSettings from '@/config/notification-settings.json';
 

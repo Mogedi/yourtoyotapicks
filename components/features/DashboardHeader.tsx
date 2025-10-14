@@ -11,7 +11,7 @@
  * - showActiveFilters: Whether to display active filter count
  */
 
-import { QUALITY_TIER } from '@/lib/constants';
+import { QUALITY_TIER } from '@/lib/config/constants';
 import type { DashboardStats } from '@/hooks/useVehicleDashboard';
 
 export interface DashboardHeaderProps {
@@ -33,12 +33,16 @@ export function DashboardHeader({
           Best matches first • Clear explanations • 5-second clarity
         </p>
         <p className="text-sm text-gray-600 mt-2">
-          {stats.totalVehicles} vehicle{stats.totalVehicles !== 1 ? 's' : ''}
-          {' '}
-          ({stats.topPicks} {QUALITY_TIER.TOP_PICK.LABEL}s, {stats.goodBuys}{' '}
-          {QUALITY_TIER.GOOD_BUY.LABEL}s, {stats.caution} {QUALITY_TIER.CAUTION.LABEL})
+          {stats.totalVehicles} vehicle{stats.totalVehicles !== 1 ? 's' : ''} (
+          {stats.topPicks} {QUALITY_TIER.TOP_PICK.LABEL}s, {stats.goodBuys}{' '}
+          {QUALITY_TIER.GOOD_BUY.LABEL}s, {stats.caution}{' '}
+          {QUALITY_TIER.CAUTION.LABEL})
           {showActiveFilters && stats.activeFilters > 0 && (
-            <> • {stats.activeFilters} filter{stats.activeFilters !== 1 ? 's' : ''} active</>
+            <>
+              {' '}
+              • {stats.activeFilters} filter
+              {stats.activeFilters !== 1 ? 's' : ''} active
+            </>
           )}
         </p>
       </div>

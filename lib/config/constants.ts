@@ -116,16 +116,16 @@ export const SCORING_WEIGHTS = {
 // ============================================================================
 
 export const MODEL_PRIORITY = {
-  'RAV4': 20,
+  RAV4: 20,
   'CR-V': 20,
-  'Highlander': 18,
-  'Pilot': 18,
-  'Camry': 15,
-  'Accord': 15,
-  'Corolla': 12,
-  'Civic': 12,
-  'Tacoma': 10,
-  'Ridgeline': 10,
+  Highlander: 18,
+  Pilot: 18,
+  Camry: 15,
+  Accord: 15,
+  Corolla: 12,
+  Civic: 12,
+  Tacoma: 10,
+  Ridgeline: 10,
 } as const;
 
 // ============================================================================

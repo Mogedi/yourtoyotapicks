@@ -3,7 +3,7 @@
 // Updates the reviewed_by_user, user_rating, and user_notes fields
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceRoleClient } from '@/lib/supabase';
+import { getServiceRoleClient } from '@/lib/database/supabase';
 import type { Vehicle } from '@/lib/types';
 
 // Force dynamic route (don't pre-render at build time)

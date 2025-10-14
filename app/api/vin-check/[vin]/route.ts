@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { decodeVIN, verifyVIN } from '@/lib/vin-decoder';
+import { decodeVIN, verifyVIN } from '@/lib/utils/vin-decoder';
 
 export const runtime = 'edge';
 

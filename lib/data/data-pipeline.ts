@@ -10,10 +10,10 @@
  */
 
 import { mockListings } from './mock-data';
-import { applyFilters, DEFAULT_FILTER_CRITERIA } from './filters';
-import { decodeVIN, verifyVIN } from './vin-decoder';
-import { insertListing, checkVinExists, insertSearchLog } from './supabase';
-import type { RawListing, VehicleInsert, SearchLogInsert } from './types';
+import { applyFilters, DEFAULT_FILTER_CRITERIA } from '../utils/filters';
+import { decodeVIN, verifyVIN } from '../utils/vin-decoder';
+import { insertListing, checkVinExists, insertSearchLog } from '../database/supabase';
+import type { RawListing, VehicleInsert, SearchLogInsert } from '../types';
 
 // ============================================================================
 // TYPES
@@ -271,7 +271,7 @@ export async function storeNewListings(listings: RawListing[]): Promise<{
         mileage: listing.mileage,
         mileage_rating: applyFilters(listing, DEFAULT_FILTER_CRITERIA)
           .mileageRating,
-        title_status: listing.title_status || 'clean',
+        title_status: 'clean', // Only 'clean' is accepted by the VehicleInsert type
         accident_count: listing.accident_count || 0,
         owner_count: listing.owner_count || 1,
         is_rental: listing.is_rental || false,

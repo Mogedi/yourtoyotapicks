@@ -2,7 +2,7 @@
 
 // SortableColumnHeader - Column header with sort indicators
 import { ArrowUp, ArrowDown, ChevronsUpDown } from 'lucide-react';
-import { TableHeaderCell } from '@/components/TableHeader';
+import { TableHeaderCell } from '@/components/table/TableHeader';
 import type { SortField, SortOrder } from '@/lib/services/sort-service';
 import { cn } from '@/lib/utils';
 

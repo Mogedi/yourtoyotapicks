@@ -1,5 +1,5 @@
 // PaginationService - Handles pagination logic
-import { PAGINATION } from '@/lib/constants';
+import { PAGINATION } from '@/lib/config/constants';
 
 export interface PaginationOptions {
   page: number;

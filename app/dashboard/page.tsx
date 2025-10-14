@@ -19,12 +19,12 @@ import { motion } from 'framer-motion';
 import { DashboardLayout } from '@/components/features/DashboardLayout';
 import { DashboardHeader } from '@/components/features/DashboardHeader';
 import { VehicleDataGrid } from '@/components/features/VehicleDataGrid';
-import { StatCards } from '@/components/StatCards';
-import { SearchBar } from '@/components/SearchBar';
-import { FilterSidebar } from '@/components/FilterSidebar';
-import { Pagination } from '@/components/Pagination';
-import { EmptyState } from '@/components/EmptyState';
-import { BulkActionBar } from '@/components/BulkActionBar';
+import { StatCards } from '@/components/shared/StatCards';
+import { SearchBar } from '@/components/filters/SearchBar';
+import { FilterSidebar } from '@/components/filters/FilterSidebar';
+import { Pagination } from '@/components/shared/Pagination';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { BulkActionBar } from '@/components/actions/BulkActionBar';
 
 export default function DashboardPage() {
   return (
@@ -57,7 +57,10 @@ export default function DashboardPage() {
       }) => (
         <div className="min-h-screen bg-gray-50">
           {/* Top Header */}
-          <DashboardHeader stats={stats} className="bg-white border-b border-gray-200 px-6 py-4" />
+          <DashboardHeader
+            stats={stats}
+            className="bg-white border-b border-gray-200 px-6 py-4"
+          />
 
           <div className="flex">
             {/* Filters Sidebar */}

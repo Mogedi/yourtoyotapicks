@@ -1,7 +1,7 @@
 // Filter engine for YourToyotaPicks
 // Applies strict criteria to curate vehicle listings based on user requirements
 
-import type { Vehicle, MileageRating, RawListing } from './types';
+import type { Vehicle, MileageRating, RawListing } from '../types';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -12,38 +12,38 @@ import type { Vehicle, MileageRating, RawListing } from './types';
  */
 export interface FilterCriteria {
   // Price constraints
-  priceMin: number;        // Default: $10,000
-  priceMax: number;        // Default: $20,000
+  priceMin: number; // Default: $10,000
+  priceMax: number; // Default: $20,000
 
   // Year constraints
-  yearMin: number;         // Default: 2015
-  yearMax: number;         // Default: current year
-  maxAgeYears: number;     // Default: 10 years
-  idealAgeMin: number;     // Default: 4 years
-  idealAgeMax: number;     // Default: 7 years
+  yearMin: number; // Default: 2015
+  yearMax: number; // Default: current year
+  maxAgeYears: number; // Default: 10 years
+  idealAgeMin: number; // Default: 4 years
+  idealAgeMax: number; // Default: 7 years
 
   // Mileage constraints
-  mileageAbsoluteMax: number;           // Default: 160,000
-  mileagePerYearIdeal: number;          // Default: 15,000
-  mileagePerYearMax: number;            // Default: 20,000
-  excellentMileageThreshold: number;    // Default: 100,000
+  mileageAbsoluteMax: number; // Default: 160,000
+  mileagePerYearIdeal: number; // Default: 15,000
+  mileagePerYearMax: number; // Default: 20,000
+  excellentMileageThreshold: number; // Default: 100,000
 
   // Title & History requirements
-  titleStatus: 'clean';                 // Only clean titles
-  maxAccidents: number;                 // Default: 0
-  maxOwners: number;                    // Default: 2
-  excludeRental: boolean;               // Default: true
-  excludeFleet: boolean;                // Default: true
-  requireVIN: boolean;                  // Default: true
-  excludeLiens: boolean;                // Default: true
+  titleStatus: 'clean'; // Only clean titles
+  maxAccidents: number; // Default: 0
+  maxOwners: number; // Default: 2
+  excludeRental: boolean; // Default: true
+  excludeFleet: boolean; // Default: true
+  requireVIN: boolean; // Default: true
+  excludeLiens: boolean; // Default: true
 
   // Geographic preferences
-  excludeRustBelt: boolean;            // Default: false (soft preference)
-  rustBeltStates: string[];            // List of rust belt state codes
+  excludeRustBelt: boolean; // Default: false (soft preference)
+  rustBeltStates: string[]; // List of rust belt state codes
 
   // Brand & Model
   allowedMakes: ('Toyota' | 'Honda')[];
-  modelPriorities: Record<string, number>;  // Model name to priority score (1-10)
+  modelPriorities: Record<string, number>; // Model name to priority score (1-10)
 }
 
 /**
@@ -101,24 +101,36 @@ export const DEFAULT_FILTER_CRITERIA: FilterCriteria = {
   excludeLiens: true,
 
   // Geographic
-  excludeRustBelt: false,  // Soft preference, not hard reject
+  excludeRustBelt: false, // Soft preference, not hard reject
   rustBeltStates: [
-    'OH', 'MI', 'WI', 'IL', 'IN', 'MN', 'IA', 'PA',
-    'NY', 'MA', 'CT', 'VT', 'NH', 'ME'
+    'OH',
+    'MI',
+    'WI',
+    'IL',
+    'IN',
+    'MN',
+    'IA',
+    'PA',
+    'NY',
+    'MA',
+    'CT',
+    'VT',
+    'NH',
+    'ME',
   ],
 
   // Brand & Model
   allowedMakes: ['Toyota', 'Honda'],
   modelPriorities: {
-    'RAV4': 10,
+    RAV4: 10,
     'C-HR': 9,
     'CR-V': 9,
     'HR-V': 8,
-    'Highlander': 8,
+    Highlander: 8,
     '4Runner': 7,
-    'Venza': 7,
-    'Pilot': 6,
-  }
+    Venza: 7,
+    Pilot: 6,
+  },
 };
 
 // ============================================================================
@@ -240,7 +252,7 @@ export function calculatePriorityScore(
 
   // Case-insensitive match
   const modelKey = Object.keys(priorities).find(
-    key => key.toLowerCase() === normalizedModel.toLowerCase()
+    (key) => key.toLowerCase() === normalizedModel.toLowerCase()
   );
 
   if (modelKey && priorities[modelKey] !== undefined) {
@@ -295,7 +307,9 @@ export function validateListing(
   // Brand requirement
   if ('make' in listing && listing.make) {
     if (!criteria.allowedMakes.includes(listing.make as any)) {
-      errors.push(`Make '${listing.make}' not allowed (must be Toyota or Honda)`);
+      errors.push(
+        `Make '${listing.make}' not allowed (must be Toyota or Honda)`
+      );
     }
   } else {
     errors.push('Missing make');
@@ -304,10 +318,14 @@ export function validateListing(
   // Price range
   if ('price' in listing && typeof listing.price === 'number') {
     if (listing.price < criteria.priceMin) {
-      errors.push(`Price $${listing.price.toLocaleString()} below minimum $${criteria.priceMin.toLocaleString()}`);
+      errors.push(
+        `Price $${listing.price.toLocaleString()} below minimum $${criteria.priceMin.toLocaleString()}`
+      );
     }
     if (listing.price > criteria.priceMax) {
-      errors.push(`Price $${listing.price.toLocaleString()} above maximum $${criteria.priceMax.toLocaleString()}`);
+      errors.push(
+        `Price $${listing.price.toLocaleString()} above maximum $${criteria.priceMax.toLocaleString()}`
+      );
     }
   } else {
     errors.push('Missing or invalid price');
@@ -325,21 +343,32 @@ export function validateListing(
       errors.push(`Year ${listing.year} above maximum ${criteria.yearMax}`);
     }
     if (age > criteria.maxAgeYears) {
-      errors.push(`Vehicle age ${age} years exceeds maximum ${criteria.maxAgeYears} years`);
+      errors.push(
+        `Vehicle age ${age} years exceeds maximum ${criteria.maxAgeYears} years`
+      );
     }
 
     // Age preference (warning, not error)
     if (age < criteria.idealAgeMin || age > criteria.idealAgeMax) {
-      warnings.push(`Vehicle age ${age} years outside ideal range ${criteria.idealAgeMin}-${criteria.idealAgeMax} years`);
+      warnings.push(
+        `Vehicle age ${age} years outside ideal range ${criteria.idealAgeMin}-${criteria.idealAgeMax} years`
+      );
     }
   } else {
     errors.push('Missing or invalid year');
   }
 
   // Mileage validation
-  if ('mileage' in listing && typeof listing.mileage === 'number' && 'year' in listing && typeof listing.year === 'number') {
+  if (
+    'mileage' in listing &&
+    typeof listing.mileage === 'number' &&
+    'year' in listing &&
+    typeof listing.year === 'number'
+  ) {
     if (listing.mileage > criteria.mileageAbsoluteMax) {
-      errors.push(`Mileage ${listing.mileage.toLocaleString()} exceeds absolute maximum ${criteria.mileageAbsoluteMax.toLocaleString()}`);
+      errors.push(
+        `Mileage ${listing.mileage.toLocaleString()} exceeds absolute maximum ${criteria.mileageAbsoluteMax.toLocaleString()}`
+      );
     }
 
     // Dynamic mileage check based on age
@@ -348,7 +377,9 @@ export function validateListing(
     const maxMileageForAge = age * criteria.mileagePerYearMax;
 
     if (listing.mileage > maxMileageForAge) {
-      errors.push(`Mileage ${listing.mileage.toLocaleString()} exceeds maximum ${maxMileageForAge.toLocaleString()} for ${age}-year-old vehicle`);
+      errors.push(
+        `Mileage ${listing.mileage.toLocaleString()} exceeds maximum ${maxMileageForAge.toLocaleString()} for ${age}-year-old vehicle`
+      );
     }
   } else if ('mileage' in listing) {
     errors.push('Missing or invalid mileage');
@@ -362,16 +393,23 @@ export function validateListing(
   }
 
   // Accident history (if available)
-  if ('accident_count' in listing && typeof listing.accident_count === 'number') {
+  if (
+    'accident_count' in listing &&
+    typeof listing.accident_count === 'number'
+  ) {
     if (listing.accident_count > criteria.maxAccidents) {
-      errors.push(`Accident count ${listing.accident_count} exceeds maximum ${criteria.maxAccidents}`);
+      errors.push(
+        `Accident count ${listing.accident_count} exceeds maximum ${criteria.maxAccidents}`
+      );
     }
   }
 
   // Owner count (if available)
   if ('owner_count' in listing && typeof listing.owner_count === 'number') {
     if (listing.owner_count > criteria.maxOwners) {
-      errors.push(`Owner count ${listing.owner_count} exceeds maximum ${criteria.maxOwners}`);
+      errors.push(
+        `Owner count ${listing.owner_count} exceeds maximum ${criteria.maxOwners}`
+      );
     }
   }
 
@@ -403,17 +441,25 @@ export function validateListing(
   }
 
   // Geographic warning (rust belt)
-  if ('state_of_origin' in listing && typeof listing.state_of_origin === 'string') {
-    const isRustBelt = checkRustBeltState(listing.state_of_origin, criteria.rustBeltStates);
+  if (
+    'state_of_origin' in listing &&
+    typeof listing.state_of_origin === 'string'
+  ) {
+    const isRustBelt = checkRustBeltState(
+      listing.state_of_origin,
+      criteria.rustBeltStates
+    );
     if (isRustBelt) {
-      warnings.push(`Vehicle from rust belt state (${listing.state_of_origin})`);
+      warnings.push(
+        `Vehicle from rust belt state (${listing.state_of_origin})`
+      );
     }
   }
 
   return {
     valid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -467,14 +513,22 @@ export function applyFilters(
 
   // Add warnings as informational reasons (don't fail the listing)
   if (validation.warnings.length > 0) {
-    reasons.push(...validation.warnings.map(w => `Warning: ${w}`));
+    reasons.push(...validation.warnings.map((w) => `Warning: ${w}`));
   }
 
   // Stage 2: Calculate mileage rating
   let mileageRating: MileageRating | undefined;
-  if ('mileage' in listing && 'year' in listing &&
-      typeof listing.mileage === 'number' && typeof listing.year === 'number') {
-    const rating = calculateMileageRating(listing.mileage, listing.year, criteria);
+  if (
+    'mileage' in listing &&
+    'year' in listing &&
+    typeof listing.mileage === 'number' &&
+    typeof listing.year === 'number'
+  ) {
+    const rating = calculateMileageRating(
+      listing.mileage,
+      listing.year,
+      criteria
+    );
 
     if (rating === null) {
       pass = false;
@@ -488,17 +542,28 @@ export function applyFilters(
   // Stage 3: Calculate priority score
   let priorityScore: number | undefined;
   if ('model' in listing && listing.model) {
-    priorityScore = calculatePriorityScore(listing.model, criteria.modelPriorities);
+    priorityScore = calculatePriorityScore(
+      listing.model,
+      criteria.modelPriorities
+    );
     reasons.push(`Priority score: ${priorityScore}/10`);
   }
 
   // Stage 4: Check rust belt concern
   let isRustBeltConcern = false;
-  if ('state_of_origin' in listing && typeof listing.state_of_origin === 'string') {
-    isRustBeltConcern = checkRustBeltState(listing.state_of_origin, criteria.rustBeltStates);
+  if (
+    'state_of_origin' in listing &&
+    typeof listing.state_of_origin === 'string'
+  ) {
+    isRustBeltConcern = checkRustBeltState(
+      listing.state_of_origin,
+      criteria.rustBeltStates
+    );
 
     if (isRustBeltConcern) {
-      reasons.push(`Rust belt concern: vehicle from ${listing.state_of_origin}`);
+      reasons.push(
+        `Rust belt concern: vehicle from ${listing.state_of_origin}`
+      );
 
       // If excludeRustBelt is true, fail the listing
       if (criteria.excludeRustBelt) {
@@ -518,7 +583,7 @@ export function applyFilters(
     reasons,
     mileageRating,
     priorityScore,
-    isRustBeltConcern
+    isRustBeltConcern,
   };
 }
 
@@ -542,9 +607,9 @@ export function filterListings(
   criteria: FilterCriteria = DEFAULT_FILTER_CRITERIA
 ): Array<{ listing: Partial<Vehicle> | RawListing; result: FilterResult }> {
   return listings
-    .map(listing => ({
+    .map((listing) => ({
       listing,
-      result: applyFilters(listing, criteria)
+      result: applyFilters(listing, criteria),
     }))
     .filter(({ result }) => result.pass);
 }
@@ -573,16 +638,16 @@ export function getFilterStats(
   mileageRatings: Record<MileageRating, number>;
   priorityScores: Record<number, number>;
 } {
-  const results = listings.map(listing => applyFilters(listing, criteria));
+  const results = listings.map((listing) => applyFilters(listing, criteria));
 
-  const passed = results.filter(r => r.pass).length;
+  const passed = results.filter((r) => r.pass).length;
   const failed = results.length - passed;
 
   // Count rejection reasons
   const rejectionReasons: Record<string, number> = {};
-  results.forEach(result => {
+  results.forEach((result) => {
     if (!result.pass) {
-      result.reasons.forEach(reason => {
+      result.reasons.forEach((reason) => {
         // Skip warnings
         if (!reason.startsWith('Warning:')) {
           rejectionReasons[reason] = (rejectionReasons[reason] || 0) + 1;
@@ -595,9 +660,9 @@ export function getFilterStats(
   const mileageRatings: Record<MileageRating, number> = {
     excellent: 0,
     good: 0,
-    acceptable: 0
+    acceptable: 0,
   };
-  results.forEach(result => {
+  results.forEach((result) => {
     if (result.mileageRating) {
       mileageRatings[result.mileageRating]++;
     }
@@ -605,9 +670,10 @@ export function getFilterStats(
 
   // Count priority scores
   const priorityScores: Record<number, number> = {};
-  results.forEach(result => {
+  results.forEach((result) => {
     if (result.priorityScore !== undefined) {
-      priorityScores[result.priorityScore] = (priorityScores[result.priorityScore] || 0) + 1;
+      priorityScores[result.priorityScore] =
+        (priorityScores[result.priorityScore] || 0) + 1;
     }
   });
 
@@ -615,9 +681,10 @@ export function getFilterStats(
     total: listings.length,
     passed,
     failed,
-    passRate: listings.length > 0 ? Math.round((passed / listings.length) * 100) : 0,
+    passRate:
+      listings.length > 0 ? Math.round((passed / listings.length) * 100) : 0,
     rejectionReasons,
     mileageRatings,
-    priorityScores
+    priorityScores,
   };
 }

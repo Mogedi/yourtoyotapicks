@@ -20,7 +20,7 @@ import {
   FilterService,
   type FilterOptions,
 } from '@/lib/services/filter-service';
-import { QUALITY_TIER, SEARCH_CRITERIA } from '@/lib/constants';
+import { QUALITY_TIER, SEARCH_CRITERIA } from '@/lib/config/constants';
 
 interface FilterSidebarProps {
   filters: FilterState;

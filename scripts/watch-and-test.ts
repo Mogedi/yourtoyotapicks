@@ -9,7 +9,13 @@
 import chokidar from 'chokidar';
 import { spawn, ChildProcess } from 'child_process';
 import path from 'path';
-import { writeErrorLog, clearErrorLog, getErrorSummary, readErrorLog, type ErrorLogEntry } from '../lib/claude-error-formatter';
+import {
+  writeErrorLog,
+  clearErrorLog,
+  getErrorSummary,
+  readErrorLog,
+  type ErrorLogEntry,
+} from '../lib/dev/claude-error-formatter';
 
 // Configuration
 const WATCH_PATHS = [
@@ -82,7 +88,9 @@ async function runTests(): Promise<void> {
       isRunningTests = false;
 
       const duration = Date.now() - startTime;
-      console.log(`\n⏱️  Test run completed in ${(duration / 1000).toFixed(1)}s\n`);
+      console.log(
+        `\n⏱️  Test run completed in ${(duration / 1000).toFixed(1)}s\n`
+      );
 
       if (code === 0) {
         console.log('✅ All tests passed!\n');
@@ -115,7 +123,11 @@ function parseAndLogErrors(stdout: string, stderr: string): void {
   // Parse stderr for errors
   const stderrLines = stderr.split('\n');
   for (const line of stderrLines) {
-    if (line.includes('Error:') || line.includes('error') || line.includes('failed')) {
+    if (
+      line.includes('Error:') ||
+      line.includes('error') ||
+      line.includes('failed')
+    ) {
       errors.push({
         timestamp,
         testName: 'unknown',
@@ -139,7 +151,11 @@ function parseAndLogErrors(stdout: string, stderr: string): void {
     }
 
     // Detect errors
-    if (line.includes('❌') || line.includes('Error') || line.includes('Failed')) {
+    if (
+      line.includes('❌') ||
+      line.includes('Error') ||
+      line.includes('Failed')
+    ) {
       errors.push({
         timestamp,
         testName: currentTest,
@@ -163,7 +179,8 @@ function parseAndLogErrors(stdout: string, stderr: string): void {
       timestamp,
       testName: 'test-suite',
       errorType: 'test',
-      message: 'Tests failed but no specific errors could be parsed. Check test output above.',
+      message:
+        'Tests failed but no specific errors could be parsed. Check test output above.',
     });
   }
 
@@ -175,7 +192,7 @@ function parseAndLogErrors(stdout: string, stderr: string): void {
   if (errorLog) {
     console.log(getErrorSummary(errorLog));
     console.log('\n📝 Errors logged to .claude/errors.json');
-    console.log('💬 Type \'/fix-errors\' in Claude to analyze and fix\n');
+    console.log("💬 Type '/fix-errors' in Claude to analyze and fix\n");
   }
 }
 
@@ -226,7 +243,9 @@ function startWatching(): void {
     .on('add', handleFileChange)
     .on('ready', () => {
       console.log('✅ Ready! Make changes to trigger tests.\n');
-      console.log('💡 Tip: Save any file in app/, components/, or lib/ to run tests\n');
+      console.log(
+        '💡 Tip: Save any file in app/, components/, or lib/ to run tests\n'
+      );
       console.log('─'.repeat(60) + '\n');
     })
     .on('error', (error) => {
