@@ -9,6 +9,19 @@ Complete documentation for the YourToyotaPicks project.
 - **[Quick Start Guide](setup/QUICK_START.md)** - Get up and running in 5 minutes
 - **[Quick Start with Seed Data](setup/QUICK_START_SEED.md)** - Using mock data for development
 
+### 📚 Learnings & Best Practices
+
+**Start here for comprehensive guidance:**
+
+- **[Learnings Index](learnings/README.md)** - Quick reference by task (testing, refactoring, database work)
+- **[Testing Best Practices](learnings/TESTING_BEST_PRACTICES.md)** - Test-first workflow, E2E patterns, React hydration
+- **[Layer Separation Principles](architecture/LAYER_SEPARATION_PRINCIPLES.md)** - Data vs UI rules (critical!)
+- **[V2 Migration Lessons](architecture/V2_MIGRATION_LESSONS.md)** - Learn from 5 major bugs (saves 7+ hours)
+- **[Database Design Patterns](architecture/DATABASE_DESIGN_PATTERNS.md)** - Raw vs computed data, versioning
+- **[Feature Addition Checklist](development/FEATURE_ADDITION_CHECKLIST.md)** - Step-by-step feature workflow
+
+**Time Investment**: 50 minutes reading | **Time Saved**: 8-14+ hours per feature/refactor
+
 ### ⚙️ Setup & Configuration
 
 - **[Database Setup](setup/DATABASE_SETUP.md)** - Supabase schema and configuration
@@ -37,14 +50,16 @@ Complete documentation for the YourToyotaPicks project.
 
 ### 🧪 Testing
 
-- **[UI Testing Plan](testing/UI_TESTING_PLAN.md)** - E2E testing strategy
-- **[UI Testing Guide](testing/UI_TESTING_README.md)** - Running and writing tests
+- **[Testing Best Practices](learnings/TESTING_BEST_PRACTICES.md)** - Test-first workflow, service layer testing, E2E patterns
+- See **[Learnings Index](learnings/README.md)** for comprehensive testing guidance
 
 ### 📐 Architecture & Technical
 
 - **[Technical Specification](architecture/TECHNICAL_SPECIFICATION.md)** - Detailed technical design
 - **[Data Sources](architecture/DATA_SOURCES.md)** - Data ingestion strategy and API integration
-- **[Project Overview](overview.md)** - High-level product vision
+- **[Layer Separation Principles](architecture/LAYER_SEPARATION_PRINCIPLES.md)** - Data vs UI rules (critical!)
+- **[V2 Migration Lessons](architecture/V2_MIGRATION_LESSONS.md)** - Bugs and fixes from V2.0 refactor
+- **[Database Design Patterns](architecture/DATABASE_DESIGN_PATTERNS.md)** - DB patterns and migrations
 
 ### 🎨 UX & Design
 
@@ -57,7 +72,8 @@ Complete documentation for the YourToyotaPicks project.
 ### 🛠️ Development
 
 - **[Development Tools Setup](development/DEVELOPMENT_TOOLS_SETUP.md)** - Development environment configuration
-- **[Implementation Learnings](development/IMPLEMENTATION_LEARNINGS.md)** - Lessons learned and best practices
+- **[Feature Addition Checklist](development/FEATURE_ADDITION_CHECKLIST.md)** - Step-by-step workflow for adding features
+- See **[Learnings Index](learnings/README.md)** for all learnings and best practices
 
 ### 📦 Archives
 
@@ -70,7 +86,10 @@ Complete documentation for the YourToyotaPicks project.
 docs/
 ├── README.md                          # This file
 ├── CURRENT_OPEN_ISSUES.md             # Active issues and workarounds
-├── overview.md                        # Product vision
+│
+├── learnings/                         # ⭐ Consolidated best practices
+│   ├── README.md                      # Quick reference by task
+│   └── TESTING_BEST_PRACTICES.md      # Test-first workflow, E2E patterns
 │
 ├── setup/                             # Setup and configuration guides
 │   ├── QUICK_START.md
@@ -90,22 +109,24 @@ docs/
 │
 ├── architecture/                      # Architectural decisions
 │   ├── TECHNICAL_SPECIFICATION.md     # Technical design
-│   └── DATA_SOURCES.md                # Data ingestion strategy
+│   ├── DATA_SOURCES.md                # Data ingestion strategy
+│   ├── LAYER_SEPARATION_PRINCIPLES.md # Data vs UI rules
+│   ├── V2_MIGRATION_LESSONS.md        # Bugs and fixes from V2.0
+│   └── DATABASE_DESIGN_PATTERNS.md    # DB patterns and migrations
 │
 ├── ux/                                # UX principles and guidelines
 │   └── UX_PRINCIPLES.md               # Core UX philosophy
 │
 ├── development/                       # Development guides
 │   ├── DEVELOPMENT_TOOLS_SETUP.md
-│   └── IMPLEMENTATION_LEARNINGS.md
+│   └── FEATURE_ADDITION_CHECKLIST.md
 │
 ├── guides/                            # How-to guides
 │   ├── MOCK_DATA_GUIDE.md
 │   └── IMPLEMENTATION_PLAN.md
 │
 ├── testing/                           # Testing documentation
-│   ├── UI_TESTING_PLAN.md
-│   └── UI_TESTING_README.md
+│   └── (test results and screenshots)
 │
 └── _archive/                          # Historical documentation
     ├── migrations/                    # Completed refactoring work
@@ -128,18 +149,20 @@ docs/
 
 ### For New Contributors
 
-1. Start with [Quick Start Guide](setup/QUICK_START.md)
-2. Review [Technical Specification](architecture/TECHNICAL_SPECIFICATION.md)
+1. **Start here**: [Learnings Index](learnings/README.md) - 50 minutes reading saves 8-14+ hours
+2. Review [Quick Start Guide](setup/QUICK_START.md)
 3. Read [UX Principles](ux/UX_PRINCIPLES.md) to understand design philosophy
-4. Check [Mock Data Guide](guides/MOCK_DATA_GUIDE.md) for development
-5. Read [UI Testing Guide](testing/UI_TESTING_README.md) before contributing
+4. Check [Technical Specification](architecture/TECHNICAL_SPECIFICATION.md)
+5. Review [Testing Best Practices](learnings/TESTING_BEST_PRACTICES.md)
 
 ### For Feature Development
 
-1. Check [Implementation Plan](guides/IMPLEMENTATION_PLAN.md) for roadmap
-2. Review related feature docs in `features/`
-3. Follow patterns in existing code
-4. Add tests following [UI Testing Plan](testing/UI_TESTING_PLAN.md)
+1. **Read first**: [Feature Addition Checklist](development/FEATURE_ADDITION_CHECKLIST.md) - saves 5-7+ hours
+2. Check [Implementation Plan](guides/IMPLEMENTATION_PLAN.md) for roadmap
+3. Review [Layer Separation Principles](architecture/LAYER_SEPARATION_PRINCIPLES.md) - critical!
+4. Review related feature docs in `features/`
+5. Follow patterns in existing code
+6. Write tests using [Testing Best Practices](learnings/TESTING_BEST_PRACTICES.md)
 
 ### For Deployment
 
