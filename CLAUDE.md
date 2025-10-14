@@ -64,15 +64,89 @@ See [docs/ux/UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md) for detailed UX specifi
 - Automated error detection system (`npm run watch:errors`)
 - Responsive UI with Tailwind CSS + shadcn/ui
 - **Case-insensitive VIN lookups** - Works with any VIN case
-- **Supabase database schema** - Complete migrations and seeding scripts
-- **Local Supabase setup** - Can run database locally for development
+- **Supabase database** - ✅ CONNECTED to production instance
+- **Database migrations** - Complete schema with seeding scripts
 
 🚧 **Not Yet Implemented:**
 
-- Live Supabase connection (database scripts ready, not connected to production)
 - Automated data ingestion from listing APIs
 - Cron job scheduling for daily updates
 - Email notification system
+
+## 🚨 Architecture Principles (CRITICAL)
+
+**⚠️ READ THIS BEFORE MAKING ANY CHANGES ⚠️**
+
+These principles were established after 5+ hours of debugging during the V2.0 refactor. Following them will save significant time.
+
+### 1. Data/UI Layer Separation
+
+**Rule**: Data layer = primitives only | UI layer = formatting only
+
+```typescript
+// ✅ GOOD: Data layer
+export const Tier = { GOLD: 1, SILVER: 2, BRONZE: 3, STANDARD: 4 } as const;
+
+// ❌ BAD: Data layer with UI
+export const Tier = { GOLD: '🥇 Gold', SILVER: '🥈 Silver' };
+```
+
+**Why**: Keeps business logic testable, makes UI changes independent of data.
+
+**See**: [docs/architecture/LAYER_SEPARATION_PRINCIPLES.md](docs/architecture/LAYER_SEPARATION_PRINCIPLES.md)
+
+### 2. Test-First Discipline
+
+**Rule**: ALWAYS run tests before making changes
+
+```bash
+# REQUIRED before ANY code changes
+npm test && npm run test:e2e
+```
+
+**Why**: Tests catch bugs (like name collisions) faster than production scripts.
+
+**See**: [docs/architecture/V2_MIGRATION_LESSONS.md](docs/architecture/V2_MIGRATION_LESSONS.md) - Bug #5
+
+### 3. Database Design
+
+**Rule**: Separate raw data from computed insights
+
+- Raw data → `curated_listings` table
+- Computed data → `vehicle_insights` table
+- Join via → `vehicles_with_insights` view
+
+**Why**: Can drop/recalculate insights without losing source data. Supports multiple algorithm versions.
+
+**See**: [docs/architecture/DATABASE_DESIGN_PATTERNS.md](docs/architecture/DATABASE_DESIGN_PATTERNS.md)
+
+### 4. Feature Addition
+
+**Rule**: Follow the checklist, don't skip steps
+
+1. ✅ Run tests first
+2. ✅ Constants/enums → Types → Database → Services → UI
+3. ✅ Test after each step
+
+**Why**: Systematic approach prevents bugs and ensures nothing is missed.
+
+**See**: [docs/development/FEATURE_ADDITION_CHECKLIST.md](docs/development/FEATURE_ADDITION_CHECKLIST.md)
+
+### Quick Reference: Common Mistakes
+
+| Mistake                  | Fix                                   | Time Cost |
+| ------------------------ | ------------------------------------- | --------- |
+| Mixed UI in data layer   | Move emojis/labels to `*-visuals.ts`  | 1 hour    |
+| Used old `criteria_tier` | Use `tier_numeric` instead            | 1.5 hours |
+| Name collision           | Alias imports (`as`)                  | 2 hours   |
+| Forgot to run tests      | Run `npm test` before changes         | 2+ hours  |
+| Wrong JSONB extraction   | Access `criteria_results?.verifiable` | 45 min    |
+
+**For detailed examples of all bugs and fixes**: [docs/architecture/V2_MIGRATION_LESSONS.md](docs/architecture/V2_MIGRATION_LESSONS.md)
+
+**Time Investment**: 30 minutes reading docs
+**Time Saved**: 5-7+ hours per major refactor
+**ROI**: Massive
 
 ## Architecture
 
@@ -81,7 +155,7 @@ See [docs/ux/UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md) for detailed UX specifi
 - **Frontend**: Next.js 15.5.4 with App Router
 - **Styling**: Tailwind CSS + shadcn/ui components
 - **Images**: IMAGIN.studio API (free, 5 angles per vehicle)
-- **Backend**: Supabase (configured but not connected - uses mock data fallback)
+- **Backend**: Supabase (✅ CONNECTED to production database)
 - **Testing**: Puppeteer E2E tests + automated error detection
 - **Hosting**: Vercel-ready configuration
 
@@ -221,9 +295,9 @@ Weighted factors (100-point scale):
 4. **Write tests** - Add E2E tests in `tests/e2e/flows/`
 5. **Update docs** - Document in appropriate `docs/` subfolder
 
-### Working with Mock Data
+### Working with Database
 
-Mock data is the primary development mode since Supabase isn't configured:
+Supabase is connected and ready to use. The app queries real data from the database and falls back to mock data only on error:
 
 ```typescript
 // Example: Adding a new mock vehicle
@@ -241,18 +315,22 @@ export const mockListings: VehicleInsert[] = [
 ];
 ```
 
-### Database Integration (When Ready)
+### Database Integration
 
-Supabase client is configured in `lib/supabase.ts`:
+✅ **Supabase is connected and operational!**
 
-```typescript
-// Set these in .env.local:
-NEXT_PUBLIC_SUPABASE_URL = your_url;
-NEXT_PUBLIC_SUPABASE_ANON_KEY = your_key;
-SUPABASE_SERVICE_ROLE_KEY = your_service_key;
+Connection is configured in `lib/supabase.ts` and `.env.local`:
+
+- Database URL: `https://crehsfhbludetpafbnwe.supabase.co`
+- All environment variables are properly set
+- Schema is defined in `supabase/migrations/`
+- 88 vehicles currently in the database
+
+To run migrations or scripts:
+
+```bash
+npm run recalculate-scores  # Recalculate all vehicle scores and tiers
 ```
-
-Schema is defined in `docs/setup/DATABASE_SETUP.md`.
 
 ### Testing
 
@@ -282,19 +360,18 @@ Tests automatically:
 
 ### Current Limitations
 
-1. **No live data** - Uses mock data only
-2. **No authentication** - Single user assumed
-3. **No cron jobs** - Manual refresh only
-4. **No email** - Notifications not implemented
+1. **No authentication** - Single user assumed
+2. **No cron jobs** - Manual refresh only
+3. **No email** - Notifications not implemented
 
 ### Supabase Integration Status
 
-- ✅ Client configured
-- ✅ Query functions written
+- ✅ Client configured and CONNECTED
+- ✅ Query functions written and working
 - ✅ Schema designed with migrations
 - ✅ Database seeding scripts created
-- ✅ Local Supabase development setup
-- ⚠️ Not connected to production instance (can run locally)
+- ✅ Connected to production instance: https://crehsfhbludetpafbnwe.supabase.co
+- ✅ 88 vehicles currently in database
 
 ### Console Errors Handled
 
@@ -329,15 +406,18 @@ See [docs/features/ERROR_WATCH_SYSTEM.md](docs/features/ERROR_WATCH_SYSTEM.md) a
 
 Detailed documentation in `/docs`:
 
-- **Setup Guides**: Database, deployment, email config
+- **Learnings**: [docs/learnings/](docs/learnings/README.md) - Consolidated best practices and lessons learned
+  - [Testing Best Practices](docs/learnings/TESTING_BEST_PRACTICES.md) - Test-first workflow, E2E patterns
 - **Architecture**: [Technical Specification](docs/architecture/TECHNICAL_SPECIFICATION.md), [Data Sources](docs/architecture/DATA_SOURCES.md)
+  - [Layer Separation Principles](docs/architecture/LAYER_SEPARATION_PRINCIPLES.md) - Data vs UI rules
+  - [V2 Migration Lessons](docs/architecture/V2_MIGRATION_LESSONS.md) - Bugs and fixes from V2.0 refactor
+  - [Database Design Patterns](docs/architecture/DATABASE_DESIGN_PATTERNS.md) - DB patterns and migrations
 - **UX Principles**: [UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md) - Core design philosophy
 - **Features**: [Dashboard V2](docs/features/DASHBOARD_V2.md), [Car Images](docs/features/CAR_IMAGES_IMPLEMENTATION.md), [Error Detection](docs/features/ERROR_WATCH_SYSTEM.md)
-- **Development**: [Tools Setup](docs/development/DEVELOPMENT_TOOLS_SETUP.md), [Implementation Learnings](docs/development/IMPLEMENTATION_LEARNINGS.md)
-- **Testing**: E2E test plans and results
-- **Guides**: Mock data guide, implementation plan
+- **Development**: [Tools Setup](docs/development/DEVELOPMENT_TOOLS_SETUP.md), [Feature Addition Checklist](docs/development/FEATURE_ADDITION_CHECKLIST.md)
+- **Setup Guides**: Database, deployment, email config
 
-See [docs/README.md](docs/README.md) for full index.
+See [docs/README.md](docs/README.md) or [docs/learnings/README.md](docs/learnings/README.md) for full index.
 
 ## Future Enhancements
 
@@ -383,8 +463,9 @@ vercel                   # Deploy to Vercel
 
 ## Getting Help
 
+- **Start Here**: [docs/learnings/README.md](docs/learnings/README.md) - Quick reference by task
 - **Setup Issues**: See [docs/setup/QUICK_START.md](docs/setup/QUICK_START.md)
-- **Testing Issues**: See [docs/testing/UI_TESTING_README.md](docs/testing/UI_TESTING_README.md)
+- **Testing Best Practices**: See [docs/learnings/TESTING_BEST_PRACTICES.md](docs/learnings/TESTING_BEST_PRACTICES.md)
 - **Feature Questions**: See [docs/features/](docs/features/)
 - **Technical Spec**: See [docs/architecture/TECHNICAL_SPECIFICATION.md](docs/architecture/TECHNICAL_SPECIFICATION.md)
 - **UX Questions**: See [docs/ux/UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md)
