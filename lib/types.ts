@@ -293,21 +293,40 @@ export interface SearchSettings {
 
 // Base listing from external APIs (before filtering)
 export interface RawListing {
+  // Basic vehicle info
   vin?: string;
   make: string;
   model: string;
   year: number;
+  body_type?: string;
+
+  // Pricing and mileage
   price: number;
   mileage: number;
-  body_type?: string;
+
+  // Location
   location: string;
   distance?: number;
+  state_of_origin?: string;
+  is_rust_belt_state?: boolean;
+
+  // Dealer info
   dealer_name?: string;
+
+  // Listing metadata
   url: string;
   images?: string[];
   source: string;
   listing_id?: string;
-  [key: string]: any; // Allow additional fields
+
+  // Vehicle history (optional - may not be provided by all sources)
+  title_status?: string;
+  accident_count?: number;
+  owner_count?: number;
+  is_rental?: boolean;
+  is_fleet?: boolean;
+  has_lien?: boolean;
+  flood_damage?: boolean;
 }
 
 // ============================================================================
@@ -317,12 +336,25 @@ export interface RawListing {
 // For database insert operations (omit auto-generated fields)
 export type VehicleInsert = Omit<
   Vehicle,
-  'id' | 'age_in_years' | 'mileage_per_year' | 'created_at' | 'first_seen_at' | 'last_updated_at'
+  | 'id'
+  | 'age_in_years'
+  | 'mileage_per_year'
+  | 'created_at'
+  | 'first_seen_at'
+  | 'last_updated_at'
 >;
 
 // For database update operations (partial)
 export type VehicleUpdate = Partial<
-  Omit<Vehicle, 'id' | 'vin' | 'age_in_years' | 'mileage_per_year' | 'created_at' | 'first_seen_at'>
+  Omit<
+    Vehicle,
+    | 'id'
+    | 'vin'
+    | 'age_in_years'
+    | 'mileage_per_year'
+    | 'created_at'
+    | 'first_seen_at'
+  >
 >;
 
 // For search log insert operations
@@ -377,7 +409,15 @@ export interface VehicleQueryOptions {
   search?: string;
 
   // Sorting
-  sortField?: 'priority' | 'quality_tier' | 'price' | 'mileage' | 'year' | 'make' | 'model' | 'date';
+  sortField?:
+    | 'priority'
+    | 'quality_tier'
+    | 'price'
+    | 'mileage'
+    | 'year'
+    | 'make'
+    | 'model'
+    | 'date';
   sortOrder?: 'asc' | 'desc';
 
   // Pagination

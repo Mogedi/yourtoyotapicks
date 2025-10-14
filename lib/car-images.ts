@@ -26,7 +26,7 @@ export function getCarImageUrl(options: CarImageOptions): string {
   const {
     make,
     model,
-    year,
+    year: _year,
     angle = 'side',
     width = 1920,
     height = 1080,
@@ -38,11 +38,11 @@ export function getCarImageUrl(options: CarImageOptions): string {
 
   // IMAGIN.studio angle mapping
   const angleMap: Record<string, string> = {
-    'side': '01',      // Side view
-    'front': '05',     // Front view
-    'rear': '08',      // Rear view
-    '34': '01',        // 3/4 front view
-    'interior': '13',  // Interior view
+    side: '01', // Side view
+    front: '05', // Front view
+    rear: '08', // Rear view
+    '34': '01', // 3/4 front view
+    interior: '13', // Interior view
   };
 
   // Use free IMAGIN.studio API
@@ -55,27 +55,36 @@ export function getCarImageUrl(options: CarImageOptions): string {
 /**
  * Get multiple angles for a car
  */
-export function getCarImageGallery(options: Omit<CarImageOptions, 'angle'>): string[] {
-  const angles: Array<CarImageOptions['angle']> = ['side', '34', 'front', 'rear', 'interior'];
+export function getCarImageGallery(
+  options: Omit<CarImageOptions, 'angle'>
+): string[] {
+  const angles: Array<CarImageOptions['angle']> = [
+    'side',
+    '34',
+    'front',
+    'rear',
+    'interior',
+  ];
 
-  return angles.map(angle =>
-    getCarImageUrl({ ...options, angle })
-  );
+  return angles.map((angle) => getCarImageUrl({ ...options, angle }));
 }
 
 /**
  * Get fallback image URL using Unsplash
  * Only used if IMAGIN.studio fails to load
  */
-export function getFallbackCarImage(make: string, model: string): string {
-  const query = `${make}+${model}+car`;
+export function getFallbackCarImage(_make: string, _model: string): string {
   return `https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3`;
 }
 
 /**
  * Generate placeholder SVG for loading state
  */
-export function getCarPlaceholder(make: string, model: string, year: number): string {
+export function getCarPlaceholder(
+  make: string,
+  model: string,
+  year: number
+): string {
   const text = `${year} ${make} ${model}`;
   const encoded = encodeURIComponent(text);
 
@@ -87,15 +96,15 @@ export function getCarPlaceholder(make: string, model: string, year: number): st
  * Common car models and their specific image adjustments
  */
 const CAR_MODEL_OVERRIDES: Record<string, { angle?: string; zoom?: string }> = {
-  'rav4': { angle: '01' },
+  rav4: { angle: '01' },
   'cr-v': { angle: '01' },
-  'highlander': { angle: '01' },
-  'pilot': { angle: '01' },
+  highlander: { angle: '01' },
+  pilot: { angle: '01' },
   '4runner': { angle: '01' },
-  'camry': { angle: '01' },
-  'accord': { angle: '01' },
-  'civic': { angle: '01' },
-  'corolla': { angle: '01' },
+  camry: { angle: '01' },
+  accord: { angle: '01' },
+  civic: { angle: '01' },
+  corolla: { angle: '01' },
 };
 
 /**

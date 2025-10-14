@@ -1,6 +1,10 @@
 // Vehicle Query API - Unified interface for fetching and filtering vehicles
 import { getMarketcheckListings } from '@/lib/supabase';
-import type { VehicleQueryOptions, VehicleQueryResult, Vehicle } from '@/lib/types';
+import type {
+  VehicleQueryOptions,
+  VehicleQueryResult,
+  Vehicle,
+} from '@/lib/types';
 import { mockListings } from '@/lib/mock-data';
 import { FilterService } from '@/lib/services/filter-service';
 import { SortService } from '@/lib/services/sort-service';
@@ -24,7 +28,7 @@ export async function queryVehicles(
       const vehicles = response.data as unknown as Vehicle[];
       return processVehicles(vehicles, options);
     }
-  } catch (error) {
+  } catch {
     // Silently fallback to mock data (expected when Supabase not configured)
     console.warn('Supabase unavailable, using mock data...');
   }
@@ -104,7 +108,7 @@ export async function getVehicleByVin(vin: string): Promise<Vehicle | null> {
       );
       return (vehicle as unknown as Vehicle) || null;
     }
-  } catch (error) {
+  } catch {
     console.warn('Supabase unavailable, searching mock data...');
   }
 
@@ -138,7 +142,7 @@ export async function getFilterOptions(): Promise<{
     if (response.data && response.data.length > 0) {
       return FilterService.getUniqueValues(response.data);
     }
-  } catch (error) {
+  } catch {
     console.warn('Supabase unavailable, using mock data filter options...');
   }
 

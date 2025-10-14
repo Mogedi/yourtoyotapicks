@@ -12,17 +12,8 @@
 import { mockListings } from './mock-data';
 import { applyFilters, DEFAULT_FILTER_CRITERIA } from './filters';
 import { decodeVIN, verifyVIN } from './vin-decoder';
-import {
-  insertListing,
-  checkVinExists,
-  insertSearchLog,
-  getServiceRoleClient
-} from './supabase';
-import type {
-  RawListing,
-  VehicleInsert,
-  SearchLogInsert
-} from './types';
+import { insertListing, checkVinExists, insertSearchLog } from './supabase';
+import type { RawListing, VehicleInsert, SearchLogInsert } from './types';
 
 // ============================================================================
 // TYPES
@@ -64,10 +55,10 @@ export const mockDataSource: ListingSource = {
   name: 'Mock Data Generator',
   fetch: async () => {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Convert VehicleInsert to RawListing format
-    return mockListings.map(listing => ({
+    return mockListings.map((listing) => ({
       vin: listing.vin,
       make: listing.make,
       model: listing.model,
@@ -150,17 +141,20 @@ export async function fetchListingsFromAPI(): Promise<{
       cost: dataSource.cost || 0,
     };
   } catch (error) {
-    console.error(`[fetchListingsFromAPI] Error fetching from ${dataSource.name}:`, error);
-    throw new Error(`Failed to fetch listings: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error(
+      `[fetchListingsFromAPI] Error fetching from ${dataSource.name}:`,
+      error
+    );
+    throw new Error(
+      `Failed to fetch listings: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 }
 
 /**
  * Stage 2: Apply filters to listings
  */
-export async function applyFiltersToListings(
-  listings: RawListing[]
-): Promise<{
+export async function applyFiltersToListings(listings: RawListing[]): Promise<{
   passed: RawListing[];
   failed: RawListing[];
 }> {
@@ -174,7 +168,9 @@ export async function applyFiltersToListings(
       passed.push(listing);
     } else {
       failed.push(listing);
-      console.log(`[Filter] Rejected ${listing.year} ${listing.make} ${listing.model} (${listing.vin}): ${result.reasons.join(', ')}`);
+      console.log(
+        `[Filter] Rejected ${listing.year} ${listing.make} ${listing.model} (${listing.vin}): ${result.reasons.join(', ')}`
+      );
     }
   }
 
@@ -184,9 +180,7 @@ export async function applyFiltersToListings(
 /**
  * Stage 3: Validate VINs using NHTSA API
  */
-export async function validateVINs(
-  listings: RawListing[]
-): Promise<{
+export async function validateVINs(listings: RawListing[]): Promise<{
   valid: RawListing[];
   invalid: RawListing[];
 }> {
@@ -196,7 +190,9 @@ export async function validateVINs(
   for (const listing of listings) {
     if (!listing.vin) {
       invalid.push(listing);
-      console.log(`[VIN] Rejected ${listing.year} ${listing.make} ${listing.model}: Missing VIN`);
+      console.log(
+        `[VIN] Rejected ${listing.year} ${listing.make} ${listing.model}: Missing VIN`
+      );
       continue;
     }
 
@@ -220,7 +216,9 @@ export async function validateVINs(
 
       if (!verification.matches) {
         invalid.push(listing);
-        console.log(`[VIN] Rejected ${listing.vin}: ${verification.issues.join(', ')}`);
+        console.log(
+          `[VIN] Rejected ${listing.vin}: ${verification.issues.join(', ')}`
+        );
         continue;
       }
 
@@ -228,7 +226,7 @@ export async function validateVINs(
 
       // Small delay to be nice to NHTSA API (250ms between requests)
       if (listings.indexOf(listing) < listings.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 250));
+        await new Promise((resolve) => setTimeout(resolve, 250));
       }
     } catch (error) {
       invalid.push(listing);
@@ -242,9 +240,7 @@ export async function validateVINs(
 /**
  * Stage 4: Store new listings in database
  */
-export async function storeNewListings(
-  listings: RawListing[]
-): Promise<{
+export async function storeNewListings(listings: RawListing[]): Promise<{
   stored: number;
   duplicates: number;
   errors: number;
@@ -273,22 +269,29 @@ export async function storeNewListings(
         body_type: listing.body_type,
         price: listing.price,
         mileage: listing.mileage,
-        mileage_rating: applyFilters(listing, DEFAULT_FILTER_CRITERIA).mileageRating,
-        title_status: (listing as any).title_status || 'clean',
-        accident_count: (listing as any).accident_count || 0,
-        owner_count: (listing as any).owner_count || 1,
-        is_rental: (listing as any).is_rental || false,
-        is_fleet: (listing as any).is_fleet || false,
-        has_lien: (listing as any).has_lien || false,
-        flood_damage: (listing as any).flood_damage || false,
-        state_of_origin: (listing as any).state_of_origin || '',
-        is_rust_belt_state: (listing as any).is_rust_belt_state || false,
+        mileage_rating: applyFilters(listing, DEFAULT_FILTER_CRITERIA)
+          .mileageRating,
+        title_status: listing.title_status || 'clean',
+        accident_count: listing.accident_count || 0,
+        owner_count: listing.owner_count || 1,
+        is_rental: listing.is_rental || false,
+        is_fleet: listing.is_fleet || false,
+        has_lien: listing.has_lien || false,
+        flood_damage: listing.flood_damage || false,
+        state_of_origin: listing.state_of_origin || '',
+        is_rust_belt_state: listing.is_rust_belt_state || false,
         current_location: listing.location,
         distance_miles: listing.distance || 0,
         dealer_name: listing.dealer_name,
-        priority_score: applyFilters(listing, DEFAULT_FILTER_CRITERIA).priorityScore || 50,
-        flag_rust_concern: applyFilters(listing, DEFAULT_FILTER_CRITERIA).isRustBeltConcern || false,
-        source_platform: (listing.source as any) || 'Marketcheck',
+        priority_score:
+          applyFilters(listing, DEFAULT_FILTER_CRITERIA).priorityScore || 50,
+        flag_rust_concern:
+          applyFilters(listing, DEFAULT_FILTER_CRITERIA).isRustBeltConcern ||
+          false,
+        source_platform: listing.source as
+          | 'Marketcheck'
+          | 'Auto.dev'
+          | 'Carapis',
         source_url: listing.url,
         source_listing_id: listing.listing_id,
         images_url: listing.images,
@@ -298,7 +301,9 @@ export async function storeNewListings(
       // Insert into database
       await insertListing(vehicle);
       stored++;
-      console.log(`[Store] Stored: ${listing.year} ${listing.make} ${listing.model} (${listing.vin})`);
+      console.log(
+        `[Store] Stored: ${listing.year} ${listing.make} ${listing.model} (${listing.vin})`
+      );
     } catch (error) {
       errors++;
       console.error(`[Store] Error storing ${listing.vin}:`, error);
@@ -372,7 +377,9 @@ export async function runPipeline(): Promise<PipelineResult> {
       fetchResult = await fetchListingsFromAPI();
       totalFetched = fetchResult.listings.length;
       apiCost = fetchResult.cost;
-      console.log(`[Pipeline] Fetched ${totalFetched} listings from ${fetchResult.source}`);
+      console.log(
+        `[Pipeline] Fetched ${totalFetched} listings from ${fetchResult.source}`
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       errors.push({
@@ -389,7 +396,9 @@ export async function runPipeline(): Promise<PipelineResult> {
     try {
       filterResult = await applyFiltersToListings(fetchResult.listings);
       afterBasicFilter = filterResult.passed.length;
-      console.log(`[Pipeline] ${afterBasicFilter} listings passed filters (${filterResult.failed.length} rejected)`);
+      console.log(
+        `[Pipeline] ${afterBasicFilter} listings passed filters (${filterResult.failed.length} rejected)`
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       errors.push({
@@ -406,13 +415,17 @@ export async function runPipeline(): Promise<PipelineResult> {
     try {
       // Skip VIN validation in test/development to avoid rate limiting
       if (process.env.SKIP_VIN_VALIDATION === 'true') {
-        console.log('[Pipeline] Skipping VIN validation (SKIP_VIN_VALIDATION=true)');
+        console.log(
+          '[Pipeline] Skipping VIN validation (SKIP_VIN_VALIDATION=true)'
+        );
         vinResult = { valid: filterResult.passed, invalid: [] };
       } else {
         vinResult = await validateVINs(filterResult.passed);
       }
       afterVinValidation = vinResult.valid.length;
-      console.log(`[Pipeline] ${afterVinValidation} listings have valid VINs (${vinResult.invalid.length} rejected)`);
+      console.log(
+        `[Pipeline] ${afterVinValidation} listings have valid VINs (${vinResult.invalid.length} rejected)`
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       errors.push({
@@ -432,7 +445,9 @@ export async function runPipeline(): Promise<PipelineResult> {
       stored = storeResult.stored;
       duplicates = storeResult.duplicates;
       errorCount = storeResult.errors;
-      console.log(`[Pipeline] Stored ${stored} new listings (${duplicates} duplicates, ${errorCount} errors)`);
+      console.log(
+        `[Pipeline] Stored ${stored} new listings (${duplicates} duplicates, ${errorCount} errors)`
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       errors.push({
@@ -494,11 +509,14 @@ export async function runPipeline(): Promise<PipelineResult> {
         apiCost,
         {
           fatal: true,
-          errors: [...errors, {
-            stage: 'pipeline',
-            message: error instanceof Error ? error.message : 'Unknown error',
-            details: error,
-          }]
+          errors: [
+            ...errors,
+            {
+              stage: 'pipeline',
+              message: error instanceof Error ? error.message : 'Unknown error',
+              details: error,
+            },
+          ],
         }
       );
     } catch (logError) {
@@ -515,11 +533,14 @@ export async function runPipeline(): Promise<PipelineResult> {
         duplicatesSkipped: duplicates,
         errors: errorCount + 1,
       },
-      errors: [...errors, {
-        stage: 'pipeline',
-        message: error instanceof Error ? error.message : 'Unknown error',
-        details: error,
-      }],
+      errors: [
+        ...errors,
+        {
+          stage: 'pipeline',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          details: error,
+        },
+      ],
       executionTimeMs: Date.now() - startTime,
     };
   }

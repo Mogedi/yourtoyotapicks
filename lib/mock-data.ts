@@ -56,7 +56,9 @@ function generateAISummary(vehicle: Partial<VehicleInsert>): string {
   if (score < 65) {
     const warnings: string[] = [];
     if (vehicle.accident_count && vehicle.accident_count > 0) {
-      warnings.push(`⚠️ ${vehicle.accident_count} accident${vehicle.accident_count > 1 ? 's' : ''}`);
+      warnings.push(
+        `⚠️ ${vehicle.accident_count} accident${vehicle.accident_count > 1 ? 's' : ''}`
+      );
     }
     if (vehicle.mileage && vehicle.mileage > 120000) {
       warnings.push('⚠️ High mileage');
@@ -88,27 +90,18 @@ function enrichVehicle(vehicle: VehicleInsert): VehicleInsert {
   };
 }
 
-// Rust belt states (from typical used car definitions)
-const RUST_BELT_STATES = [
-  'OH', 'MI', 'IL', 'IN', 'PA', 'NY', 'WI', 'MN', 'IA', 'MO'
-];
-
-// Non-rust belt states
-const CLEAN_STATES = [
-  'CA', 'TX', 'FL', 'AZ', 'NC', 'GA', 'TN', 'CO', 'NV', 'OR', 'WA'
-];
-
-// Helper to generate realistic VIN numbers
+// Helper to generate realistic VIN numbers (currently unused but kept for future dynamic data)
 // Format: WMI (3) + VDS (6) + VIS (8) = 17 characters
-function generateVIN(make: 'Toyota' | 'Honda', year: number): string {
+function _generateVIN(make: 'Toyota' | 'Honda', _year: number): string {
   // Toyota WMI codes: 4T1, 5TD, JTM, 2T1, etc.
   // Honda WMI codes: 1HG, 2HG, JHM, 3HG, etc.
   const toyotaWMI = ['4T1', '5TD', 'JTM', '2T1', '5TF', '4T3'];
   const hondaWMI = ['1HG', '2HG', 'JHM', '3HG', '5J6', '19X'];
 
-  const wmi = make === 'Toyota'
-    ? toyotaWMI[Math.floor(Math.random() * toyotaWMI.length)]
-    : hondaWMI[Math.floor(Math.random() * hondaWMI.length)];
+  const wmi =
+    make === 'Toyota'
+      ? toyotaWMI[Math.floor(Math.random() * toyotaWMI.length)]
+      : hondaWMI[Math.floor(Math.random() * hondaWMI.length)];
 
   // Generate VDS (6 chars) + VIS (8 chars) = 14 more characters
   const chars = 'ABCDEFGHJKLMNPRSTUVWXYZ0123456789'; // Excludes I, O, Q
@@ -118,16 +111,6 @@ function generateVIN(make: 'Toyota' | 'Honda', year: number): string {
   }
 
   return vin;
-}
-
-// Helper to get random element from array
-function randomChoice<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// Helper to get random int in range
-function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // Base vehicle listings (without curator fields)
@@ -164,7 +147,11 @@ const baseListings: VehicleInsert[] = [
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/1',
     source_listing_id: 'MC-RAV4-001',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2021 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'RAV4',
+      year: 2021,
+    }),
     reviewed_by_user: false,
   },
 
@@ -196,7 +183,11 @@ const baseListings: VehicleInsert[] = [
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/2',
     source_listing_id: 'AD-CRV-002',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'CR-V', year: 2020 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'CR-V',
+      year: 2020,
+    }),
     reviewed_by_user: false,
   },
 
@@ -227,7 +218,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/3',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2021 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'RAV4',
+      year: 2021,
+    }),
     reviewed_by_user: false,
   },
 
@@ -258,7 +253,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/4',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Accord', year: 2021 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Accord',
+      year: 2021,
+    }),
     reviewed_by_user: false,
   },
 
@@ -289,7 +288,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/5',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Corolla', year: 2020 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Corolla',
+      year: 2020,
+    }),
     reviewed_by_user: false,
   },
 
@@ -320,7 +323,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/6',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Civic', year: 2021 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Civic',
+      year: 2021,
+    }),
     reviewed_by_user: false,
   },
 
@@ -351,7 +358,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/7',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Highlander', year: 2020 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Highlander',
+      year: 2020,
+    }),
     reviewed_by_user: false,
   },
 
@@ -382,7 +393,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/8',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Pilot', year: 2021 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Pilot',
+      year: 2021,
+    }),
     reviewed_by_user: false,
   },
 
@@ -413,7 +428,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/9',
-    images_url: getCarImageGallery({ make: 'Toyota', model: '4Runner', year: 2019 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: '4Runner',
+      year: 2019,
+    }),
     reviewed_by_user: false,
   },
 
@@ -444,7 +463,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/10',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'HR-V', year: 2022 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'HR-V',
+      year: 2022,
+    }),
     reviewed_by_user: false,
   },
 
@@ -475,7 +498,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/11',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'C-HR', year: 2021 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'C-HR',
+      year: 2021,
+    }),
     reviewed_by_user: false,
   },
 
@@ -506,7 +533,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'high',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/12',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2020 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'RAV4',
+      year: 2020,
+    }),
     reviewed_by_user: false,
   },
 
@@ -541,7 +572,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'medium',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/13',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Highlander', year: 2022 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Highlander',
+      year: 2022,
+    }),
     reviewed_by_user: false,
   },
 
@@ -572,7 +607,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'medium',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/14',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Pilot', year: 2023 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Pilot',
+      year: 2023,
+    }),
     reviewed_by_user: false,
   },
 
@@ -603,7 +642,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'medium',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/15',
-    images_url: getCarImageGallery({ make: 'Toyota', model: '4Runner', year: 2021 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: '4Runner',
+      year: 2021,
+    }),
     reviewed_by_user: false,
   },
 
@@ -634,7 +677,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'medium',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/16',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Accord', year: 2023 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Accord',
+      year: 2023,
+    }),
     reviewed_by_user: false,
   },
 
@@ -665,7 +712,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'medium',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/17',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Camry', year: 2023 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Camry',
+      year: 2023,
+    }),
     reviewed_by_user: false,
   },
 
@@ -696,7 +747,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'medium',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/18',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2022 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'RAV4',
+      year: 2022,
+    }),
     reviewed_by_user: false,
   },
 
@@ -731,7 +786,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/19',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'CR-V', year: 2017 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'CR-V',
+      year: 2017,
+    }),
     reviewed_by_user: false,
   },
 
@@ -762,7 +821,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/20',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Camry', year: 2016 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Camry',
+      year: 2016,
+    }),
     reviewed_by_user: false,
   },
 
@@ -793,7 +856,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/21',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Civic', year: 2018 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Civic',
+      year: 2018,
+    }),
     reviewed_by_user: false,
   },
 
@@ -824,7 +891,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/22',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Corolla', year: 2017 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Corolla',
+      year: 2017,
+    }),
     reviewed_by_user: false,
   },
 
@@ -859,7 +930,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/23',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Accord', year: 2019 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Accord',
+      year: 2019,
+    }),
     reviewed_by_user: false,
   },
 
@@ -890,7 +965,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/24',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2018 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'RAV4',
+      year: 2018,
+    }),
     reviewed_by_user: false,
   },
 
@@ -921,7 +1000,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/25',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'CR-V', year: 2019 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'CR-V',
+      year: 2019,
+    }),
     reviewed_by_user: false,
   },
 
@@ -956,7 +1039,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/26',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Camry', year: 2018 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Camry',
+      year: 2018,
+    }),
     reviewed_by_user: false,
   },
 
@@ -987,7 +1074,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/27',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Civic', year: 2017 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Civic',
+      year: 2017,
+    }),
     reviewed_by_user: false,
   },
 
@@ -1018,7 +1109,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/28',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Corolla', year: 2019 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Corolla',
+      year: 2019,
+    }),
     reviewed_by_user: false,
   },
 
@@ -1053,7 +1148,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/29',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'Accord', year: 2020 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'Accord',
+      year: 2020,
+    }),
     reviewed_by_user: false,
   },
 
@@ -1084,7 +1183,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Carapis',
     source_url: 'https://example.com/listing/30',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'Camry', year: 2019 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'Camry',
+      year: 2019,
+    }),
     reviewed_by_user: false,
   },
 
@@ -1119,7 +1222,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Marketcheck',
     source_url: 'https://example.com/listing/31',
-    images_url: getCarImageGallery({ make: 'Honda', model: 'CR-V', year: 2018 }),
+    images_url: getCarImageGallery({
+      make: 'Honda',
+      model: 'CR-V',
+      year: 2018,
+    }),
     reviewed_by_user: false,
   },
 
@@ -1150,7 +1257,11 @@ const baseListings: VehicleInsert[] = [
     overall_rating: 'low',
     source_platform: 'Auto.dev',
     source_url: 'https://example.com/listing/32',
-    images_url: getCarImageGallery({ make: 'Toyota', model: 'RAV4', year: 2017 }),
+    images_url: getCarImageGallery({
+      make: 'Toyota',
+      model: 'RAV4',
+      year: 2017,
+    }),
     reviewed_by_user: false,
   },
 ];
@@ -1171,11 +1282,14 @@ export const mockDataStats = {
     rust_belt: 2,
   },
   byMake: {
-    Toyota: mockListings.filter(l => l.make === 'Toyota').length,
-    Honda: mockListings.filter(l => l.make === 'Honda').length,
+    Toyota: mockListings.filter((l) => l.make === 'Toyota').length,
+    Honda: mockListings.filter((l) => l.make === 'Honda').length,
   },
-  byModel: mockListings.reduce((acc, l) => {
-    acc[l.model] = (acc[l.model] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>),
+  byModel: mockListings.reduce(
+    (acc, l) => {
+      acc[l.model] = (acc[l.model] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  ),
 };
