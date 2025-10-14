@@ -91,33 +91,43 @@ See [docs/ux/UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md) for detailed UX specifi
 /
 ├── app/                    # Next.js app router pages
 │   ├── page.tsx           # Landing page
-│   └── dashboard/         # Dashboard and vehicle details
-├── components/            # React components
-│   ├── ui/               # shadcn/ui components
-│   ├── FilterBar.tsx     # Vehicle filtering
-│   ├── VehicleCard.tsx   # Vehicle card display (with real images)
-│   ├── VehicleList.tsx   # Vehicle grid layout
-│   ├── VehicleDetail.tsx # Vehicle detail view (5-angle gallery)
-│   └── CarImage.tsx      # Smart image component with fallbacks
-├── lib/                   # Utilities and business logic
-│   ├── supabase.ts       # Database client & queries
-│   ├── mock-data.ts      # Mock vehicle data (32 listings with real images)
-│   ├── car-images.ts     # IMAGIN.studio API integration
-│   ├── types.ts          # TypeScript types
-│   ├── utils.ts          # Utility functions
-│   └── claude-error-formatter.ts  # Error logging for automated fixes
+│   ├── dashboard/         # Dashboard and vehicle details
+│   └── api/               # API routes (cron, VIN check, etc.)
+├── components/            # React components (organized by feature)
+│   ├── ui/                # shadcn/ui primitives
+│   ├── vehicle/           # Vehicle display components (VehicleCard, VehicleDetail, etc.)
+│   ├── filters/           # Search and filter components (FilterBar, FilterSidebar, SearchBar)
+│   ├── table/             # Table/grid components (TableHeader, TableRow, etc.)
+│   ├── actions/           # Action menu components (ActionMenu, BulkActionBar)
+│   ├── shared/            # Shared utility components (EmptyState, Pagination, etc.)
+│   └── features/          # Feature-specific components (DashboardHeader, VehicleDataGrid)
+├── lib/                   # Business logic (organized by domain)
+│   ├── adapters/          # External API adapters (marketcheck-adapter.ts)
+│   ├── database/          # Supabase client & SQL files
+│   ├── email/             # Email system & templates (daily-digest, weekly-digest)
+│   ├── utils/             # Utility functions (car-images, vin-decoder, filters)
+│   ├── data/              # Mock data & data pipeline
+│   ├── config/            # App configuration (constants, design-tokens)
+│   ├── dev/               # Development tools (claude-error-formatter)
+│   ├── api/               # API query functions
+│   ├── services/          # Business logic services (filter, sort, pagination)
+│   ├── types.ts           # TypeScript types
+│   └── utils.ts           # Core utility functions
+├── hooks/                 # Custom React hooks
 ├── tests/                 # E2E test suite
-│   ├── e2e/              # Puppeteer tests
-│   └── screenshots/      # Test screenshots
-├── docs/                  # Documentation (organized)
-│   ├── setup/            # Setup guides
-│   ├── features/         # Feature documentation
-│   ├── architecture/     # Architectural decisions
-│   ├── ux/               # UX principles and guidelines
-│   ├── development/      # Development guides
-│   ├── guides/           # How-to guides
-│   ├── testing/          # Test documentation
-│   └── _archive/         # Historical documentation
+│   ├── playwright/        # Playwright tests (current)
+│   ├── e2e/               # Puppeteer tests (legacy)
+│   └── screenshots/       # Test screenshots
+├── docs/                  # Documentation (well organized!)
+│   ├── MVP_LAUNCH_ROADMAP.md  # Step-by-step launch guide
+│   ├── setup/             # Setup guides
+│   ├── architecture/      # Technical specs & data sources
+│   ├── ux/                # UX principles and guidelines
+│   ├── features/          # Feature documentation (Dashboard V2, car images, error detection)
+│   ├── development/       # Development guides
+│   ├── guides/            # How-to guides
+│   ├── testing/           # Test documentation
+│   └── _archive/          # Historical documentation
 └── scripts/               # Build and test scripts
 ```
 

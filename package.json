@@ -1,6 +1,7 @@
 {
   "name": "yourtoyotapicks",
   "version": "1.0.0",
+  "description": "Your trustworthy curator for finding the perfect Toyota or Honda. Automated filtering, priority scoring, and quality tier visualization.",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
