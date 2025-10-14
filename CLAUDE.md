@@ -469,3 +469,76 @@ vercel                   # Deploy to Vercel
 - **Feature Questions**: See [docs/features/](docs/features/)
 - **Technical Spec**: See [docs/architecture/TECHNICAL_SPECIFICATION.md](docs/architecture/TECHNICAL_SPECIFICATION.md)
 - **UX Questions**: See [docs/ux/UX_PRINCIPLES.md](docs/ux/UX_PRINCIPLES.md)
+
+---
+
+## 📁 Documentation Policy
+
+**CRITICAL RULE**: All documentation files MUST be created in `docs/`, NEVER in root directory.
+
+### Root Directory Policy
+
+- ✅ **ONLY** `README.md` and `CLAUDE.md` belong in root
+- ❌ **NEVER** create temporary status files in root (e.g., `DATABASE_STATUS.md`)
+- ❌ **NEVER** create investigation/debug files in root (e.g., `FILTER_INVESTIGATION.md`)
+- ❌ **NEVER** create planning files in root (e.g., `MIGRATION_INSTRUCTIONS.md`)
+- ❌ **NEVER** create implementation summaries in root (e.g., `FILTER_FIX_SUMMARY.md`)
+
+### Where to Create Documentation
+
+| Type                   | Location             | Examples                                            |
+| ---------------------- | -------------------- | --------------------------------------------------- |
+| **Planning docs**      | `docs/development/`  | Feature plans, implementation guides                |
+| **Bug investigations** | `docs/development/`  | Issue analysis, root cause investigations           |
+| **Fix summaries**      | `docs/development/`  | Bug fixes, problem resolutions                      |
+| **Status updates**     | `docs/development/`  | Database status, migration status                   |
+| **Learning docs**      | `docs/learnings/`    | Best practices, lessons learned, testing strategies |
+| **Architecture docs**  | `docs/architecture/` | Technical specs, design patterns                    |
+| **Setup guides**       | `docs/setup/`        | Installation, deployment, configuration             |
+| **Feature docs**       | `docs/features/`     | Feature implementation details                      |
+| **UX docs**            | `docs/ux/`           | Design principles, user experience guidelines       |
+
+### Documentation Workflow
+
+When creating ANY new markdown file:
+
+1. **Determine category** - Is it planning, learning, architecture, setup, feature, or UX?
+2. **Create in appropriate `docs/` subfolder** - Never in root
+3. **Update index if significant** - Add entry to `docs/README.md` if it's a major document
+4. **Cross-reference in learnings** - Update `docs/learnings/README.md` if it contains reusable lessons
+
+### Examples
+
+✅ **GOOD**:
+
+```bash
+# Planning a new feature
+docs/development/FEATURE_PLAN_NOTIFICATIONS.md
+
+# Investigating a bug
+docs/development/BUG_INVESTIGATION_SLOW_QUERIES.md
+
+# Documenting a fix
+docs/development/FIX_SUMMARY_DATABASE_MIGRATION.md
+
+# Recording lessons learned
+docs/learnings/PAGINATION_BEST_PRACTICES.md
+```
+
+❌ **BAD**:
+
+```bash
+# Don't create in root!
+DATABASE_STATUS.md
+MIGRATION_INSTRUCTIONS.md
+FILTER_FIX_SUMMARY.md
+SCORING_SYSTEM.md
+```
+
+### Benefits
+
+1. **Clean root** - Only 2 essential files, easy to navigate
+2. **No cleanup needed** - All docs already organized
+3. **Better discoverability** - Everything indexed in `docs/README.md`
+4. **Git history** - Focused on code changes, not scattered docs
+5. **Maintainability** - Easy to find and update related docs
