@@ -19,10 +19,10 @@ Complete documentation for the YourToyotaPicks project.
 
 #### Implemented Features
 
-- **[Car Images System](CAR_IMAGES_IMPLEMENTATION.md)** - Real car images with IMAGIN.studio API
+- **[Car Images System](features/CAR_IMAGES_IMPLEMENTATION.md)** - Real car images with IMAGIN.studio API
 - **[Vehicle Detail Page](features/FEATURE_9_VEHICLE_DETAIL.md)** - 5-angle gallery and comprehensive info
-- **[Error Detection System](ERROR_WATCH_SYSTEM.md)** - Automated error capture for development
-- **[Error Capture Guide](ERROR_CAPTURE_GUIDE.md)** - How to capture and fix all error types
+- **[Error Detection System](features/ERROR_WATCH_SYSTEM.md)** - Automated error capture for development
+- **[Error Capture Guide](features/ERROR_CAPTURE_GUIDE.md)** - How to capture and fix all error types
 
 #### Automation Features (Planned)
 
@@ -149,10 +149,10 @@ docs/
 
 ### For Development
 
-1. Use [Error Watch System](ERROR_WATCH_SYSTEM.md) to catch issues automatically
+1. Use [Error Watch System](features/ERROR_WATCH_SYSTEM.md) to catch issues automatically
 2. Run `npm run watch:errors` for live error detection
 3. Type `/fix-errors` to have Claude analyze and fix errors
-4. Check [Error Capture Guide](ERROR_CAPTURE_GUIDE.md) for all error types
+4. Check [Error Capture Guide](features/ERROR_CAPTURE_GUIDE.md) for all error types
 
 ## 📊 Project Status
 
