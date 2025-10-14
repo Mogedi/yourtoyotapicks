@@ -4,6 +4,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import type { Vehicle } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { getQualityTier, QUALITY_TIER } from '@/lib/constants';
 
 interface StatCardsProps {
   vehicles: Vehicle[];
@@ -11,34 +12,38 @@ interface StatCardsProps {
 }
 
 export function StatCards({ vehicles, className }: StatCardsProps) {
-  // Calculate quality tier counts
-  const topPicks = vehicles.filter((v) => v.priority_score >= 80).length;
-  const goodBuys = vehicles.filter(
-    (v) => v.priority_score >= 65 && v.priority_score < 80
+  // Calculate quality tier counts using centralized helper
+  const topPicks = vehicles.filter(
+    (v) => getQualityTier(v.priority_score) === 'top_pick'
   ).length;
-  const caution = vehicles.filter((v) => v.priority_score < 65).length;
+  const goodBuys = vehicles.filter(
+    (v) => getQualityTier(v.priority_score) === 'good_buy'
+  ).length;
+  const caution = vehicles.filter(
+    (v) => getQualityTier(v.priority_score) === 'caution'
+  ).length;
 
   const stats = [
     {
-      label: '🟩 Top Picks',
+      label: `🟩 ${QUALITY_TIER.TOP_PICK.LABEL}s`,
       value: topPicks.toString(),
-      description: 'Score 80+',
+      description: `Score ${QUALITY_TIER.TOP_PICK.MIN_SCORE}+`,
       bgClass: 'bg-green-50',
       iconColorClass: 'text-green-600',
       textClass: 'text-green-900',
     },
     {
-      label: '🟨 Good Buys',
+      label: `🟨 ${QUALITY_TIER.GOOD_BUY.LABEL}s`,
       value: goodBuys.toString(),
-      description: 'Score 65-79',
+      description: `Score ${QUALITY_TIER.GOOD_BUY.MIN_SCORE}-${QUALITY_TIER.GOOD_BUY.MAX_SCORE}`,
       bgClass: 'bg-yellow-50',
       iconColorClass: 'text-yellow-600',
       textClass: 'text-yellow-900',
     },
     {
-      label: '⚪ Needs Review',
+      label: `⚪ ${QUALITY_TIER.CAUTION.LABEL}`,
       value: caution.toString(),
-      description: 'Score <65',
+      description: `Score <${QUALITY_TIER.GOOD_BUY.MIN_SCORE}`,
       bgClass: 'bg-gray-50',
       iconColorClass: 'text-gray-600',
       textClass: 'text-gray-900',

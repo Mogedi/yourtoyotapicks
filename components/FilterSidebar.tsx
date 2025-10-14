@@ -16,6 +16,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import type { FilterState } from '@/hooks/useVehicleFilters';
 import { cn } from '@/lib/utils';
+import { FilterService, type FilterOptions } from '@/lib/services/filter-service';
+import { QUALITY_TIER, SEARCH_CRITERIA } from '@/lib/constants';
 
 interface FilterSidebarProps {
   filters: FilterState;
@@ -50,16 +52,21 @@ export function FilterSidebar({
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const hasActiveFilters =
-    filters.make !== 'all' ||
-    filters.model !== 'all' ||
-    filters.yearMin !== '' ||
-    filters.yearMax !== '' ||
-    filters.priceMin !== '' ||
-    filters.priceMax !== '' ||
-    filters.mileageMax !== '' ||
-    filters.mileageRating !== 'all' ||
-    filters.qualityTier !== 'all';
+  // Convert FilterState to FilterOptions for FilterService
+  const filterOptions: FilterOptions = {
+    make: filters.make !== 'all' ? filters.make : undefined,
+    model: filters.model !== 'all' ? filters.model : undefined,
+    yearMin: filters.yearMin !== '' ? parseInt(filters.yearMin) : undefined,
+    yearMax: filters.yearMax !== '' ? parseInt(filters.yearMax) : undefined,
+    priceMin: filters.priceMin !== '' ? parseFloat(filters.priceMin) : undefined,
+    priceMax: filters.priceMax !== '' ? parseFloat(filters.priceMax) : undefined,
+    mileageMax: filters.mileageMax !== '' ? parseInt(filters.mileageMax) : undefined,
+    mileageRating: filters.mileageRating !== 'all' ? filters.mileageRating : undefined,
+    qualityTier: filters.qualityTier !== 'all' ? filters.qualityTier : undefined,
+  };
+
+  // Use FilterService to check for active filters
+  const hasActiveFilters = FilterService.getActiveFilterCount(filterOptions) > 0;
 
   return (
     <aside
@@ -172,7 +179,7 @@ export function FilterSidebar({
                   type="number"
                   value={filters.priceMin}
                   onChange={(e) => onFilterChange('priceMin', e.target.value)}
-                  placeholder="10000"
+                  placeholder={String(SEARCH_CRITERIA.PRICE.MIN)}
                 />
               </div>
               <div>
@@ -182,7 +189,7 @@ export function FilterSidebar({
                   type="number"
                   value={filters.priceMax}
                   onChange={(e) => onFilterChange('priceMax', e.target.value)}
-                  placeholder="20000"
+                  placeholder={String(SEARCH_CRITERIA.PRICE.MAX)}
                 />
               </div>
             </div>
@@ -205,7 +212,7 @@ export function FilterSidebar({
                 type="number"
                 value={filters.mileageMax}
                 onChange={(e) => onFilterChange('mileageMax', e.target.value)}
-                placeholder="100000"
+                placeholder={String(SEARCH_CRITERIA.MILEAGE.MAX)}
               />
             </div>
 
@@ -252,9 +259,15 @@ export function FilterSidebar({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Tiers</SelectItem>
-                <SelectItem value="top_pick">🟩 Top Picks (80+)</SelectItem>
-                <SelectItem value="good_buy">🟨 Good Buys (65-79)</SelectItem>
-                <SelectItem value="caution">⚪ Caution (&lt;65)</SelectItem>
+                <SelectItem value="top_pick">
+                  🟩 {QUALITY_TIER.TOP_PICK.LABEL} ({QUALITY_TIER.TOP_PICK.MIN_SCORE}+)
+                </SelectItem>
+                <SelectItem value="good_buy">
+                  🟨 {QUALITY_TIER.GOOD_BUY.LABEL} ({QUALITY_TIER.GOOD_BUY.MIN_SCORE}-{QUALITY_TIER.GOOD_BUY.MAX_SCORE})
+                </SelectItem>
+                <SelectItem value="caution">
+                  ⚪ {QUALITY_TIER.CAUTION.LABEL} (&lt;{QUALITY_TIER.GOOD_BUY.MIN_SCORE})
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
