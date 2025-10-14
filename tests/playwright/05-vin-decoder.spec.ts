@@ -30,9 +30,11 @@ interface VINDecodeData {
 }
 
 test.describe('VIN Decoder Flow', () => {
-  let nhtsaApiCalls: Array<{ url: string; status: number; data?: any }> = [];
+  const nhtsaApiCalls: Array<{ url: string; status: number; data?: any }> = [];
 
-  test('should decode VIN and display vehicle specifications', async ({ page }) => {
+  test('should decode VIN and display vehicle specifications', async ({
+    page,
+  }) => {
     // Setup network monitoring for NHTSA API calls
     page.on('response', async (response) => {
       const url = response.url();
@@ -60,7 +62,10 @@ test.describe('VIN Decoder Flow', () => {
       await page.goto(`/dashboard/${TEST_VIN}`);
       await expect(page.locator('h1')).toBeVisible();
       await expect(page).toHaveURL(new RegExp(TEST_VIN));
-      await page.screenshot({ path: `test-results/05-vehicle-detail-loaded.png`, fullPage: true });
+      await page.screenshot({
+        path: `test-results/05-vehicle-detail-loaded.png`,
+        fullPage: true,
+      });
     });
 
     // Navigate to Specifications tab
@@ -74,19 +79,23 @@ test.describe('VIN Decoder Flow', () => {
       let clicked = false;
       for (const selector of specificationsTabSelectors) {
         try {
-          const element = typeof selector === 'string' ? page.locator(selector) : selector;
+          const element =
+            typeof selector === 'string' ? page.locator(selector) : selector;
           await element.click({ timeout: 2000 });
           clicked = true;
           console.log('✓ Clicked Specifications tab');
           break;
-        } catch (e) {
+        } catch {
           continue;
         }
       }
 
       expect(clicked).toBe(true);
       await page.waitForTimeout(1500);
-      await page.screenshot({ path: `test-results/05-specifications-tab.png`, fullPage: true });
+      await page.screenshot({
+        path: `test-results/05-specifications-tab.png`,
+        fullPage: true,
+      });
     });
 
     // Verify VIN is displayed
@@ -143,7 +152,10 @@ test.describe('VIN Decoder Flow', () => {
       });
 
       console.log('✓ Extracted VIN data:', JSON.stringify(vinData, null, 2));
-      await page.screenshot({ path: `test-results/05-vin-specifications.png`, fullPage: true });
+      await page.screenshot({
+        path: `test-results/05-vin-specifications.png`,
+        fullPage: true,
+      });
     });
 
     // Verify VIN data format and completeness
@@ -157,12 +169,16 @@ test.describe('VIN Decoder Flow', () => {
       }
 
       // Count populated fields
-      const populatedFields = Object.entries(vinData).filter(([_, value]) => value).length;
+      const populatedFields = Object.entries(vinData).filter(
+        ([_, value]) => value
+      ).length;
       console.log(`✓ ${populatedFields} fields populated`);
 
       // Check for common fields
       const commonFields = ['make', 'model', 'year'];
-      const foundCommonFields = commonFields.filter((field) => vinData[field as keyof VINDecodeData]);
+      const foundCommonFields = commonFields.filter(
+        (field) => vinData[field as keyof VINDecodeData]
+      );
 
       if (foundCommonFields.length === 0) {
         console.warn('⚠ No common fields (make, model, year) found');
@@ -174,7 +190,9 @@ test.describe('VIN Decoder Flow', () => {
     // Verify NHTSA API calls
     await test.step('Verify NHTSA API calls', async () => {
       if (nhtsaApiCalls.length === 0) {
-        console.warn('⚠ No NHTSA API calls detected (may be using cached data)');
+        console.warn(
+          '⚠ No NHTSA API calls detected (may be using cached data)'
+        );
       } else {
         console.log(`✓ Found ${nhtsaApiCalls.length} NHTSA API call(s)`);
 
@@ -204,8 +222,8 @@ test.describe('VIN Decoder Flow', () => {
     await test.step('Verify mileage analysis', async () => {
       // Scroll down to mileage analysis section
       await page.evaluate(() => {
-        const heading = Array.from(document.querySelectorAll('h3, h2')).find((el) =>
-          el.textContent?.includes('Mileage Analysis')
+        const heading = Array.from(document.querySelectorAll('h3, h2')).find(
+          (el) => el.textContent?.includes('Mileage Analysis')
         );
         if (heading) {
           heading.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -221,7 +239,10 @@ test.describe('VIN Decoder Flow', () => {
 
       if (hasMileageAnalysis) {
         console.log('✓ Mileage Analysis section found');
-        await page.screenshot({ path: `test-results/05-mileage-analysis.png`, fullPage: true });
+        await page.screenshot({
+          path: `test-results/05-mileage-analysis.png`,
+          fullPage: true,
+        });
       } else {
         console.warn('⚠ Mileage Analysis section not found');
       }

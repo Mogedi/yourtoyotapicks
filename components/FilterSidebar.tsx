@@ -16,7 +16,10 @@ import {
 import { Separator } from '@/components/ui/separator';
 import type { FilterState } from '@/hooks/useVehicleFilters';
 import { cn } from '@/lib/utils';
-import { FilterService, type FilterOptions } from '@/lib/services/filter-service';
+import {
+  FilterService,
+  type FilterOptions,
+} from '@/lib/services/filter-service';
 import { QUALITY_TIER, SEARCH_CRITERIA } from '@/lib/constants';
 
 interface FilterSidebarProps {
@@ -38,7 +41,7 @@ export function FilterSidebar({
   onClearFilters,
   makes,
   models,
-  years,
+  years: _years,
   className,
 }: FilterSidebarProps) {
   const [expandedSections, setExpandedSections] = useState({
@@ -58,15 +61,21 @@ export function FilterSidebar({
     model: filters.model !== 'all' ? filters.model : undefined,
     yearMin: filters.yearMin !== '' ? parseInt(filters.yearMin) : undefined,
     yearMax: filters.yearMax !== '' ? parseInt(filters.yearMax) : undefined,
-    priceMin: filters.priceMin !== '' ? parseFloat(filters.priceMin) : undefined,
-    priceMax: filters.priceMax !== '' ? parseFloat(filters.priceMax) : undefined,
-    mileageMax: filters.mileageMax !== '' ? parseInt(filters.mileageMax) : undefined,
-    mileageRating: filters.mileageRating !== 'all' ? filters.mileageRating : undefined,
-    qualityTier: filters.qualityTier !== 'all' ? filters.qualityTier : undefined,
+    priceMin:
+      filters.priceMin !== '' ? parseFloat(filters.priceMin) : undefined,
+    priceMax:
+      filters.priceMax !== '' ? parseFloat(filters.priceMax) : undefined,
+    mileageMax:
+      filters.mileageMax !== '' ? parseInt(filters.mileageMax) : undefined,
+    mileageRating:
+      filters.mileageRating !== 'all' ? filters.mileageRating : undefined,
+    qualityTier:
+      filters.qualityTier !== 'all' ? filters.qualityTier : undefined,
   };
 
   // Use FilterService to check for active filters
-  const hasActiveFilters = FilterService.getActiveFilterCount(filterOptions) > 0;
+  const hasActiveFilters =
+    FilterService.getActiveFilterCount(filterOptions) > 0;
 
   return (
     <aside
@@ -260,13 +269,17 @@ export function FilterSidebar({
               <SelectContent>
                 <SelectItem value="all">All Tiers</SelectItem>
                 <SelectItem value="top_pick">
-                  🟩 {QUALITY_TIER.TOP_PICK.LABEL} ({QUALITY_TIER.TOP_PICK.MIN_SCORE}+)
+                  🟩 {QUALITY_TIER.TOP_PICK.LABEL} (
+                  {QUALITY_TIER.TOP_PICK.MIN_SCORE}+)
                 </SelectItem>
                 <SelectItem value="good_buy">
-                  🟨 {QUALITY_TIER.GOOD_BUY.LABEL} ({QUALITY_TIER.GOOD_BUY.MIN_SCORE}-{QUALITY_TIER.GOOD_BUY.MAX_SCORE})
+                  🟨 {QUALITY_TIER.GOOD_BUY.LABEL} (
+                  {QUALITY_TIER.GOOD_BUY.MIN_SCORE}-
+                  {QUALITY_TIER.GOOD_BUY.MAX_SCORE})
                 </SelectItem>
                 <SelectItem value="caution">
-                  ⚪ {QUALITY_TIER.CAUTION.LABEL} (&lt;{QUALITY_TIER.GOOD_BUY.MIN_SCORE})
+                  ⚪ {QUALITY_TIER.CAUTION.LABEL} (&lt;
+                  {QUALITY_TIER.GOOD_BUY.MIN_SCORE})
                 </SelectItem>
               </SelectContent>
             </Select>

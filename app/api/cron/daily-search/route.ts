@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
  * Returns status information about the cron job.
  * Does not run the pipeline, just returns configuration.
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   // Check if CRON_SECRET is configured
   const hasCronSecret = !!process.env.CRON_SECRET;
   const hasSupabaseKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY;

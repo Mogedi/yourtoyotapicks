@@ -1,7 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,7 +26,6 @@ import {
   Trophy,
   DollarSign,
   Gauge,
-  Calendar,
   Shield,
   ExternalLink,
   ChevronLeft,
@@ -128,11 +133,10 @@ const CarPlaceholder = () => (
 
 export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
   const [selectedImage, setSelectedImage] = React.useState(0);
-  const [vehicle, setVehicle] = React.useState(initialVehicle);
+  const vehicle = initialVehicle;
   const mileageBadge = getMileageBadgeStyle(vehicle.mileage_rating);
   const overallRatingBadge = getOverallRatingBadge(vehicle.overall_rating);
   const images = vehicle.images_url || [];
-
 
   return (
     <div className="space-y-6">
@@ -213,7 +217,9 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 {vehicle.year} {vehicle.make} {vehicle.model}
               </h1>
               {vehicle.body_type && (
-                <p className="text-muted-foreground text-lg">{vehicle.body_type}</p>
+                <p className="text-muted-foreground text-lg">
+                  {vehicle.body_type}
+                </p>
               )}
             </div>
 
@@ -225,7 +231,9 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Price</p>
-                  <p className="text-xl font-bold">{formatPrice(vehicle.price)}</p>
+                  <p className="text-xl font-bold">
+                    {formatPrice(vehicle.price)}
+                  </p>
                 </div>
               </div>
 
@@ -235,7 +243,9 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Mileage</p>
-                  <p className="text-xl font-bold">{formatMileage(vehicle.mileage)} mi</p>
+                  <p className="text-xl font-bold">
+                    {formatMileage(vehicle.mileage)} mi
+                  </p>
                 </div>
               </div>
 
@@ -255,7 +265,9 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Distance</p>
-                  <p className="text-xl font-bold">{vehicle.distance_miles} mi</p>
+                  <p className="text-xl font-bold">
+                    {vehicle.distance_miles} mi
+                  </p>
                 </div>
               </div>
             </div>
@@ -278,9 +290,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 {vehicle.title_status}
               </Badge>
 
-              <Badge variant="secondary">
-                Score: {vehicle.priority_score}
-              </Badge>
+              <Badge variant="secondary">Score: {vehicle.priority_score}</Badge>
             </div>
 
             {/* Location */}
@@ -290,7 +300,9 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 <div>
                   <p className="font-medium">{vehicle.current_location}</p>
                   {vehicle.dealer_name && (
-                    <p className="text-sm text-muted-foreground">{vehicle.dealer_name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {vehicle.dealer_name}
+                    </p>
                   )}
                   {vehicle.state_of_origin && (
                     <p className="text-sm text-muted-foreground">
@@ -304,7 +316,11 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
             {/* Action Buttons */}
             <div className="grid gap-3">
               <Button asChild size="lg" className="w-full">
-                <a href={vehicle.source_url} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={vehicle.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <ExternalLink className="w-4 h-4 mr-2" />
                   View on {vehicle.source_platform}
                 </a>
@@ -361,21 +377,54 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                   {/* Left Column */}
                   <div className="space-y-4">
                     <SpecItem label="VIN" value={vehicle.vin} />
-                    <SpecItem label="Make" value={vehicle.vin_decode_data.make} />
-                    <SpecItem label="Model" value={vehicle.vin_decode_data.model} />
-                    <SpecItem label="Year" value={vehicle.vin_decode_data.year} />
-                    <SpecItem label="Body Type" value={vehicle.vin_decode_data.body_type} />
-                    <SpecItem label="Trim" value={vehicle.vin_decode_data.trim} />
+                    <SpecItem
+                      label="Make"
+                      value={vehicle.vin_decode_data.make}
+                    />
+                    <SpecItem
+                      label="Model"
+                      value={vehicle.vin_decode_data.model}
+                    />
+                    <SpecItem
+                      label="Year"
+                      value={vehicle.vin_decode_data.year}
+                    />
+                    <SpecItem
+                      label="Body Type"
+                      value={vehicle.vin_decode_data.body_type}
+                    />
+                    <SpecItem
+                      label="Trim"
+                      value={vehicle.vin_decode_data.trim}
+                    />
                   </div>
 
                   {/* Right Column */}
                   <div className="space-y-4">
-                    <SpecItem label="Engine" value={vehicle.vin_decode_data.engine_type} />
-                    <SpecItem label="Fuel Type" value={vehicle.vin_decode_data.fuel_type} />
-                    <SpecItem label="Drive Type" value={vehicle.vin_decode_data.drive_type} />
-                    <SpecItem label="Transmission" value={vehicle.vin_decode_data.transmission} />
-                    <SpecItem label="Manufacturer" value={vehicle.vin_decode_data.manufacturer} />
-                    <SpecItem label="Plant Country" value={vehicle.vin_decode_data.plant_country} />
+                    <SpecItem
+                      label="Engine"
+                      value={vehicle.vin_decode_data.engine_type}
+                    />
+                    <SpecItem
+                      label="Fuel Type"
+                      value={vehicle.vin_decode_data.fuel_type}
+                    />
+                    <SpecItem
+                      label="Drive Type"
+                      value={vehicle.vin_decode_data.drive_type}
+                    />
+                    <SpecItem
+                      label="Transmission"
+                      value={vehicle.vin_decode_data.transmission}
+                    />
+                    <SpecItem
+                      label="Manufacturer"
+                      value={vehicle.vin_decode_data.manufacturer}
+                    />
+                    <SpecItem
+                      label="Plant Country"
+                      value={vehicle.vin_decode_data.plant_country}
+                    />
                   </div>
                 </div>
               ) : (
@@ -387,7 +436,8 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                   <SpecItem label="Body Type" value={vehicle.body_type} />
                   <div className="p-4 bg-muted rounded-lg">
                     <p className="text-sm text-muted-foreground">
-                      Detailed VIN decode data not available. Basic information shown above.
+                      Detailed VIN decode data not available. Basic information
+                      shown above.
                     </p>
                   </div>
                 </div>
@@ -401,9 +451,15 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
               <CardTitle>Mileage Analysis</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <SpecItem label="Current Mileage" value={`${formatMileage(vehicle.mileage)} miles`} />
+              <SpecItem
+                label="Current Mileage"
+                value={`${formatMileage(vehicle.mileage)} miles`}
+              />
               {vehicle.age_in_years && (
-                <SpecItem label="Vehicle Age" value={`${vehicle.age_in_years} years`} />
+                <SpecItem
+                  label="Vehicle Age"
+                  value={`${vehicle.age_in_years} years`}
+                />
               )}
               {vehicle.mileage_per_year && (
                 <SpecItem
@@ -414,7 +470,11 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
               <SpecItem
                 label="Mileage Rating"
                 value={mileageBadge.label}
-                badge={<Badge className={mileageBadge.className}>{mileageBadge.label}</Badge>}
+                badge={
+                  <Badge className={mileageBadge.className}>
+                    {mileageBadge.label}
+                  </Badge>
+                }
               />
             </CardContent>
           </Card>
@@ -437,21 +497,35 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                     <HistoryItem
                       label="Title Status"
                       value={vehicle.vin_history_data.title_status}
-                      status={vehicle.vin_history_data.title_status === 'clean' ? 'good' : 'warning'}
+                      status={
+                        vehicle.vin_history_data.title_status === 'clean'
+                          ? 'good'
+                          : 'warning'
+                      }
                     />
                     <HistoryItem
                       label="Accident Count"
                       value={vehicle.vin_history_data.accident_count.toString()}
-                      status={vehicle.vin_history_data.accident_count === 0 ? 'good' : 'warning'}
+                      status={
+                        vehicle.vin_history_data.accident_count === 0
+                          ? 'good'
+                          : 'warning'
+                      }
                     />
                     <HistoryItem
                       label="Owner Count"
                       value={vehicle.vin_history_data.owner_count.toString()}
-                      status={vehicle.vin_history_data.owner_count <= 2 ? 'good' : 'neutral'}
+                      status={
+                        vehicle.vin_history_data.owner_count <= 2
+                          ? 'good'
+                          : 'neutral'
+                      }
                     />
                     <HistoryItem
                       label="State of Origin"
-                      value={vehicle.vin_history_data.state_of_origin || 'Unknown'}
+                      value={
+                        vehicle.vin_history_data.state_of_origin || 'Unknown'
+                      }
                       status="neutral"
                     />
                   </div>
@@ -470,7 +544,10 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                         label="Fleet Vehicle"
                         value={vehicle.vin_history_data.is_fleet}
                       />
-                      <FlagItem label="Has Lien" value={vehicle.vin_history_data.has_lien} />
+                      <FlagItem
+                        label="Has Lien"
+                        value={vehicle.vin_history_data.has_lien}
+                      />
                       <FlagItem
                         label="Flood Damage"
                         value={vehicle.vin_history_data.flood_damage}
@@ -501,7 +578,9 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                         {vehicle.vin_history_data.last_reported_date && (
                           <SpecItem
                             label="Last Report Date"
-                            value={formatDate(vehicle.vin_history_data.last_reported_date)}
+                            value={formatDate(
+                              vehicle.vin_history_data.last_reported_date
+                            )}
                           />
                         )}
                       </div>
@@ -512,8 +591,8 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 <div className="p-6 bg-muted rounded-lg text-center">
                   <AlertCircle className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Vehicle history data not available. This information may be added after
-                    running a VIN history check.
+                    Vehicle history data not available. This information may be
+                    added after running a VIN history check.
                   </p>
                 </div>
               )}
@@ -527,8 +606,14 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <SpecItem label="Title Status" value={vehicle.title_status} />
-              <SpecItem label="Accident Count" value={vehicle.accident_count.toString()} />
-              <SpecItem label="Owner Count" value={vehicle.owner_count.toString()} />
+              <SpecItem
+                label="Accident Count"
+                value={vehicle.accident_count.toString()}
+              />
+              <SpecItem
+                label="Owner Count"
+                value={vehicle.owner_count.toString()}
+              />
               <div className="space-y-2">
                 <FlagItem label="Rental Vehicle" value={vehicle.is_rental} />
                 <FlagItem label="Fleet Vehicle" value={vehicle.is_fleet} />
@@ -613,14 +698,23 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                     <FilterResultItem
                       label="Not from Rust Belt"
                       passed={!vehicle.is_rust_belt_state}
-                      value={vehicle.is_rust_belt_state ? 'Rust belt state' : 'Non-rust belt'}
+                      value={
+                        vehicle.is_rust_belt_state
+                          ? 'Rust belt state'
+                          : 'Non-rust belt'
+                      }
                     />
                     <FilterResultItem
                       label="Rust Concern Flag"
                       passed={!vehicle.flag_rust_concern}
-                      value={vehicle.flag_rust_concern ? 'Flagged' : 'Not flagged'}
+                      value={
+                        vehicle.flag_rust_concern ? 'Flagged' : 'Not flagged'
+                      }
                     />
-                    <SpecItem label="Distance from You" value={`${vehicle.distance_miles} miles`} />
+                    <SpecItem
+                      label="Distance from You"
+                      value={`${vehicle.distance_miles} miles`}
+                    />
                   </AccordionContent>
                 </AccordionItem>
 
@@ -629,7 +723,11 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                   <AccordionContent className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm">Overall Priority Score</span>
-                      <Badge variant={vehicle.priority_score >= 80 ? 'default' : 'secondary'}>
+                      <Badge
+                        variant={
+                          vehicle.priority_score >= 80 ? 'default' : 'secondary'
+                        }
+                      >
                         {vehicle.priority_score}/100
                       </Badge>
                     </div>
@@ -640,15 +738,15 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                           vehicle.priority_score >= 80
                             ? 'bg-amber-500'
                             : vehicle.priority_score >= 60
-                            ? 'bg-blue-500'
-                            : 'bg-gray-400'
+                              ? 'bg-blue-500'
+                              : 'bg-gray-400'
                         )}
                         style={{ width: `${vehicle.priority_score}%` }}
                       />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Priority score is calculated based on model preference, mileage, price,
-                      condition, and history.
+                      Priority score is calculated based on model preference,
+                      mileage, price, condition, and history.
                     </p>
                   </AccordionContent>
                 </AccordionItem>
@@ -664,14 +762,25 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
               <CardTitle>Listing Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <SpecItem label="Source Platform" value={vehicle.source_platform} />
+              <SpecItem
+                label="Source Platform"
+                value={vehicle.source_platform}
+              />
               <SpecItem label="Listing ID" value={vehicle.source_listing_id} />
-              <SpecItem label="First Seen" value={formatDate(vehicle.first_seen_at)} />
-              <SpecItem label="Last Updated" value={formatDate(vehicle.last_updated_at)} />
-              <SpecItem label="Created At" value={formatDate(vehicle.created_at)} />
+              <SpecItem
+                label="First Seen"
+                value={formatDate(vehicle.first_seen_at)}
+              />
+              <SpecItem
+                label="Last Updated"
+                value={formatDate(vehicle.last_updated_at)}
+              />
+              <SpecItem
+                label="Created At"
+                value={formatDate(vehicle.created_at)}
+              />
             </CardContent>
           </Card>
-
         </TabsContent>
       </Tabs>
     </div>

@@ -21,7 +21,7 @@ import { useVehicleSort } from '@/hooks/useVehicleSort';
 import { usePagination } from '@/hooks/usePagination';
 import { useMultiSelect } from '@/hooks/useMultiSelect';
 import { FilterService } from '@/lib/services/filter-service';
-import { getQualityTier, QUALITY_TIER } from '@/lib/constants';
+import { getQualityTier } from '@/lib/constants';
 import type { Vehicle } from '@/lib/types';
 
 export interface DashboardStats {
@@ -81,7 +81,8 @@ export interface UseVehicleDashboardReturn {
 
 export function useVehicleDashboard(): UseVehicleDashboardReturn {
   // State hooks
-  const { filters, updateFilter, clearFilters, hasActiveFilters } = useVehicleFilters();
+  const { filters, updateFilter, clearFilters, hasActiveFilters } =
+    useVehicleFilters();
   const { sort, toggleSort } = useVehicleSort();
   const { page, pageSize, goToPage, setPageSize } = usePagination();
 
@@ -95,8 +96,10 @@ export function useVehicleDashboard(): UseVehicleDashboardReturn {
       priceMin: filters.priceMin ? parseFloat(filters.priceMin) : undefined,
       priceMax: filters.priceMax ? parseFloat(filters.priceMax) : undefined,
       mileageMax: filters.mileageMax ? parseInt(filters.mileageMax) : undefined,
-      mileageRating: filters.mileageRating !== 'all' ? filters.mileageRating : undefined,
-      qualityTier: filters.qualityTier !== 'all' ? filters.qualityTier : undefined,
+      mileageRating:
+        filters.mileageRating !== 'all' ? filters.mileageRating : undefined,
+      qualityTier:
+        filters.qualityTier !== 'all' ? filters.qualityTier : undefined,
       search: filters.search !== '' ? filters.search : undefined,
       sortField: sort.field,
       sortOrder: sort.order,

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { getListingByVin, getMarketcheckListingByVin } from '@/lib/supabase';
 import { mockListings } from '@/lib/mock-data';
 import { VehicleDetail } from '@/components/VehicleDetail';
@@ -19,12 +20,12 @@ function VehicleNotFound() {
           The vehicle you are looking for does not exist or has been removed.
         </p>
       </div>
-      <a
+      <Link
         href="/dashboard"
         className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
       >
         Back to Dashboard
-      </a>
+      </Link>
     </div>
   );
 }
@@ -49,7 +50,7 @@ export default async function VehicleDetailPage({
   // Try Marketcheck data first (case-insensitive VIN lookup)
   try {
     vehicle = await getMarketcheckListingByVin(vin);
-  } catch (marketcheckError) {
+  } catch {
     // Marketcheck query failed, will try legacy next
   }
 
@@ -57,7 +58,7 @@ export default async function VehicleDetailPage({
   if (!vehicle) {
     try {
       vehicle = await getListingByVin(vin.toUpperCase());
-    } catch (error) {
+    } catch {
       // Legacy query failed, will try mock data next
     }
   }
@@ -102,7 +103,7 @@ export async function generateMetadata({
   // Try Marketcheck first
   try {
     vehicle = await getMarketcheckListingByVin(vin);
-  } catch (marketcheckError) {
+  } catch {
     // Marketcheck query failed
   }
 
@@ -110,7 +111,7 @@ export async function generateMetadata({
   if (!vehicle) {
     try {
       vehicle = await getListingByVin(vin);
-    } catch (error) {
+    } catch {
       // Legacy query failed
     }
   }

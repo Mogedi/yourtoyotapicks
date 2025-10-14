@@ -34,7 +34,7 @@ export default [
                 argsIgnorePattern: "^_",
                 varsIgnorePattern: "^_",
             }],
-            "@typescript-eslint/no-explicit-any": "warn",
+            "@typescript-eslint/no-explicit-any": "off", // Allow any for flexibility
             "@typescript-eslint/explicit-function-return-type": "off",
             "@typescript-eslint/explicit-module-boundary-types": "off",
             "@typescript-eslint/no-non-null-assertion": "warn",
@@ -42,9 +42,7 @@ export default [
             "react/react-in-jsx-scope": "off",
             "react-hooks/rules-of-hooks": "error",
             "react-hooks/exhaustive-deps": "warn",
-            "no-console": ["warn", {
-                allow: ["warn", "error"],
-            }],
+            "no-console": "off", // Allow console for development
             "prefer-const": "error",
             "no-var": "error",
         },

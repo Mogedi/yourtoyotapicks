@@ -28,7 +28,7 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Parse command-line arguments
 const args = process.argv.slice(2);
-const fileArg = args.find(arg => arg.startsWith('--file='));
+const fileArg = args.find((arg) => arg.startsWith('--file='));
 const specifiedFile = fileArg ? fileArg.split('=')[1] : null;
 
 // Find the most recent marketcheck-*.json file if not specified
@@ -38,7 +38,7 @@ function findLatestMarketCheckFile(): string {
 
   // Filter for date-based files only (marketcheck-YYYY-MM-DD.json)
   const dateBasedFiles = files
-    .filter(f => f.match(/^marketcheck-\d{4}-\d{2}-\d{2}\.json$/))
+    .filter((f) => f.match(/^marketcheck-\d{4}-\d{2}-\d{2}\.json$/))
     .sort()
     .reverse(); // Most recent first (YYYY-MM-DD sorts correctly)
 
@@ -48,7 +48,7 @@ function findLatestMarketCheckFile(): string {
 
   // Fallback to any marketcheck-*.json file
   const allMarketCheckFiles = files
-    .filter(f => f.startsWith('marketcheck-') && f.endsWith('.json'))
+    .filter((f) => f.startsWith('marketcheck-') && f.endsWith('.json'))
     .sort()
     .reverse();
 
@@ -150,8 +150,12 @@ function mapListingToRow(listing: any): any {
     dealer_state: listing.dealer?.state || null,
     dealer_zip: listing.dealer?.zip || null,
     dealer_country: listing.dealer?.country || null,
-    dealer_latitude: listing.dealer?.latitude ? parseFloat(listing.dealer.latitude) : null,
-    dealer_longitude: listing.dealer?.longitude ? parseFloat(listing.dealer.longitude) : null,
+    dealer_latitude: listing.dealer?.latitude
+      ? parseFloat(listing.dealer.latitude)
+      : null,
+    dealer_longitude: listing.dealer?.longitude
+      ? parseFloat(listing.dealer.longitude)
+      : null,
     dealer_phone: listing.dealer?.phone || null,
     dealer_msa_code: listing.dealer?.msa_code || null,
 
@@ -171,9 +175,15 @@ function mapListingToRow(listing: any): any {
     city_mpg: listing.build?.city_mpg || null,
     powertrain_type: listing.build?.powertrain_type || null,
     made_in: listing.build?.made_in || null,
-    overall_height: listing.build?.overall_height ? parseFloat(listing.build.overall_height) : null,
-    overall_length: listing.build?.overall_length ? parseFloat(listing.build.overall_length) : null,
-    overall_width: listing.build?.overall_width ? parseFloat(listing.build.overall_width) : null,
+    overall_height: listing.build?.overall_height
+      ? parseFloat(listing.build.overall_height)
+      : null,
+    overall_length: listing.build?.overall_length
+      ? parseFloat(listing.build.overall_length)
+      : null,
+    overall_width: listing.build?.overall_width
+      ? parseFloat(listing.build.overall_width)
+      : null,
 
     // Media (store as JSONB)
     photo_links: listing.media?.photo_links || null,
@@ -197,7 +207,9 @@ async function importMarketCheckData() {
   // Check if input file exists
   if (!fs.existsSync(INPUT_FILE)) {
     console.error(`❌ Error: File not found: ${INPUT_FILE}`);
-    console.error('\n   💡 Tip: Run fetch script first: npx tsx scripts/fetch-marketcheck-sample.ts');
+    console.error(
+      '\n   💡 Tip: Run fetch script first: npx tsx scripts/fetch-marketcheck-sample.ts'
+    );
     process.exit(1);
   }
 
@@ -224,7 +236,9 @@ async function importMarketCheckData() {
     const firstListing = listings[0];
     console.log(`\n📍 Sample Listing:`);
     console.log(`   VIN: ${firstListing.vin}`);
-    console.log(`   Vehicle: ${firstListing.build?.year} ${firstListing.build?.make} ${firstListing.build?.model}`);
+    console.log(
+      `   Vehicle: ${firstListing.build?.year} ${firstListing.build?.make} ${firstListing.build?.model}`
+    );
     console.log(`   Price: $${firstListing.price?.toLocaleString()}`);
     console.log(`   Mileage: ${firstListing.miles?.toLocaleString()} miles`);
 
@@ -233,11 +247,16 @@ async function importMarketCheckData() {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
     // Test connection
-    const { error: connectionError } = await supabase.from('marketcheck_listings').select('count').limit(0);
+    const { error: connectionError } = await supabase
+      .from('marketcheck_listings')
+      .select('count')
+      .limit(0);
     if (connectionError) {
       console.error('❌ Failed to connect to Supabase:');
       console.error(`   ${connectionError.message}`);
-      console.error('\n   💡 Tip: Check that migration is applied and table exists');
+      console.error(
+        '\n   💡 Tip: Check that migration is applied and table exists'
+      );
       process.exit(1);
     }
     console.log('✅ Connected to Supabase');
@@ -254,16 +273,18 @@ async function importMarketCheckData() {
     // Insert in batches of 50 to avoid payload limits
     const BATCH_SIZE = 50;
     let totalInserted = 0;
-    let totalUpdated = 0;
+    const _totalUpdated = 0;
 
     for (let i = 0; i < rows.length; i += BATCH_SIZE) {
       const batch = rows.slice(i, i + BATCH_SIZE);
       const batchNum = Math.floor(i / BATCH_SIZE) + 1;
       const totalBatches = Math.ceil(rows.length / BATCH_SIZE);
 
-      console.log(`   Batch ${batchNum}/${totalBatches}: Inserting ${batch.length} rows...`);
+      console.log(
+        `   Batch ${batchNum}/${totalBatches}: Inserting ${batch.length} rows...`
+      );
 
-      const { data: insertData, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('marketcheck_listings')
         .upsert(batch, {
           onConflict: 'vin',
@@ -278,14 +299,18 @@ async function importMarketCheckData() {
         // Try to identify which row caused the error
         console.error('\n   Problematic rows:');
         batch.forEach((row, idx) => {
-          console.error(`      ${i + idx + 1}. VIN: ${row.vin} (${row.year} ${row.make} ${row.model})`);
+          console.error(
+            `      ${i + idx + 1}. VIN: ${row.vin} (${row.year} ${row.make} ${row.model})`
+          );
         });
 
         process.exit(1);
       }
 
       totalInserted += batch.length;
-      console.log(`   ✅ Batch ${batchNum} completed (${totalInserted}/${rows.length} total)`);
+      console.log(
+        `   ✅ Batch ${batchNum} completed (${totalInserted}/${rows.length} total)`
+      );
     }
 
     // Verify import
@@ -310,22 +335,35 @@ async function importMarketCheckData() {
     // Sample queries
     console.log('\n📝 Sample Queries:');
     console.log('   1. View all listings:');
-    console.log('      SELECT vin, year, make, model, price, miles FROM marketcheck_listings;');
+    console.log(
+      '      SELECT vin, year, make, model, price, miles FROM marketcheck_listings;'
+    );
     console.log('\n   2. View Toyota RAV4s only:');
-    console.log('      SELECT * FROM marketcheck_listings WHERE make = \'Toyota\' AND model = \'RAV4\';');
+    console.log(
+      "      SELECT * FROM marketcheck_listings WHERE make = 'Toyota' AND model = 'RAV4';"
+    );
     console.log('\n   3. View clean title, single-owner vehicles:');
-    console.log('      SELECT * FROM marketcheck_listings WHERE carfax_clean_title = true AND carfax_1_owner = true;');
+    console.log(
+      '      SELECT * FROM marketcheck_listings WHERE carfax_clean_title = true AND carfax_1_owner = true;'
+    );
     console.log('\n   4. Count by make and model:');
-    console.log('      SELECT make, model, COUNT(*) FROM marketcheck_listings GROUP BY make, model ORDER BY count DESC;');
+    console.log(
+      '      SELECT make, model, COUNT(*) FROM marketcheck_listings GROUP BY make, model ORDER BY count DESC;'
+    );
 
     // Next steps
     console.log('\n🎯 Next Steps:');
-    console.log('   1. Query the data: supabase db sql --query "SELECT * FROM marketcheck_listings LIMIT 5;"');
-    console.log('   2. Verify data quality: Check for NULL values, incorrect types, etc.');
-    console.log('   3. Update dashboard to use Marketcheck data instead of mock data');
+    console.log(
+      '   1. Query the data: supabase db sql --query "SELECT * FROM marketcheck_listings LIMIT 5;"'
+    );
+    console.log(
+      '   2. Verify data quality: Check for NULL values, incorrect types, etc.'
+    );
+    console.log(
+      '   3. Update dashboard to use Marketcheck data instead of mock data'
+    );
     console.log('   4. Test dashboard filters with real data');
     console.log('   5. Schedule periodic data refreshes (weekly cron job)\n');
-
   } catch (error: any) {
     console.error('\n❌ Error during import:\n');
 
