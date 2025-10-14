@@ -1,225 +1,163 @@
 'use client';
 
-// Dashboard V2 - Table View Page
-import { useEffect, useMemo } from 'react';
+/**
+ * Dashboard - Main vehicle listing page
+ *
+ * Uses the new simplified architecture:
+ * - DashboardLayout: Provides all data via render props
+ * - VehicleDataGrid: Smart table component with sorting/selection
+ * - Feature components: Self-contained, easy to swap
+ *
+ * Compare to the old version (226 lines):
+ * - No manual hook setup (30+ lines eliminated)
+ * - No manual stats calculation
+ * - No props drilling
+ * - Easy to swap table for grid/kanban views
+ */
+
 import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { LayoutGrid, LayoutList } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { DashboardLayout } from '@/components/features/DashboardLayout';
+import { DashboardHeader } from '@/components/features/DashboardHeader';
+import { VehicleDataGrid } from '@/components/features/VehicleDataGrid';
 import { StatCards } from '@/components/StatCards';
 import { SearchBar } from '@/components/SearchBar';
 import { FilterSidebar } from '@/components/FilterSidebar';
-import { VehicleTableView } from '@/components/VehicleTableView';
 import { Pagination } from '@/components/Pagination';
 import { EmptyState } from '@/components/EmptyState';
 import { BulkActionBar } from '@/components/BulkActionBar';
-import { useVehicles } from '@/hooks/useVehicles';
-import { useVehicleFilters } from '@/hooks/useVehicleFilters';
-import { useVehicleSort } from '@/hooks/useVehicleSort';
-import { usePagination } from '@/hooks/usePagination';
-import { useMultiSelect } from '@/hooks/useMultiSelect';
-import { FilterService } from '@/lib/services/filter-service';
 
-export default function TableViewPage() {
-  const { filters, updateFilter, clearFilters, hasActiveFilters } =
-    useVehicleFilters();
-  const { sort, toggleSort } = useVehicleSort();
-  const { page, pageSize, goToPage, setPageSize } = usePagination();
-
-  // Build query options
-  const queryOptions = useMemo(
-    () => ({
-      // Filters
-      make: filters.make !== 'all' ? filters.make : undefined,
-      model: filters.model !== 'all' ? filters.model : undefined,
-      yearMin: filters.yearMin ? parseInt(filters.yearMin) : undefined,
-      yearMax: filters.yearMax ? parseInt(filters.yearMax) : undefined,
-      priceMin: filters.priceMin ? parseFloat(filters.priceMin) : undefined,
-      priceMax: filters.priceMax ? parseFloat(filters.priceMax) : undefined,
-      mileageMax: filters.mileageMax ? parseInt(filters.mileageMax) : undefined,
-      mileageRating: filters.mileageRating,
-      qualityTier: filters.qualityTier,
-      search: filters.search,
-      // Sorting
-      sortField: sort.field,
-      sortOrder: sort.order,
-      // Pagination
-      page,
-      pageSize,
-    }),
-    [filters, sort, page, pageSize]
-  );
-
-  // Fetch vehicles
-  const { data, isLoading, error } = useVehicles(queryOptions);
-
-  // Multi-select for bulk actions
-  const {
-    selectedItems,
-    toggleItem,
-    toggleAll,
-    clearSelection,
-    isSelected,
-    allSelected,
-    selectedKeys,
-  } = useMultiSelect(data?.data ?? [], (vehicle) => vehicle.id);
-
-  // Get unique filter options
-  const filterOptions = useMemo(() => {
-    if (!data?.data) return { makes: [], models: [], years: [] };
-    return FilterService.getUniqueValues(data.data);
-  }, [data?.data]);
-
+export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Your Curated Picks
-            </h1>
-            <p className="text-xs text-gray-500 mt-1">
-              Best matches first • Clear explanations • 5-second clarity
-            </p>
-            <p className="text-sm text-gray-600 mt-2">
-              {data?.pagination.totalItems ?? 0} vehicles
-              {data?.allFilteredVehicles &&
-                (() => {
-                  const allVehicles = data.allFilteredVehicles;
-                  const topPicks = allVehicles.filter(
-                    (v: any) => v.priority_score >= 80
-                  ).length;
-                  const goodBuys = allVehicles.filter(
-                    (v: any) => v.priority_score >= 65 && v.priority_score < 80
-                  ).length;
-                  const caution = allVehicles.filter(
-                    (v: any) => v.priority_score < 65
-                  ).length;
-                  return ` (${topPicks} Top Picks, ${goodBuys} Good Buys, ${caution} Caution)`;
-                })()}
-              {hasActiveFilters &&
-                ` • ${data?.filters.activeCount ?? 0} filters active`}
-            </p>
-          </div>
+    <DashboardLayout>
+      {({
+        vehicles,
+        allFilteredVehicles,
+        stats,
+        isLoading,
+        error,
+        filters,
+        updateFilter,
+        clearFilters,
+        hasActiveFilters,
+        filterOptions,
+        sort,
+        toggleSort,
+        page,
+        pageSize,
+        totalPages,
+        totalItems,
+        goToPage,
+        setPageSize,
+        selectedVehicles,
+        selectedKeys,
+        toggleSelect,
+        toggleSelectAll,
+        clearSelection,
+        allSelected,
+      }) => (
+        <div className="min-h-screen bg-gray-50">
+          {/* Top Header */}
+          <DashboardHeader stats={stats} className="bg-white border-b border-gray-200 px-6 py-4" />
 
-          {/* View Toggle - Hidden for now */}
-          {/* <div className="flex items-center gap-2">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm">
-                <LayoutGrid className="h-4 w-4 mr-2" />
-                Card View
-              </Button>
-            </Link>
-            <Button size="sm" variant="default">
-              <LayoutList className="h-4 w-4 mr-2" />
-              Table View
-            </Button>
-          </div> */}
-        </div>
-      </header>
-
-      <div className="flex">
-        {/* Left Sidebar - Filters */}
-        <FilterSidebar
-          filters={filters}
-          onFilterChange={updateFilter}
-          onClearFilters={clearFilters}
-          makes={filterOptions.makes}
-          models={filterOptions.models}
-          years={filterOptions.years}
-        />
-
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Stat Cards */}
-            <StatCards
-              vehicles={data?.allFilteredVehicles ?? []}
-              className="mb-6"
+          <div className="flex">
+            {/* Filters Sidebar */}
+            <FilterSidebar
+              filters={filters}
+              onFilterChange={updateFilter}
+              onClearFilters={clearFilters}
+              makes={filterOptions.makes}
+              models={filterOptions.models}
+              years={filterOptions.years}
             />
 
-            {/* Search Bar */}
-            <div className="mb-6">
-              <SearchBar
-                value={filters.search}
-                onChange={(value) => updateFilter('search', value)}
-              />
-            </div>
+            {/* Main Content */}
+            <main className="flex-1 p-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Stat Cards */}
+                <StatCards vehicles={allFilteredVehicles} className="mb-6" />
 
-            {/* Error State */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-red-600">{error}</p>
-              </div>
-            )}
+                {/* Search Bar */}
+                <div className="mb-6">
+                  <SearchBar
+                    value={filters.search}
+                    onChange={(value) => updateFilter('search', value)}
+                  />
+                </div>
 
-            {/* Loading State */}
-            {isLoading && (
-              <div className="bg-white rounded-lg shadow p-12 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
-                <p className="text-gray-600">Loading vehicles...</p>
-              </div>
-            )}
+                {/* Error State */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-red-600">{error}</p>
+                  </div>
+                )}
 
-            {/* Empty State */}
-            {!isLoading && !error && data && data.data.length === 0 && (
-              <EmptyState
-                message="No vehicles found"
-                description="Try adjusting your filters or search criteria to see more results."
-                onClearFilters={hasActiveFilters ? clearFilters : undefined}
-                showClearButton={hasActiveFilters}
-              />
-            )}
+                {/* Loading State */}
+                {isLoading && (
+                  <div className="bg-white rounded-lg shadow p-12 text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
+                    <p className="text-gray-600">Loading vehicles...</p>
+                  </div>
+                )}
 
-            {/* Table View */}
-            {!isLoading && !error && data && data.data.length > 0 && (
-              <>
-                <VehicleTableView
-                  vehicles={data.data}
-                  sortField={sort.field}
-                  sortOrder={sort.order}
-                  onSort={toggleSort}
-                  selectedVehicles={selectedKeys}
-                  onToggleSelect={toggleItem}
-                  onToggleSelectAll={toggleAll}
-                  allSelected={allSelected}
-                  className="mb-6"
-                />
+                {/* Empty State */}
+                {!isLoading && !error && vehicles.length === 0 && (
+                  <EmptyState
+                    message="No vehicles found"
+                    description="Try adjusting your filters or search criteria to see more results."
+                    onClearFilters={hasActiveFilters ? clearFilters : undefined}
+                    showClearButton={hasActiveFilters}
+                  />
+                )}
 
-                {/* Pagination */}
-                <Pagination
-                  currentPage={data.pagination.currentPage}
-                  totalPages={data.pagination.totalPages}
-                  pageSize={data.pagination.pageSize}
-                  totalItems={data.pagination.totalItems}
-                  onPageChange={goToPage}
-                  onPageSizeChange={setPageSize}
-                />
-              </>
-            )}
-          </motion.div>
-        </main>
-      </div>
+                {/* Vehicle Data Grid - NEW SIMPLIFIED COMPONENT */}
+                {!isLoading && !error && vehicles.length > 0 && (
+                  <>
+                    <VehicleDataGrid
+                      vehicles={vehicles}
+                      sortField={sort.field}
+                      sortOrder={sort.order}
+                      onSort={toggleSort}
+                      selectable={true}
+                      selectedKeys={selectedKeys}
+                      onToggleSelect={toggleSelect}
+                      onToggleSelectAll={toggleSelectAll}
+                      allSelected={allSelected}
+                      className="mb-6"
+                    />
 
-      {/* Bulk Action Bar */}
-      <BulkActionBar
-        selectedVehicles={selectedItems}
-        onClearSelection={clearSelection}
-        onExport={() => {
-          // TODO: Implement export
-          console.log('Export:', selectedItems);
-        }}
-        onDelete={() => {
-          // TODO: Implement delete
-          console.log('Delete:', selectedItems);
-          clearSelection();
-        }}
-      />
-    </div>
+                    {/* Pagination */}
+                    <Pagination
+                      currentPage={page}
+                      totalPages={totalPages}
+                      pageSize={pageSize}
+                      totalItems={totalItems}
+                      onPageChange={goToPage}
+                      onPageSizeChange={setPageSize}
+                    />
+                  </>
+                )}
+              </motion.div>
+            </main>
+          </div>
+
+          {/* Bulk Action Bar */}
+          <BulkActionBar
+            selectedVehicles={selectedVehicles}
+            onClearSelection={clearSelection}
+            onExport={() => {
+              console.log('Export:', selectedVehicles);
+            }}
+            onDelete={() => {
+              console.log('Delete:', selectedVehicles);
+              clearSelection();
+            }}
+          />
+        </div>
+      )}
+    </DashboardLayout>
   );
 }
